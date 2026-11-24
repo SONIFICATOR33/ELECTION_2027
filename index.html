@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=12">
+<link rel="stylesheet" href="css/app.css?v=14">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -95,7 +95,7 @@
     </article>
     <article class="card">
       <h2>Jouer entre amis</h2>
-      <button class="ghost" data-go="classement">Mes groupes</button>
+      <button class="ghost" data-go="classement">Les Joueurs</button>
     </article>
     <details class="card rules">
       <summary><h2>La règle de sélection</h2></summary>
@@ -213,7 +213,6 @@
     <p class="help" id="pubHelp"></p>
     <button class="big" id="teamShare" disabled>Partager l’image de mon gouvernement</button>
     <button class="ghost" id="teamSave">Enregistrer sur mon téléphone</button>
-    <canvas id="cv" width="1080" height="1350" hidden></canvas>
   </div>
 </section>
 
@@ -259,12 +258,8 @@
 <section class="view" id="v-classement">
   <div class="wrap stack">
     <article class="card">
-      <h2>Mes groupes</h2>
+      <h2>Les Joueurs</h2>
       <div id="group-view"></div>
-      <details id="registered-players" hidden>
-        <summary>Joueurs inscrits</summary>
-        <div id="registered-names"></div>
-      </details>
       <button class="ghost" id="install-app" aria-controls="install-help" aria-expanded="false" hidden>Installer l’app</button>
       <p id="install-help" hidden>Sur iPhone, ouvre le site dans Safari, puis Partager → Sur l’écran d’accueil → Ouvrir comme app web. Sur Android, ouvre le menu de Chrome et choisis Installer l’application ou Ajouter à l’écran d’accueil.</p>
     </article>
@@ -289,7 +284,7 @@
   <a href="#paris" data-t="paris"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V4h8v7M10.5 7.5l1.5 1.5 2.5-3"/></svg><span>Mes paris</span></a>
   <a href="#team" data-t="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/></svg><span>Ma team</span></a>
   <a href="#sondages" data-t="sondages"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
-  <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Mes groupes</span></a>
+  <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Les Joueurs</span></a>
 </nav>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT">
@@ -318,9 +313,14 @@
     <div class="fbody" id="fBody"></div>
   </div>
 </div>
+<dialog id="player-dialog" aria-labelledby="player-title">
+  <form method="dialog"><button class="ghost">Fermer</button></form>
+  <h2 id="player-title"></h2>
+  <div id="player-detail"></div>
+</dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=13"></script>
+<script type="module" src="js/app.js?v=14"></script>
 <script type="module" src="js/install.js"></script>
 </body>
 </html>

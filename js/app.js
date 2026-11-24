@@ -337,6 +337,7 @@ async function renderTeamVisibility() {
   }
   visibility.textContent = 'Chargement de tes groupes…';
   try {
+    await store.groups.ensureCommonGroup().catch(console.warn);
     const groups = await store.groups.teamVisibility();
     if (request !== visibilityRequest) return;
     visibility.innerHTML = groups.length ? groups.map(g =>
@@ -399,16 +400,17 @@ $('#teamShare').onclick = async () => {
     toast('Image téléchargée : envoie-la à tes amis');
   }
 };
-async function drawTeam() {
+async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   try { await Promise.all([document.fonts.load('600 60px "Bodoni Moda"'), document.fonts.load('500 60px "Bodoni Moda"'), document.fonts.load('500 26px "Hanken Grotesk"')]); } catch (e) { }
-  const cv = $('#cv'), x = cv.getContext('2d'), W = 1080, H = 1350, t = draft.team;
+  const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = 1350;
+  const x = cv.getContext('2d');
   const SERIF = '"Bodoni Moda", Didot, Georgia, serif', SANS = '"Hanken Grotesk", system-ui, sans-serif';
   x.fillStyle = '#FFFCF6'; x.fillRect(0, 0, W, H);
   x.fillStyle = '#0E0E0E'; x.fillRect(0, 0, W, 250);
   [['#1F3A93', 0], ['#FBF9F4', 1], ['#C8102E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 30, 64, 30, 56); });
   x.strokeStyle = '#C6A15B'; x.lineWidth = 2; x.strokeRect(64, 64, 90, 56);
   x.fillStyle = '#FBF9F4'; x.font = '500 66px ' + SERIF; x.fillText('Ma team de rêve', 184, 116);
-  x.fillStyle = '#E9D7A8'; x.font = '500 34px ' + SANS; x.fillText('Le gouvernement de ' + (ME ? ME.pseudo : 'moi'), 64, 196);
+  x.fillStyle = '#E9D7A8'; x.font = '500 34px ' + SANS; x.fillText('Le gouvernement de ' + pseudo, 64, 196);
   x.fillStyle = '#C6A15B'; x.fillRect(0, 250, W, 4);
   let y0 = 325;
   if (t.coeur) {
@@ -488,7 +490,7 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont partagés dans le groupe commun par défaut et révélés à la clôture. Ta Dream Team reste privée jusqu’à ce que tu la partages.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
       <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
@@ -513,6 +515,7 @@ sheet.addEventListener('submit', async e => {
   const slow = setTimeout(() => { status.textContent = 'La connexion prend plus de temps que prévu. Vérifie ton réseau.'; }, 8000);
   try {
     ME = await store.join(p, c);
+    store.groups?.ensureCommonGroup().catch(console.warn);
   } catch (err) {
     er.textContent = err.message || 'Connexion impossible.';
     status.textContent = '';
@@ -565,39 +568,20 @@ function show() {
   $$('.tabs a').forEach(a => { const o = a.dataset.t === v; a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
   if (v === 'sondages') requestAnimationFrame(draw);
-  if (v === 'classement') { groupUI.render(); renderRegisteredPlayers(); }
+  if (v === 'classement') groupUI.render();
   if (v === 'team') renderTeamVisibility();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
 
-const registered = $('#registered-players');
-let rosterRequest = 0;
-async function renderRegisteredPlayers() {
-  const request = ++rosterRequest;
-  registered.hidden = !ME || !store.registeredPlayers;
-  if (registered.hidden || !registered.open) return;
-  const content = $('#registered-names');
-  content.textContent = 'Chargement…';
-  try {
-    const names = await store.registeredPlayers();
-    if (request !== rosterRequest) return;
-    content.innerHTML = '<ul>' + names.sort((a, b) => a.localeCompare(b, 'fr'))
-      .map(pseudo => '<li>' + esc(pseudo) + '</li>').join('') + '</ul>';
-  } catch {
-    if (request === rosterRequest) content.textContent = 'La liste générale est indisponible. Les membres de ton groupe sont affichés plus haut.';
-  }
-}
-registered.addEventListener('toggle', renderRegisteredPlayers);
-
 const groupUI = groupView($('#group-view'), {
-  getStore: () => store, withUser: withMe, getTeam: () => clone(draft.team), notify: toast
+  getStore: () => store, withUser: withMe, drawTeam, notify: toast
 });
 function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderCTA(); renderPollsHome();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
   renderTeam();
-  if (location.hash === '#classement') { groupUI.render(); renderRegisteredPlayers(); }
+  if (location.hash === '#classement') groupUI.render();
 }
 
 /* ===================== AFFICHE D'ACCUEIL ===================== */
@@ -624,6 +608,7 @@ $('#brandBtn').onclick = () => showSplash();
   window.addEventListener('fiche-error', () => toast('Fiches indisponibles pour le moment, réessaie dans un instant'));
   store = await openStore();
   ME = store.me();
+  if (ME) store.groups?.ensureCommonGroup().catch(console.warn);
   await refresh(true);
   loadDraft(); initSB();
   initPolls();

@@ -1,6 +1,7 @@
 import { LOCK1, LOCK2, LOCKGP } from './data.js';
 
 export const GROUP_CODE = /^[a-f0-9]{32}$/;
+export const COMMON_GROUP = 'e1ec7100202700000000000000000001';
 export const STAGES = [
   ['l1', 'Qui sera là le 31 janvier ?', LOCK1],
   ['l2', 'Qui sera admis sur la ligne de départ ?', LOCK2],
@@ -20,30 +21,45 @@ export function groupsStore(store) {
   const settings = () => doc('players', pid(), 'settings', 'groups');
   const entry = (code, stage) => doc('groups', code, stage, pid());
 
-  async function join(code, name) {
+  async function join(code, name, common = false) {
     if (!GROUP_CODE.test(code)) throw new Error('Ce lien d’invitation est invalide.');
-    await F.runTransaction(db, async tx => {
+    const joined = await F.runTransaction(db, async tx => {
       const [g, s] = await Promise.all([tx.get(group(code)), tx.get(settings())]);
       const list = s.data()?.groups || {};
-      if (Object.hasOwn(list, code)) return;
+      if (Object.hasOwn(list, code)) {
+        if (!common || !list[code]) return false;
+        const membership = await tx.get(member(code));
+        return !membership.data()?.shared;
+      }
       if (Object.keys(list).length >= 5) throw new Error('Tu as déjà rejoint cinq groupes.');
-      if (name) {
+      if (name && !(common && g.exists())) {
         if (g.exists()) throw new Error('Impossible de créer le groupe. Réessaie.');
         tx.set(group(code), { name, creator: pid() });
       } else if (!g.exists()) throw new Error('Ce groupe est introuvable.');
       tx.set(member(code), { pseudo: store.me().pseudo, shared: false, submitted: [] });
-      tx.set(settings(), { groups: { ...list, [code]: false } });
+      tx.set(settings(), { groups: { ...list, [code]: common } });
+      return true;
     });
-    return code;
+    return joined;
   }
 
+  let commonEnrollment;
   return {
+    ensureCommonGroup() {
+      commonEnrollment ||= join(COMMON_GROUP, 'Tous les joueurs', true)
+        .then(joined => joined && this.setSharing(COMMON_GROUP, true))
+        .catch(error => { commonEnrollment = null; throw error; });
+      return commonEnrollment;
+    },
+    resetEnrollment() { commonEnrollment = null; },
     async create(name) {
       const title = name.trim();
       if (title.length < 2 || title.length > 48) throw new Error('Choisis un nom de 2 à 48 caractères.');
-      return join(crypto.randomUUID().replaceAll('-', ''), title);
+      const code = crypto.randomUUID().replaceAll('-', '');
+      await join(code, title);
+      return code;
     },
-    join,
+    async join(code) { await join(code); return code; },
     async list() {
       const snap = await F.getDoc(settings());
       return Promise.all(Object.entries(snap.data()?.groups || {}).map(async ([code, shared]) => {

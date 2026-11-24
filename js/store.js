@@ -93,11 +93,13 @@ class FirebaseStore {
       if (pl.exists()) throw new StoreError('badpin', 'Ce pseudo existe déjà et le code ne correspond pas.');
       throw new StoreError('net', 'Impossible de créer ton pseudo pour le moment. Réessaie.');
     }
+    this.groups.resetEnrollment();
     this.cache = null; return this._me;
   }
   async logout() {
     const { F } = this;
     try { await F.deleteDoc(F.doc(this.db, 'devices', this.user.uid)); } catch (e) { }
+    this.groups.resetEnrollment();
     this._me = null; this.cache = null;
   }
   async registeredPlayers() {
@@ -109,10 +111,10 @@ class FirebaseStore {
       const conditions = [F.orderBy(F.documentId()), F.limit(500)];
       if (cursor) conditions.push(F.startAfter(cursor));
       const page = await F.getDocs(F.query(players, ...conditions));
-      names.push(...page.docs.map(doc => doc.data().pseudo));
+      names.push(...page.docs.map(doc => [doc.id, { pseudo: doc.data().pseudo }]));
       cursor = page.size === 500 ? page.docs.at(-1) : null;
     } while (cursor);
-    return names;
+    return Object.fromEntries(names);
   }
   async loadAll(force) {
     if (!force && this.cache && Date.now() - this.cacheAt < 60e3) return this.cache;
@@ -129,6 +131,7 @@ class FirebaseStore {
   }
   async save(patch, gp) {
     const { F } = this; if (!this._me) throw new StoreError('auth', 'Choisis d’abord ton pseudo.');
+    await this.groups.ensureCommonGroup().catch(console.warn);
     const ref = F.doc(this.db, 'pronos', this._me.pid);
     const w0 = clampWeek(weekOf(Date.now()));
     /* l'horloge du téléphone peut différer de celle du serveur autour de lundi minuit */

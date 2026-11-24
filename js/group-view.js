@@ -1,123 +1,135 @@
 import { by, RESULTS, U1, U2 } from './data.js';
-import { classement, current, hasResults, TITRES, titre } from './scoring.js';
-import { GROUP_CODE, STAGES } from './groups.js';
+import { classement, current } from './scoring.js';
+import { COMMON_GROUP, GROUP_CODE, STAGES } from './groups.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
 })[ch]);
 const name = id => by[id] ? by[id].p + ' ' + by[id].n : id;
 const fmt = n => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
-const choices = ids => Array.isArray(ids) ? ids.map(id => escape(name(id))).join(', ') : '';
 const clock = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris'
 });
 
-export function groupView(root, { getStore, withUser, getTeam, notify }) {
-  let selected = null, generation = 0, currentTab = 'pronos';
-  const params = new URL(location.href).searchParams;
-  const requested = params.get('groupe') || '';
+export function groupView(root, { getStore, withUser, drawTeam, notify }) {
+  let selected = COMMON_GROUP, generation = 0, display;
+  const dialog = document.querySelector('#player-dialog');
+  const heading = document.querySelector('#player-title');
+  const details = document.querySelector('#player-detail');
+  let imageUrl;
+  dialog.addEventListener('close', () => {
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+    imageUrl = null;
+    details.replaceChildren();
+  });
+  const requested = new URL(location.href).searchParams.get('groupe') || '';
   let invitation = GROUP_CODE.test(requested) ? requested : '';
-  const removeInvite = () => {
+  function removeInvite() {
     invitation = '';
     const url = new URL(location.href);
     url.searchParams.delete('groupe');
     history.replaceState(null, '', url);
-  };
+  }
 
-  function renderPronos(data) {
-    const players = Object.entries(data.players);
+  function roster(data, pid) {
+    const rows = classement(data.players, data.pronos, RESULTS, U1, U2);
+    return rows.length ? '<ul class="player-list">' + rows.map(row => {
+      const player = data.players[row.pid];
+      return `<li><strong>${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
+        <span class="player-points">${fmt(row.total)} pts</span>
+        <div class="group-actions">
+          <button class="ghost" data-player="${escape(row.pid)}" data-detail="pronos" ${player.shared ? '' : 'disabled'}>Pronos</button>
+          <button class="ghost" data-player="${escape(row.pid)}" data-detail="team" ${Object.hasOwn(data.teams, row.pid) ? '' : 'disabled'}>Dream Team</button>
+        </div></li>`;
+    }).join('') + '</ul>' : '<p>Aucun joueur dans ce groupe.</p>';
+  }
+
+  function playerPronos(id, { players, pronos }) {
+    const row = classement(players, pronos, RESULTS, U1, U2).find(r => r.pid === id);
     return STAGES.map(([key, label, lock]) => {
-      const submitted = players.filter(([, p]) => p.submitted?.includes(key));
-      const open = Date.now() < +lock;
-      const revealed = submitted.map(([id, p]) => {
-        const value = data.pronos[id]?.[key];
-        if (!value) return '';
-        const g = key === 'weeks' ? current({ weeks: value }) : null;
-        const prediction = key === 'weeks'
-          ? (g ? escape(name(g.pres)) + ' gagne avec ' + fmt(g.win) + ' %<br>' +
-            g.top.map((t, i) => (i + 1) + '. ' + escape(name(t.id)) + ' ' + fmt(t.pct) + ' %').join(' · ') : '')
-          : choices(value);
-        return '<li><b>' + escape(p.pseudo) + '</b><br>' + prediction + '</li>';
-      }).join('');
-      return '<section class="group-stage"><h3>' + label + '</h3><p>' + submitted.length + ' sur ' +
-        players.length + ' ont joué et partagé' + (open ? ' · Révélation le ' + clock.format(lock) + ' (Paris)' : '') +
-        '</p>' + (open ? '' : '<ul>' + revealed + '</ul>') + '</section>';
+      const value = pronos[id]?.[key];
+      const g = key === 'weeks' && value ? current({ weeks: value }) : null;
+      let text = 'Pas encore de prono partagé.';
+      if (g) text = g.top.map(t => escape(name(t.id)) + ' ' + fmt(t.pct) + ' %').join(' · ') +
+        '<br>Finale : ' + escape(name(g.pres)) + ' gagne avec ' + fmt(g.win) + ' %.';
+      else if (Array.isArray(value)) text = value.map(candidate => escape(name(candidate))).join(', ');
+      else if (players[id]?.submitted?.includes(key) && Date.now() < +lock) {
+        text = 'Prono enregistré. Révélation le ' + clock.format(lock) + ' (Paris).';
+      }
+      const points = key === 'weeks' ? (row?.t1 || 0) + (row?.fin || 0) : (key === 'l1' ? row?.e1 : row?.e2) || 0;
+      return `<section class="group-stage"><h3>${label} · ${fmt(points)} pts</h3><p>${text}</p></section>`;
     }).join('');
-  }
-
-  function renderTeams(data) {
-    const rows = Object.entries(data.teams).map(([id, team]) => {
-      const lines = [['Président de cœur', team.coeur], ['Premier ministre', team.pm],
-        ...Object.entries(team.min || {}), [team.jl, team.jn]];
-      return '<details><summary>' + escape(data.players[id]?.pseudo) + '</summary><ul>' +
-        lines.filter(([role, person]) => role && person).map(([role, person]) =>
-          '<li><b>' + escape(role) + '</b> · ' + escape(person) + '</li>').join('') + '</ul></details>';
-    }).join('');
-    return '<p>Publie une copie de ta Dream Team dans ce groupe.</p>' +
-      '<div class="group-actions"><button class="ghost" data-group-action="team">Publier ma Dream Team</button>' +
-      '<button class="ghost" data-group-action="unteam">Retirer ma Dream Team</button></div>' +
-      (rows || '<p>Aucune Dream Team publiée.</p>');
-  }
-
-  function renderRank(data) {
-    if (!hasResults(RESULTS)) return '<p>Les premiers points seront calculés après les résultats de l’étape 1.</p>';
-    const players = Object.fromEntries(Object.entries(data.players).filter(([id]) => data.pronos[id]));
-    const rows = classement(players, data.pronos, RESULTS, U1, U2);
-    if (!rows.length) return '<p>Aucun prono révélé à classer.</p>';
-    return '<div class="scroll"><table class="rank"><thead><tr><th>Rang</th><th>Joueur</th><th>Étape 1</th>' +
-      '<th>Étape 2</th><th>1er tour</th><th>Finale</th><th>Total</th></tr></thead><tbody>' +
-      rows.map(r => '<tr><td>' + r.rank + '</td><td>' + escape(r.pseudo) + '<small>' +
-        TITRES[titre({ rank: r.rank, n: rows.length, results: true })] + '</small></td>' +
-        [r.e1, r.e2, r.t1, r.fin, r.total].map(x => '<td>' + fmt(x) + '</td>').join('') + '</tr>').join('') +
-      '</tbody></table></div>';
   }
 
   async function render() {
     const request = ++generation;
     const store = getStore();
-    if (!store?.groups) {
-      root.innerHTML = '<p>Les groupes sont indisponibles hors connexion ou en mode essai.</p>';
-      return;
-    }
-    if (!store.me()) {
-      root.innerHTML = '<p>' + (invitation ? 'Tu as reçu une invitation.' : 'Crée un groupe ou rejoins celui d’un ami.') +
-        '</p><button class="big" data-group-action="identify">Choisir mon pseudo</button>';
+    if (!store?.groups || !store.me()) {
+      root.removeAttribute('aria-busy');
+      root.innerHTML = !store?.groups ? '<p>La liste des joueurs nécessite une connexion.</p>' :
+        '<p>Connecte-toi pour retrouver les joueurs et voir ce qu’ils partagent.</p><button class="big" data-group-action="identify">Choisir mon pseudo</button>';
       return;
     }
     root.setAttribute('aria-busy', 'true');
     try {
+      await store.groups.ensureCommonGroup().catch(console.warn);
       const groups = await store.groups.list();
       if (request !== generation) return;
       if (invitation && groups.some(g => g.code === invitation)) {
         selected = invitation;
         removeInvite();
       }
-      if (!groups.some(g => g.code === selected)) selected = groups[0]?.code || null;
+      if (!groups.some(g => g.code === selected)) selected = groups[0]?.code || COMMON_GROUP;
       const group = groups.find(g => g.code === selected);
-      const data = group ? await store.groups.load(group.code, Date.now()) : null;
+      const [data, registered] = await Promise.all([
+        group ? store.groups.load(group.code, Date.now()) : { players: {}, pronos: {}, teams: {} },
+        selected === COMMON_GROUP ? store.registeredPlayers().catch(() => ({})) : {}
+      ]);
       if (request !== generation) return;
-      root.innerHTML = (invitation ? '<p>Invitation reçue</p><button class="big" data-group-action="join">Rejoindre le groupe</button>' : '') +
-        (groups.length ? '<label>Groupe <select id="active-group">' + groups.map(g =>
+      data.players = Object.assign(Object.create(null), registered, data.players);
+      display = data;
+      root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Rejoindre le groupe invité</button></p>' : '') +
+        (group && group.code !== COMMON_GROUP ? '<h3>' + escape(group.name) + '</h3>' : '') +
+        roster(data, store.me().pid) +
+        (group ? '<p class="help">Les pronos partagés se révèlent à la clôture. Les Dream Teams sont visibles si leur auteur les partage.</p>' : '') +
+        '<details class="player-groups"><summary>Choisir ou gérer mes groupes</summary>' +
+        (groups.length ? '<label>Afficher les joueurs de <select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
-          '</select></label>' : '<p>Crée ton premier groupe et partage le lien avec tes amis.</p>') +
-        '<form id="create-group" class="group-actions"><label>Nom du nouveau groupe <input name="name" required minlength="2" maxlength="48"></label>' +
-        '<button class="ghost">Créer le groupe</button></form>' +
-        (!group ? '' : '<div class="group-actions"><button class="ghost" data-group-action="invite">Inviter un ami</button>' +
+          '</select></label>' : '') +
+        (group ? '<div class="group-actions">' +
+          (group.code === COMMON_GROUP ? '' : '<button class="ghost" data-group-action="invite">Inviter un ami</button>') +
           '<button class="ghost" data-group-action="share" aria-pressed="' + group.shared + '">' +
-          (group.shared ? 'Arrêter de partager mes pronos' : 'Partager mes pronos dans ce groupe') + '</button></div>' +
-          '<p>Les choix partagés seront visibles par les membres après chaque clôture.</p>' +
-          '<section aria-label="Membres du groupe"><h3>Membres (' + Object.keys(data.players).length +
-          ')</h3><ul>' + Object.values(data.players).map(p => p.pseudo).sort((a, b) => a.localeCompare(b, 'fr'))
-            .map(pseudo => '<li>' + escape(pseudo) + '</li>').join('') + '</ul></section>' +
-          '<div class="group-actions" aria-label="Contenu du groupe">' +
-          [['pronos', 'Pronos'], ['teams', 'Dream Teams'], ['rank', 'Classement']].map(([tab, label]) =>
-            '<button class="ghost" data-tab="' + tab + '" aria-pressed="' + (tab === currentTab) + '">' + label + '</button>').join('') +
-          '</div><div class="group-content">' + (currentTab === 'teams' ? renderTeams(data) :
-            currentTab === 'rank' ? renderRank(data) : renderPronos(data)) + '</div>');
-    } catch (err) {
-      if (request === generation) root.innerHTML = '<p>Impossible de charger les groupes.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
+          (group.shared ? 'Arrêter de partager mes pronos' : 'Partager mes pronos dans ce groupe') + '</button></div>' : '') +
+        '<form id="create-group" class="group-actions"><label>Nom du nouveau groupe <input name="name" required minlength="2" maxlength="48"></label>' +
+        '<button class="ghost">Créer le groupe</button></form></details>';
+    } catch {
+      if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
     } finally {
       if (request === generation) root.removeAttribute('aria-busy');
+    }
+  }
+
+  async function showPlayer(id, kind) {
+    const player = display?.players[id];
+    if (!player) return;
+    heading.textContent = (kind === 'team' ? 'Dream Team de ' : 'Pronos de ') + player.pseudo;
+    if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
+    else details.textContent = 'Chargement de l’image…';
+    dialog.showModal();
+    if (kind !== 'team') return;
+    const closeOnLoad = new AbortController();
+    dialog.addEventListener('close', () => closeOnLoad.abort(), { once: true });
+    try {
+      const blob = await drawTeam(display.teams[id], player.pseudo);
+      if (closeOnLoad.signal.aborted || !dialog.open) return;
+      if (!blob) throw new Error();
+      imageUrl = URL.createObjectURL(blob);
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = 'Composition du gouvernement de ' + player.pseudo;
+      details.replaceChildren(img);
+    } catch {
+      if (!closeOnLoad.signal.aborted && dialog.open) details.textContent = 'Image indisponible.';
     }
   }
 
@@ -141,7 +153,7 @@ export function groupView(root, { getStore, withUser, getTeam, notify }) {
   root.addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b) return;
-    if (b.dataset.tab) { currentTab = b.dataset.tab; render(); return; }
+    if (b.dataset.player) { showPlayer(b.dataset.player, b.dataset.detail); return; }
     const action = b.dataset.groupAction;
     if (action === 'identify') { withUser(render); return; }
     if (action === 'retry') { render(); return; }
@@ -151,12 +163,6 @@ export function groupView(root, { getStore, withUser, getTeam, notify }) {
     run(b, async () => {
       if (action === 'join') { selected = await groups.join(invitation); removeInvite(); }
       if (action === 'share') await groups.setSharing(code, b.getAttribute('aria-pressed') !== 'true');
-      if (action === 'team') {
-        const team = getTeam();
-        if (!team.coeur && !team.pm) throw new Error('Choisis d’abord ton président de cœur ou ton Premier ministre.');
-        await groups.publishTeam(code, team);
-      }
-      if (action === 'unteam') await groups.unpublishTeam(code);
       if (action === 'invite') {
         const url = new URL(location.pathname, location.origin);
         url.searchParams.set('groupe', code);
