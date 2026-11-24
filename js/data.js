@@ -39,12 +39,10 @@ export const MILESTONES = [
 export const BLACKOUT = [[paris(2027, 4, 17), paris(2027, 4, 18, 20)], [paris(2027, 5, 1), paris(2027, 5, 2, 20)]];
 
 /* ---------- Candidats ----------
-   Déclarés au 23/11/2026 (Toute l'Europe, recoupé avec France-Vote le 24/11), rangés de gauche à droite.
+   Déclarés au 23/11/2026 (Toute l'Europe, recoupé avec France-Vote le 24/11), sans les candidatures confidentielles (retirées le 24/11 à la demande du club), rangés de gauche à droite.
    main = testé dans les sondages ; und = pas (encore) déclaré ; off = hors axe gauche-droite ; poll = repère % */
 export const C = [
   { id: 'arthaud', p: 'Nathalie', n: 'Arthaud', party: 'Lutte ouvrière', col: '#8E1B1B', main: 1, poll: 1 },
-  { id: 'kazib', p: 'Anasse', n: 'Kazib', party: 'Révolution permanente', col: '#A8323A' },
-  { id: 'labib', p: 'Selma', n: 'Labib', party: 'NPA-Révolutionnaires', col: '#B5452F' },
   { id: 'melenchon', p: 'Jean-Luc', n: 'Mélenchon', party: 'La France insoumise', col: 'var(--c-jlm)', main: 1, poll: 17.8 },
   { id: 'roussel', p: 'Fabien', n: 'Roussel', party: 'PCF', col: '#B0101C', main: 1, poll: 1 },
   { id: 'tondelier', p: 'Marine', n: 'Tondelier', party: 'Les Écologistes', col: '#2E9E4F', main: 1, poll: 2.5, note: 'Choix du parti le 13 déc.' },
@@ -61,27 +59,19 @@ export const C = [
   { id: 'villepin', p: 'Dominique', n: 'de Villepin', party: 'La France humaniste', col: '#6C63B5', main: 1, poll: 1.5 },
   { id: 'retailleau', p: 'Bruno', n: 'Retailleau', party: 'Les Républicains', col: 'var(--c-br)', main: 1, poll: 6 },
   { id: 'lisnard', p: 'David', n: 'Lisnard', party: 'Nouvelle Énergie', col: 'var(--c-dl)', main: 1, poll: 10 },
-  { id: 'platret', p: 'Gilles', n: 'Platret', party: 'Divers droite', col: '#4A5C8A' },
   { id: 'nda', p: 'Nicolas', n: 'Dupont-Aignan', party: 'Debout la France', col: '#34427E', main: 1, poll: 1 },
   { id: 'asselineau', p: 'François', n: 'Asselineau', party: 'UPR', col: '#2C6E7F' },
   { id: 'philippot', p: 'Florian', n: 'Philippot', party: 'Les Patriotes', col: '#4B3F8F' },
   { id: 'lepen', p: 'Marine', n: 'Le Pen', party: 'Rassemblement national', col: 'var(--c-lp)', main: 1, poll: 31.6 },
   { id: 'zemmour', p: 'Éric', n: 'Zemmour', party: 'Reconquête', col: '#3A2E57', main: 1, poll: 3.5 },
   { id: 'lassalle', p: 'Jean', n: 'Lassalle', party: 'Résistons !', col: '#7A6A3A', off: 1, und: 1, note: 'Attendu' },
-  { id: 'polony', p: 'Natacha', n: 'Polony', party: 'Nous sommes la France', col: '#7A7A85', off: 1 },
-  { id: 'branco', p: 'Juan', n: 'Branco', party: 'Les Ruches', col: '#7A7A85', off: 1 },
-  { id: 'egger', p: 'Clara', n: 'Egger', party: 'Solution démocratique', col: '#7A7A85', off: 1 },
-  { id: 'markovic', p: 'Mira', n: 'Markovic', party: 'Parti animaliste', col: '#7A7A85', off: 1 },
-  { id: 'mikolajczak', p: 'Antoine', n: 'Mikolajczak', party: 'Équinoxe', col: '#7A7A85', off: 1 },
-  { id: 'mathieu', p: 'Benoît', n: 'Mathieu', party: 'Sans étiquette', col: '#7A7A85', off: 1 },
-  { id: 'lalanne', p: 'Francis', n: 'Lalanne', party: 'France Libre', col: '#7A7A85', off: 1 },
-  { id: 'durif', p: 'Sylvain', n: 'Durif', party: 'Sans étiquette', col: '#7A7A85', off: 1 }
+  { id: 'polony', p: 'Natacha', n: 'Polony', party: 'Nous sommes la France', col: '#7A7A85', off: 1 }
 ];
 export const by = Object.fromEntries(C.map(c => [c.id, c]));
 
 /* Candidats sur lesquels on parie dans les étapes 1 et 2.
    À FIGER à la clôture de chaque étape : un candidat ajouté ensuite ne compte pas. */
-export const U1 = ['arthaud', 'kazib', 'labib', 'melenchon', 'roussel', 'tondelier', 'batho', 'glucksmann', 'hollande', 'bouamrane', 'cazeneuve', 'attal', 'becht', 'philippe', 'bertrand', 'riner', 'villepin', 'retailleau', 'lisnard', 'platret', 'nda', 'asselineau', 'philippot', 'lepen', 'zemmour', 'lassalle', 'polony', 'branco', 'egger', 'markovic', 'mikolajczak', 'mathieu', 'lalanne', 'durif'];
+export const U1 = ['arthaud', 'melenchon', 'roussel', 'tondelier', 'batho', 'glucksmann', 'hollande', 'bouamrane', 'cazeneuve', 'attal', 'becht', 'philippe', 'bertrand', 'riner', 'villepin', 'retailleau', 'lisnard', 'nda', 'asselineau', 'philippot', 'lepen', 'zemmour', 'lassalle', 'polony'];
 export const U2 = U1;
 
 /* Retirés depuis le début du jeu (affichés barrés dans « Qui sera là ? ») */
