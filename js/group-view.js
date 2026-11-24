@@ -1,6 +1,7 @@
+import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_CODE, STAGES } from './groups.js?v=19';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=22';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -46,7 +47,7 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
 
   function playerPronos(id, { players, pronos }) {
     const row = classement(players, pronos, RESULTS, U1, U2).find(r => r.pid === id);
-    return STAGES.map(([key, label, lock]) => {
+    const live = STAGES.map(([key, label, lock]) => {
       const value = pronos[id]?.[key];
       const g = key === 'weeks' && value ? current({ weeks: value }) : null;
       let text = 'Pas encore de prono partagé.';
@@ -54,11 +55,20 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
         '<br>Finale : ' + escape(name(g.pres)) + ' gagne avec ' + fmt(g.win) + ' %.';
       else if (Array.isArray(value)) text = value.map(candidate => escape(name(candidate))).join(', ');
       else if (players[id]?.submitted?.includes(key) && Date.now() < +lock) {
-        text = 'Prono enregistré. Révélation le ' + clock.format(lock) + ' (Paris).';
+        text = 'Prono enregistré. Avec les anciennes règles, révélation le ' + clock.format(lock) + ' (Paris).';
       }
       const points = key === 'weeks' ? (row?.t1 || 0) + (row?.fin || 0) : (key === 'l1' ? row?.e1 : row?.e2) || 0;
       return `<section class="group-stage"><h3>${label} · ${fmt(points)} pts</h3><p>${text}</p></section>`;
     }).join('');
+    const photos = monthlyPhotos(pronos[id] || {});
+    const names = ids => ids.map(x => escape(name(x))).join(', ');
+    const history = photos.map(photo => `<details class="group-stage"><summary>${escape(photo.label)}</summary><ul>
+      ${photo.l1 ? `<li>Encore candidats le 31 décembre : ${names(photo.l1)}</li>` : ''}
+      ${photo.l2 ? `<li>500 signatures : ${names(photo.l2)}</li>` : ''}
+      ${photo.weeks ? `<li>Top 5 : ${photo.weeks.top.map(t => escape(name(t.id)) + ' ' + fmt(t.pct) + ' %').join(' · ')}</li>
+      <li>Vainqueur : ${escape(name(photo.weeks.pres))} · ${fmt(photo.weeks.win)} %</li>` : ''}
+      </ul></details>`).join('');
+    return live + '<h3>Photos mensuelles</h3>' + (history || '<p>La première photo s’affichera après la fin du mois.</p>');
   }
 
   async function render() {
@@ -94,15 +104,15 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
           '</select></label>' : '') +
         roster(data, store.me().pid) +
         '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
-        '<p>Crée un groupe pour retrouver tes amis et comparer vos pronos.</p>' +
+        (store.me().pid === GROUP_ADMIN ? '<p>Crée un groupe et envoie son lien aux amis que tu veux inviter.</p>' +
         '<details><summary>Créer un groupe</summary>' +
         '<form id="create-group" class="group-actions"><label>Nom du groupe <input name="name" required minlength="2" maxlength="48"></label>' +
-        '<button class="big">Créer et ouvrir le groupe</button></form></details>' +
+        '<button class="big">Créer et ouvrir le groupe</button></form></details>' : '<p>Rejoins un groupe à partir du lien envoyé par Vincent.</p>') +
         (group && group.code !== COMMON_GROUP ? '<button class="ghost group-invite" data-group-action="invite">Inviter des amis dans ' + escape(group.name) + '</button>' : '') +
         (group ? '<details><summary>Partage des pronos</summary><div class="group-actions">' +
           '<button class="ghost" data-group-action="share" aria-pressed="' + group.shared + '">' +
           (group.shared ? 'Masquer mes pronos dans ce groupe' : 'Partager mes pronos dans ce groupe') + '</button></div>' +
-          '<p class="help">Les pronos partagés se révèlent à la clôture.</p></details>' : '') + '</section>';
+          '<p class="help">Les pronos partagés sont visibles dès leur enregistrement.</p></details>' : '') + '</section>';
     } catch {
       if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
     } finally {

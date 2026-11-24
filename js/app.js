@@ -1,12 +1,12 @@
-import { groupView } from './group-view.js?v=20';
-import { COMMON_GROUP } from './groups.js?v=19';
+import { groupView } from './group-view.js?v=22';
+import { COMMON_GROUP } from './groups.js?v=22';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=19';
+import * as D from './data.js?v=22';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
-import { openStore } from './store.js';
+import { openStore } from './store.js?v=22';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=16';
@@ -134,7 +134,7 @@ async function renderPronoSharing() {
     sharePronos.checked = common.shared;
     sharePronos.disabled = false;
     sharePronosStatus.textContent = common.shared
-      ? 'Partagés dans le groupe commun, visibles à la clôture.'
+      ? 'Partagés dans le groupe commun, visibles dès leur enregistrement.'
       : 'Masqués dans le groupe commun.';
   } catch {
     if (request !== shareRequest) return;
@@ -161,7 +161,7 @@ sharePronos.addEventListener('change', async () => {
 });
 
 function renderParisSummary() {
-  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
+  const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k), dl = deadline(k);
     return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'} · ${dl.txt}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
@@ -229,7 +229,7 @@ function renderSB() {
     const p = mine();
     let t;
     if (k === 'gp') { const c = S.current(p); t = c ? `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
-    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
+    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 décembre' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     $('#sum' + i).textContent = t;
   });
 }
@@ -374,7 +374,7 @@ async function drawPronoRecap() {
   const saved = mine(), g = S.current(saved);
   const candidate = id => by[id] ? by[id].p + ' ' + by[id].n : id;
   const sections = [
-    ['Encore candidats le 31 janvier', (saved.l1 || []).map(candidate)],
+    ['Encore candidats le 31 décembre', (saved.l1 || []).map(candidate)],
     ['500 signatures', (saved.l2 || []).map(candidate)],
     ['Premier tour · Mon top 5', (g?.top || []).map((t, i) => `${i + 1}. ${candidate(t.id)} · ${fmt(t.pct)} %`)],
     ['Second tour · Mon vainqueur', g?.pres ? [`${candidate(g.pres)} · ${fmt(g.win)} %`] : []]
@@ -615,7 +615,7 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont partagés dans le groupe commun par défaut et révélés à la clôture. Ton gouvernement reste privé jusqu’à ce que tu le partages.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont partagés dans le groupe commun par défaut et visibles dès leur enregistrement. Ton gouvernement reste privé jusqu’à ce que tu le partages.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
       <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
