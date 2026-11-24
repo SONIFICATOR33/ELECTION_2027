@@ -18,4 +18,4 @@ En ligne : https://sonificator33.github.io/ELECTION_2027/
 - `firestore.rules` : règles d'accès à coller dans la console Firebase.
 
 ## Typographie
-Bricolage Grotesque (licence SIL OFL 1.1, voir `fonts/`), hébergée dans le dépôt : aucun appel à Google Fonts.
+Bodoni Moda (titres, chiffres) et Hanken Grotesk (texte), licence SIL OFL 1.1 (voir `fonts/`), hébergées dans le dépôt : aucun appel à Google Fonts.

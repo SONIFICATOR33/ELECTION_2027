@@ -6,6 +6,7 @@ import { C, by } from './data.js';
 import * as S from './scoring.js';
 import { openStore } from './store.js';
 import { snd } from './sound.js';
+import { guilloche } from './guilloche.js';
 
 /* place de chaque candidat sur l'axe gauche-droite (-1 à 1), null = hors axe : sert au son */
 const AXIS = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
@@ -66,7 +67,9 @@ function renderHeader() {
 
 /* ===================== ACCUEIL ===================== */
 function renderHero() {
-  $('#jx').textContent = 'J-' + Math.max(0, daysTo(D.TOUR1));
+  requestAnimationFrame(() => guilloche($('#gHero'), { cx: 0.85, cy: 0.3, alpha: 0.16, scale: 1.1 }));
+  const jj = Math.max(0, daysTo(D.TOUR1));
+  $('#jx').textContent = jj; $('#jxl').textContent = (jj > 1 ? 'jours' : 'jour') + ' avant le 1er tour, dimanche 18 avril 2027';
   const a = +D.T0, z = +D.TOUR2, pos = t => Math.max(0, Math.min(100, (t - a) / (z - a) * 100));
   const n = now(), next = D.MILESTONES.find(m => +m.at > n);
   $('#track').innerHTML = `<div class="ln0"></div><div class="ln1" style="width:${pos(n)}%"></div>` +
@@ -357,41 +360,40 @@ $('#teamShare').onclick = async () => {
     toast('Image téléchargée : envoie-la à tes amis');
   }
 };
-const x0 = () => $('#cv').getContext('2d');
 async function drawTeam() {
-  try { await Promise.all([document.fonts.load('800 60px "Bricolage Grotesque"'), document.fonts.load('600 30px "Bricolage Grotesque"')]); } catch (e) { }
-  try { x0().fontStretch = 'condensed'; } catch (e) { }
+  try { await Promise.all([document.fonts.load('600 60px "Bodoni Moda"'), document.fonts.load('500 60px "Bodoni Moda"'), document.fonts.load('500 26px "Hanken Grotesk"')]); } catch (e) { }
   const cv = $('#cv'), x = cv.getContext('2d'), W = 1080, H = 1350, t = draft.team;
-  x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#38433E'; x.fillRect(0, 0, W, 250);
-  [['#2140C9', 0], ['#fff', 1], ['#E3262E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 34, 58, 34, 66); });
-  x.strokeStyle = 'rgba(255,255,255,.7)'; x.lineWidth = 2; x.strokeRect(64, 58, 102, 66);
-  x.fillStyle = '#fff'; x.font = '800 64px "Bricolage Grotesque", sans-serif'; x.fillText('MA TEAM DE RÊVE', 196, 118);
-  x.font = '600 34px "Bricolage Grotesque", sans-serif'; x.fillText('Le gouvernement de ' + (ME ? ME.pseudo : 'moi'), 64, 196);
-  [['#2140C9', 0], ['#fff', 1], ['#E3262E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(i * W / 3, 250, W / 3, 10); });
+  const SERIF = '"Bodoni Moda", Didot, Georgia, serif', SANS = '"Hanken Grotesk", system-ui, sans-serif';
+  x.fillStyle = '#FBF9F4'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#0F1B3D'; x.fillRect(0, 0, W, 250);
+  [['#1F3A93', 0], ['#FBF9F4', 1], ['#C8102E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 30, 64, 30, 56); });
+  x.strokeStyle = '#C6A15B'; x.lineWidth = 2; x.strokeRect(64, 64, 90, 56);
+  x.fillStyle = '#FBF9F4'; x.font = '500 66px ' + SERIF; x.fillText('Ma team de rêve', 184, 116);
+  x.fillStyle = '#E9D7A8'; x.font = '500 34px ' + SANS; x.fillText('Le gouvernement de ' + (ME ? ME.pseudo : 'moi'), 64, 196);
+  x.fillStyle = '#C6A15B'; x.fillRect(0, 250, W, 4);
   let y0 = 325;
   if (t.coeur) {
-    x.fillStyle = '#E1000F'; x.font = '700 28px "Bricolage Grotesque", sans-serif'; x.fillText('MON PRÉSIDENT DE CŒUR', 64, y0);
-    x.fillStyle = '#141414'; x.font = '800 64px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
+    x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Mon président de cœur', 64, y0);
+    x.fillStyle = '#0F1B3D'; x.font = '600 62px ' + SERIF; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
     y0 += 125;
   }
-  x.fillStyle = '#5B5B66'; x.font = '700 28px "Bricolage Grotesque", sans-serif'; x.fillText('PREMIER MINISTRE', 64, y0);
-  x.fillStyle = '#2140C9'; x.font = '800 ' + (t.coeur ? 60 : 76) + 'px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
+  x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Premier ministre', 64, y0);
+  x.fillStyle = '#0F1B3D'; x.font = '600 ' + (t.coeur ? 56 : 72) + 'px ' + SERIF; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
   let y = y0 + (t.coeur ? 135 : 155);
   const step = t.coeur ? 56 : 64;
-  x.strokeStyle = '#E1E1E6'; x.lineWidth = 2;
+  x.strokeStyle = '#E8E1CF'; x.lineWidth = 1.5;
   for (const p of D.POSTES) {
-    x.fillStyle = '#5B5B66'; x.font = '600 27px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, p, 410), 64, y);
-    x.fillStyle = '#141414'; x.font = '700 38px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
+    x.fillStyle = '#5D6377'; x.font = '500 26px ' + SANS; x.fillText(fit(x, p, 410), 64, y);
+    x.fillStyle = '#0F1B3D'; x.font = '600 36px ' + SERIF; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
     x.beginPath(); x.moveTo(64, y + 20); x.lineTo(W - 64, y + 20); x.stroke(); y += step;
   }
   if (t.jl && t.jn) {
-    x.fillStyle = '#E1000F'; x.font = '700 28px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, 'JOKER : ' + t.jl.toUpperCase(), W - 128), 64, y + 20);
-    x.fillStyle = '#141414'; x.font = '800 44px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
+    x.fillStyle = '#C8102E'; x.font = '600 26px ' + SANS; x.fillText(fit(x, 'Joker : ' + t.jl, W - 128), 64, y + 20);
+    x.fillStyle = '#0F1B3D'; x.font = '500 42px ' + SERIF; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
   }
-  x.fillStyle = '#FFC83D'; x.fillRect(0, H - 90, W, 90);
-  x.fillStyle = '#1C1C28'; x.font = '800 32px "Bricolage Grotesque", sans-serif'; x.fillText('Les pronos des vieux boucs', 64, H - 34);
-  x.font = '500 24px "Bricolage Grotesque", sans-serif'; const u = (location.host + location.pathname).replace(/index\.html$/, '').replace(/\/$/, ''); x.fillText(u, W - 64 - x.measureText(u).width, H - 36);
+  x.fillStyle = '#0F1B3D'; x.fillRect(0, H - 90, W, 90); x.fillStyle = '#C6A15B'; x.fillRect(0, H - 90, W, 3);
+  x.fillStyle = '#FBF9F4'; x.font = '500 30px ' + SERIF; x.fillText('Les pronos des vieux boucs', 64, H - 34);
+  x.fillStyle = '#E9D7A8'; x.font = '500 22px ' + SANS; const u = (location.host + location.pathname).replace(/index\.html$/, '').replace(/\/$/, ''); x.fillText(u, W - 64 - x.measureText(u).width, H - 36);
   return new Promise(r => cv.toBlob(r, 'image/png'));
 }
 function fit(x, s, w) { s = String(s); if (x.measureText(s).width <= w) return s; while (s.length > 1 && x.measureText(s + '…').width > w) s = s.slice(0, -1); return s + '…'; }
@@ -590,9 +592,10 @@ function renderAll() {
 /* ===================== AFFICHE D'ACCUEIL ===================== */
 const splash = $('#splash');
 function showSplash() {
-  $('#splashBand').textContent = `J-${Math.max(0, daysTo(D.TOUR1))} avant le 1er tour`;
+  $('#splashJ').textContent = `J-${Math.max(0, daysTo(D.TOUR1))}`;
   $('#splashGo').textContent = ME ? `C’est parti, ${ME.pseudo}` : 'Entrer dans le jeu';
   splash.hidden = false; document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.27, alpha: 0.2, scale: 1.05 }));
 }
 function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; try { sessionStorage.setItem('pdm-splash', '1'); } catch (e) { } }
 $('#splashGo').onclick = () => { snd.logo(); hideSplash(); if (!ME) setTimeout(() => openJoin(), 250); };
