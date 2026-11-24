@@ -509,3 +509,10 @@ h2{font-weight:600;letter-spacing:-.2px}
 .player-groups details .group-actions { margin-block: 8px; }
 .player-groups .group-invite { margin-block: 8px; min-height: 44px; }
 .tabs a[data-t="classement"] span { text-align: center; line-height: 1.1; }
+
+.prono-sharing { margin-block: 12px; }
+.choice-control { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+.choice-control input { width: 20px; height: 20px; flex: none; accent-color: #28754c; }
+.visibility-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+.visibility-choices .choice-control { min-width: 78px; padding-inline: 10px; border: 1px solid var(--line); border-radius: 8px; }
+.visibility-choices .choice-control:has(:checked) { border-color: #28754c; background: #dff4e6; color: #174829; }

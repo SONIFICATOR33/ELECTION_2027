@@ -109,6 +109,57 @@ function renderPollsHome() {
 }
 
 /* ===================== MES PARIS ===================== */
+const sharePronos = $('#share-pronos');
+const sharePronosStatus = $('#share-pronos-status');
+const sharePronosAction = $('#share-pronos-action');
+let shareRequest = 0;
+async function renderPronoSharing() {
+  const request = ++shareRequest;
+  sharePronos.disabled = true;
+  sharePronos.checked = false;
+  sharePronosAction.hidden = true;
+  if (!store?.groups || !ME) {
+    sharePronosStatus.textContent = 'Connecte-toi pour choisir qui voit tes pronos.';
+    sharePronosAction.hidden = !!ME;
+    sharePronosAction.textContent = 'Me connecter';
+    sharePronosAction.onclick = () => openJoin();
+    return;
+  }
+  sharePronosStatus.textContent = 'Vérification du partage…';
+  try {
+    await store.groups.ensureCommonGroup();
+    const common = (await store.groups.list()).find(g => g.code === COMMON_GROUP);
+    if (request !== shareRequest) return;
+    if (!common) throw new Error();
+    sharePronos.checked = common.shared;
+    sharePronos.disabled = false;
+    sharePronosStatus.textContent = common.shared
+      ? 'Partagés dans le groupe commun, visibles à la clôture.'
+      : 'Masqués dans le groupe commun.';
+  } catch {
+    if (request !== shareRequest) return;
+    sharePronosStatus.textContent = 'Impossible de vérifier le partage.';
+    sharePronosAction.hidden = false;
+    sharePronosAction.textContent = 'Réessayer';
+    sharePronosAction.onclick = renderPronoSharing;
+  }
+}
+sharePronos.addEventListener('change', async () => {
+  if (sharePronos.disabled || !ME) return;
+  const shared = sharePronos.checked, request = ++shareRequest;
+  sharePronos.disabled = true;
+  sharePronosStatus.textContent = 'Enregistrement du choix…';
+  try {
+    await store.groups.setSharing(COMMON_GROUP, shared);
+    if (request === shareRequest) await renderPronoSharing();
+  } catch {
+    if (request !== shareRequest) return;
+    sharePronos.checked = !shared;
+    sharePronos.disabled = false;
+    sharePronosStatus.textContent = 'Choix non enregistré. Réessaie.';
+  }
+});
+
 function renderParisSummary() {
   const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
@@ -404,24 +455,26 @@ async function renderTeamVisibility() {
     const groups = await store.groups.teamVisibility();
     if (request !== visibilityRequest) return;
     const visible = groups.some(g => g.visible);
-    visibility.innerHTML = `<div class="group-actions" role="group" aria-label="Visibilité du gouvernement">
-      <button class="ghost" data-visibility="yes" aria-pressed="${visible}">Oui</button>
-      <button class="ghost" data-visibility="no" aria-pressed="${!visible}">Non</button>
-    </div>`;
+    visibility.innerHTML = `<div class="visibility-choices" role="group" aria-label="Visibilité du gouvernement">
+      <label class="choice-control"><input type="radio" name="government-visibility" value="yes" ${visible ? 'checked' : ''}> Oui</label>
+      <label class="choice-control"><input type="radio" name="government-visibility" value="no" ${visible ? '' : 'checked'}> Non</label>
+    </div><p class="help" role="status">${visible ? 'Ton gouvernement est visible.' : 'Ton gouvernement est privé.'}</p>`;
   } catch {
     if (request === visibilityRequest) visibility.innerHTML = '<p>Impossible de vérifier la visibilité.</p><button class="ghost" data-retry-visibility>Réessayer</button>';
   }
 }
-visibility.addEventListener('click', async e => {
-  if (e.target.closest('[data-retry-visibility]')) { await renderTeamVisibility(); return; }
-  const button = e.target.closest('button[data-visibility]');
-  if (!button || !ME) return;
-  const hide = button.dataset.visibility === 'no';
+visibility.addEventListener('click', e => {
+  if (e.target.closest('[data-retry-visibility]')) renderTeamVisibility();
+});
+visibility.addEventListener('change', async e => {
+  if (e.target.name !== 'government-visibility' || !ME) return;
+  const hide = e.target.value === 'no';
   if (!hide && !draft.team.coeur && !draft.team.pm) {
     toast('Choisis au moins ton président ou ton Premier ministre.');
+    visibility.querySelector('[value="no"]').checked = true;
     return;
   }
-  for (const b of visibility.querySelectorAll('button')) b.disabled = true;
+  for (const input of visibility.querySelectorAll('input')) input.disabled = true;
   try {
     const groups = await store.groups.teamVisibility();
     if (hide) await Promise.all(groups.filter(g => g.visible).map(g => store.groups.unpublishTeam(g.code)));
@@ -436,7 +489,7 @@ visibility.addEventListener('click', async e => {
     await renderTeamVisibility();
   } catch (err) {
     toast(err.message || 'Impossible de modifier la visibilité.');
-    for (const b of visibility.querySelectorAll('button')) b.disabled = false;
+    await renderTeamVisibility();
   }
 });
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
@@ -612,7 +665,6 @@ sheet.addEventListener('submit', async e => {
   for (const k in kd) if (kd[k]) { draft[k] = keep[k]; dirty[k] = true; }
   initSB();
   renderAll();
-  if (location.hash === '#team') renderTeamVisibility();
   if (action) await action();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { sheet.classList.remove('open'); pending = null; } });
@@ -642,6 +694,7 @@ function show() {
   if (v === 'sondages') requestAnimationFrame(draw);
   if (v === 'classement') groupUI.render();
   if (v === 'team') renderTeamVisibility();
+  if (v === 'paris') renderPronoSharing();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
@@ -653,6 +706,8 @@ function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderPollsHome();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
   renderTeam();
+  if (location.hash === '#team') renderTeamVisibility();
+  if (location.hash === '#paris') renderPronoSharing();
   if (location.hash === '#classement') groupUI.render();
 }
 
