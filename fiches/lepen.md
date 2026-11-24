@@ -2,12 +2,13 @@
 
 **Rassemblement national** · 58 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/lepen.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/lepen.webp" alt="" width="240">
+
+Photo [Marine Le Pen 2025 (cropped).jpg](https://commons.wikimedia.org/wiki/File:Marine_Le_Pen_2025_(cropped).jpg) · Vox España · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidate déclarée le 7 juillet 2026, jour de l’arrêt d’appel qui la laisse éligible ; pourvoi en cassation en attente
-- **Repère sondages** : 31,6 % (en baisse : −2,5 pts en 3 mois dans la moyenne Sondax)
 - **Présidentielles passées** : 2012 : 17,90 % · 2017 : 21,30 %, 2nd tour : 33,90 % · 2022 : 23,15 %, 2nd tour : 41,45 %
 
 ## Aujourd’hui

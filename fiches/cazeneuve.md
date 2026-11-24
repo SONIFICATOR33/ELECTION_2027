@@ -2,12 +2,13 @@
 
 **La Convention** · 63 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/cazeneuve.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/cazeneuve.webp" alt="" width="240">
+
+Photo [Bernard Cazeneuve, (42399145362) (cropped).jpg](https://commons.wikimedia.org/wiki/File:Bernard_Cazeneuve,_(42399145362)_(cropped).jpg) · Jérémy Barande · [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : « Lettre aux Français » le 16 juillet 2026, refuse la primaire du PS
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

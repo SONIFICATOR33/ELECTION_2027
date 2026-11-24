@@ -2,12 +2,13 @@
 
 **Place publique** · 47 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/glucksmann.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/glucksmann.webp" alt="" width="240">
+
+Photo [Raphaël Glucksmann, espiègle, place Vendôme, le 7 septembre 2026.jpg](https://commons.wikimedia.org/wiki/File:Rapha%C3%ABl_Glucksmann,_espi%C3%A8gle,_place_Vend%C3%B4me,_le_7_septembre_2026.jpg) · Xsolba · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre
-- **Repère sondages** : 9,8 %
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

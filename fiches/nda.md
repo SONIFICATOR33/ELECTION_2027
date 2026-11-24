@@ -2,12 +2,13 @@
 
 **Debout la France** · 66 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/nda.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/nda.webp" alt="" width="240">
+
+Photo [Nicolas Dupont-Aignan, homme politique français.jpg](https://commons.wikimedia.org/wiki/File:Nicolas_Dupont-Aignan,_homme_politique_fran%C3%A7ais.jpg) · Debout la France · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée en mars 2025
-- **Repère sondages** : 1 %
 - **Présidentielles passées** : 2012 : 1,79 % · 2017 : 4,70 % · 2022 : 2,06 %
 
 ## Aujourd’hui

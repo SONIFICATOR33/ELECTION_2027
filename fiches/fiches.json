@@ -1,6 +1,6 @@
 {
   "maj": "2026-11-24",
-  "note": "Faits vérifiés le 24/11/2026. Le prénom, le nom, le parti, la couleur et le repère sondage viennent de js/data.js. Ici : biographie et statut de candidature. Tags du parcours : élu, nommé, parti, carrière, sport, candidature.",
+  "note": "Biographies, statuts datés et crédits des portraits. Les données de sondage figurent dans js/data.js.",
   "candidats": {
     "arthaud": {
       "f": true,
@@ -44,7 +44,15 @@
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "arthaud.webp",
+        "auteur": "Kokluts",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Nathalie_Arthaud_(LO)_19-05-2024.jpg",
+        "titre": "Nathalie Arthaud (LO) 19-05-2024.jpg"
+      }
     },
     "melenchon": {
       "naissance": "1951-08-19",
@@ -97,7 +105,15 @@
           "Public Sénat, 9 nov. 2026",
           "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-le-judoka-teddy-riner-se-lance-dans-la-course-a-lelysee-au-milieu-dune-multitude-de-candidats"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "melenchon.webp",
+        "auteur": "jlm2017.fr",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Portrait_officiel_JLM_20-01-2026.jpg",
+        "titre": "Portrait officiel JLM 20-01-2026.jpg"
+      }
     },
     "roussel": {
       "naissance": "1969-04-16",
@@ -142,7 +158,15 @@
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "roussel.webp",
+        "auteur": "Zouhair NAKARA",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Roussel_Fabien_1.jpg",
+        "titre": "Roussel Fabien 1.jpg"
+      }
     },
     "tondelier": {
       "f": true,
@@ -178,7 +202,15 @@
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "tondelier.webp",
+        "auteur": "Selbymay",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Huma2023MarineTondelier_(cropped).jpg",
+        "titre": "Huma2023MarineTondelier (cropped).jpg"
+      }
     },
     "batho": {
       "f": true,
@@ -220,7 +252,15 @@
           "L’Info durable (AFP)",
           "https://www.linfodurable.fr/lex-ministre-delphine-batho-candidate-la-presidentielle-pour-conjurer-la-rikikisation-de-lecologie"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "batho.webp",
+        "auteur": "DeuxSevres79",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Delphine_Batho_(cropped-2).png",
+        "titre": "Delphine Batho (cropped-2).png"
+      }
     },
     "glucksmann": {
       "naissance": "1979-10-15",
@@ -260,7 +300,15 @@
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "glucksmann.webp",
+        "auteur": "Xsolba",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Rapha%C3%ABl_Glucksmann,_espi%C3%A8gle,_place_Vend%C3%B4me,_le_7_septembre_2026.jpg",
+        "titre": "Raphaël Glucksmann, espiègle, place Vendôme, le 7 septembre 2026.jpg"
+      }
     },
     "hollande": {
       "naissance": "1954-08-12",
@@ -306,7 +354,15 @@
           "AFP via La Gazette France, nov. 2026",
           "https://www.lagazettefrance.fr/article/presidentielle-hollande-ne-lache-rien-malgre-la-victoire-de-glucksmann"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "hollande.webp",
+        "auteur": "Christophe Licoppe / European Union, 2024 / EC - Audiovisual Service",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_Hollande_-_Ceremony_of_Honour_for_Jacques_Delors_-_2024.jpg",
+        "titre": "François Hollande - Ceremony of Honour for Jacques Delors - 2024.jpg"
+      }
     },
     "bouamrane": {
       "naissance": "1973-02-21",
@@ -346,7 +402,15 @@
           "LCP, 9 juin 2026",
           "https://lcp.fr/actualites/presidentielle-2027-qui-est-karim-bouamrane-le-maire-socialiste-de-saint-ouen-et-nouveau"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "bouamrane.webp",
+        "auteur": "Oumma",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Karim_Bouamrane_en_2026_(cropped).jpg",
+        "titre": "Karim Bouamrane en 2026 (cropped).jpg"
+      }
     },
     "cazeneuve": {
       "naissance": "1963-06-02",
@@ -386,7 +450,15 @@
           "LCP, 30 juil. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-l-objectif-de-bernard-cazeneuve-est-de-devenir-president-de-la"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "cazeneuve.webp",
+        "auteur": "Jérémy Barande",
+        "licence": "CC BY-SA 2.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Bernard_Cazeneuve,_(42399145362)_(cropped).jpg",
+        "titre": "Bernard Cazeneuve, (42399145362) (cropped).jpg"
+      }
     },
     "attal": {
       "naissance": "1989-03-16",
@@ -425,8 +497,20 @@
         [
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ],
+        [
+          "Assemblée nationale, notices et portraits",
+          "https://www2.assemblee-nationale.fr/static/tribun/trombinoscope/trombinoscope_groupe.pdf"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "attal.webp",
+        "auteur": "Stenbocki maja",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Gabriel_Attal_in_2026_(2).jpg",
+        "titre": "Gabriel Attal in 2026 (2).jpg"
+      }
     },
     "becht": {
       "naissance": "1976-04-28",
@@ -465,8 +549,20 @@
         [
           "Sud Radio",
           "https://www.sudradio.fr/politique/qui-est-olivier-becht-cet-ancien-ministre-qui-se-lance-dans-la-course-a-lelysee"
+        ],
+        [
+          "Assemblée nationale, notices et portraits",
+          "https://www2.assemblee-nationale.fr/static/tribun/trombinoscope/trombinoscope_groupe.pdf"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "becht.webp",
+        "auteur": "Palácio do Planalto from Brasilia, Brasil",
+        "licence": "CC BY 2.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Olivier_Becht_2023_(cropped).jpg",
+        "titre": "Olivier Becht 2023 (cropped).jpg"
+      }
     },
     "philippe": {
       "naissance": "1970-11-28",
@@ -506,7 +602,15 @@
           "Europe 1",
           "https://www.europe1.fr/politique/edouard-philippe-annonce-officiellement-sa-candidature-a-la-prochaine-election-presidentielle-4265431"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "philippe.webp",
+        "auteur": "Wasasaq8",
+        "licence": "CC0",
+        "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Edouard_Philippe_3x4_crop.jpg",
+        "titre": "Edouard Philippe 3x4 crop.jpg"
+      }
     },
     "bertrand": {
       "naissance": "1965-03-21",
@@ -546,7 +650,15 @@
           "LCP, 27 août 2026",
           "https://lcp.fr/actualites/2027-figure-de-la-droite-xavier-bertrand-confirme-qu-il-sera-candidat-a-l-election"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "bertrand.webp",
+        "auteur": "Claudio Centonze / European Union, 2025 / EC - Audiovisual Service",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Xavier_Bertrand_-_2025_(cropped).jpg",
+        "titre": "Xavier Bertrand - 2025 (cropped).jpg"
+      }
     },
     "riner": {
       "naissance": "1989-04-07",
@@ -586,7 +698,15 @@
           "LCP, 9 nov. 2026",
           "https://lcp.fr/actualites/le-judoka-teddy-riner-annonce-sa-candidature-a-l-election-presidentielle-de-2027-444920"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "riner.webp",
+        "auteur": "Georges Biard",
+        "licence": "CC BY-SA 3.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Teddy_Riner_Cannes_2016.jpg",
+        "titre": "Teddy Riner Cannes 2016.jpg"
+      }
     },
     "villepin": {
       "naissance": "1953-11-14",
@@ -626,7 +746,15 @@
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "villepin.webp",
+        "auteur": "Georges Seguin (Okki)",
+        "licence": "CC BY-SA 3.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Dominique_de_Villepin_20100330_Salon_du_livre_de_Paris_2_cropped.jpg",
+        "titre": "Dominique de Villepin 20100330 Salon du livre de Paris 2 cropped.jpg"
+      }
     },
     "retailleau": {
       "naissance": "1960-11-20",
@@ -666,7 +794,15 @@
           "Public Sénat",
           "https://www.publicsenat.fr/actualites/politique/https-www-publicsenat-fr-actualites-politique-je-serai-le-president-de-lordre-de-la-justice-et-de-la-fierte-francaise-bruno-retailleau-se-declare-candidat-a-la-presidentielle-de-2027"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "retailleau.webp",
+        "auteur": "Anthonymontardyfr",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Bruno_Retailleau_-_Ministre_de_l%27Int%C3%A9rieur_fran%C3%A7ais_(cropped).jpg",
+        "titre": "Bruno Retailleau - Ministre de l'Intérieur français (cropped).jpg"
+      }
     },
     "lisnard": {
       "naissance": "1969-02-02",
@@ -706,7 +842,15 @@
           "France-Vote",
           "https://www.france-vote.fr/candidats"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "lisnard.webp",
+        "auteur": "Grégor Sauvagère",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:David_Lisnard_en_2026.jpg",
+        "titre": "David Lisnard en 2026.jpg"
+      }
     },
     "nda": {
       "naissance": "1961-03-07",
@@ -759,7 +903,15 @@
           "France-Vote",
           "https://www.france-vote.fr/candidats"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "nda.webp",
+        "auteur": "Debout la France",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Nicolas_Dupont-Aignan,_homme_politique_fran%C3%A7ais.jpg",
+        "titre": "Nicolas Dupont-Aignan, homme politique français.jpg"
+      }
     },
     "asselineau": {
       "naissance": "1957-09-14",
@@ -799,7 +951,15 @@
           "Slate",
           "https://www.slate.fr/politique/election-presidentielle-2027-liste-candidats-declares-interesses-primaire-gauche-droite-extreme-lfi-rn-lr-ps-macron"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "asselineau.webp",
+        "auteur": "Union Populaire Républicaine",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_ASSELINEAU.jpg",
+        "titre": "François ASSELINEAU.jpg"
+      }
     },
     "philippot": {
       "naissance": "1981-10-24",
@@ -834,7 +994,15 @@
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "philippot.webp",
+        "auteur": "Thomas Bresson",
+        "licence": "CC BY 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:2022-04-16_16-49-26_MAM-Paris_02.jpg",
+        "titre": "2022-04-16 16-49-26 MAM-Paris 02.jpg"
+      }
     },
     "lepen": {
       "f": true,
@@ -890,7 +1058,15 @@
           "LCP, 7 juil. 2026",
           "https://lcp.fr/actualites/ce-soir-je-suis-candidate-a-l-election-presidentielle-annonce-marine-le-pen-438886"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "lepen.webp",
+        "auteur": "Vox España",
+        "licence": "CC0",
+        "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Marine_Le_Pen_2025_(cropped).jpg",
+        "titre": "Marine Le Pen 2025 (cropped).jpg"
+      }
     },
     "zemmour": {
       "naissance": "1958-08-31",
@@ -935,11 +1111,19 @@
           "Euronews, 10 nov. 2026",
           "https://fr.euronews.com/2026/11/10/eric-zemmour-annonce-sa-candidature-a-la-presidentielle"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "zemmour.webp",
+        "auteur": "Anh De France",
+        "licence": "CC0",
+        "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Portrait_d%27%C3%89ric_Zemmour,_avril_2022.jpg",
+        "titre": "Portrait d'Éric Zemmour, avril 2022.jpg"
+      }
     },
     "lassalle": {
       "naissance": "1955-05-03",
-      "statut": "Cagnotte lancée pour une 3e candidature, décision pas encore annoncée",
+      "statut": "Recherche des soutiens pour une troisième candidature. LCP le cite parmi les annonces, sans date de déclaration personnelle précisée.",
       "aujourdhui": "Président de Résistons !, sans mandat depuis 2022",
       "parcours": [
         [
@@ -983,8 +1167,24 @@
         [
           "Europe 1",
           "https://www.europe1.fr/node/970134"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ],
+        [
+          "Le Parisien, 10 juil. 2026",
+          "https://www.leparisien.fr/elections/presidentielle/presidentielle-2027-jean-lassalle-ouvre-une-cagnotte-pour-financer-sa-candidature-10-07-2026-VEKIANBM45D3RFDOHIPPUDSE5A.php"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "lassalle.webp",
+        "auteur": "Antoine Lamielle",
+        "licence": "CC BY-SA 4.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Jean_Lassalle.jpg",
+        "titre": "Jean Lassalle.jpg"
+      }
     },
     "polony": {
       "f": true,
@@ -1025,7 +1225,15 @@
           "LCP, 14 oct. 2026",
           "https://lcp.fr/actualites/natacha-polony-annonce-sa-candidature-a-l-election-presidentielle-443808"
         ]
-      ]
+      ],
+      "portrait": {
+        "fichier": "polony.webp",
+        "auteur": "Georges Biard",
+        "licence": "CC BY-SA 3.0",
+        "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Natacha_Polony_Cannes_2015.jpg",
+        "titre": "Natacha Polony Cannes 2015.jpg"
+      }
     }
   }
 }

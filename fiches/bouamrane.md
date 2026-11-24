@@ -2,12 +2,13 @@
 
 **PS, hors primaire** · 54 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/bouamrane.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/bouamrane.webp" alt="" width="240">
+
+Photo [Karim Bouamrane en 2026 (cropped).jpg](https://commons.wikimedia.org/wiki/File:Karim_Bouamrane_en_2026_(cropped).jpg) · Oumma · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 9 juin 2026, hors primaire du PS
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

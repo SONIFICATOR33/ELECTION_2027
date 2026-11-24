@@ -28,9 +28,9 @@ export const mult = w => Math.round((2 - w / (NWEEKS - 1)) * 100) / 100;
 export const MILESTONES = [
   { at: LOCK1, short: '11 déc.', label: 'Clôture du pari « Qui sera là ? »', kind: 'lock' },
   { at: RES1, short: '31 janv.', label: 'Résultat : qui est encore là', kind: 'res' },
-  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « 500 signatures »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
+  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « Ligne de départ »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
   { at: DEPOT500, short: '12 mars', label: 'Dépôt des 500 signatures, 18 h', kind: 'off' },
-  { at: RES2, short: '26 mars', label: 'Résultat : qui a ses 500 signatures', kind: 'res' },
+  { at: RES2, short: '26 mars', label: 'Liste officielle attendue au plus tard', kind: 'res' },
   { at: TOUR1, short: '18 avril', label: '1er tour', kind: 'tour' },
   { at: TOUR2, short: '2 mai', label: '2nd tour', kind: 'tour' }
 ];
@@ -52,7 +52,7 @@ export const C = [
   { id: 'bouamrane', p: 'Karim', n: 'Bouamrane', party: 'PS, hors primaire', col: '#C7608F' },
   { id: 'cazeneuve', p: 'Bernard', n: 'Cazeneuve', party: 'La Convention', col: '#A85C80' },
   { id: 'attal', p: 'Gabriel', n: 'Attal', party: 'Renaissance', col: '#C99700', main: 1, poll: 5 },
-  { id: 'becht', p: 'Olivier', n: 'Becht', party: '« Extrême centre »', col: '#B8932A' },
+  { id: 'becht', p: 'Olivier', n: 'Becht', party: 'Apparenté Ensemble pour la République', col: '#B8932A' },
   { id: 'philippe', p: 'Édouard', n: 'Philippe', party: 'Horizons', col: 'var(--c-ep)', main: 1, poll: 9 },
   { id: 'bertrand', p: 'Xavier', n: 'Bertrand', party: 'Nous France', col: '#2F6FB0' },
   { id: 'riner', p: 'Teddy', n: 'Riner', party: 'Sans étiquette', col: '#64748B', main: 1, poll: 3.5 },

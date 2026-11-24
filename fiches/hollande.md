@@ -2,12 +2,13 @@
 
 **PS** · 72 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/hollande.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/hollande.webp" alt="" width="240">
+
+Photo [François Hollande - Ceremony of Honour for Jacques Delors - 2024.jpg](https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_Hollande_-_Ceremony_of_Honour_for_Jacques_Delors_-_2024.jpg) · Christophe Licoppe / European Union, 2024 / EC - Audiovisual Service · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Pas déclaré : sa décision, d’abord promise pour décembre, est repoussée à janvier
-- **Repère sondages** : 7 %
 - **Présidentielles passées** : 2012 : 28,63 %, élu au 2nd tour avec 51,64 %
 
 ## Aujourd’hui

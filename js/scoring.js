@@ -3,7 +3,7 @@
    ===================================================================== */
 import { T0, WEEK, NWEEKS, mult, LOCK1, LOCK2, LOCKGP } from './data.js';
 
-export const weekOf = t => Math.floor((+t - +T0) / WEEK);
+export const weekOf = t => Math.floor((+t - +T0 + (+t >= Date.UTC(2027, 2, 28, 1) ? 3600e3 : 0)) / WEEK);
 export const clampWeek = w => Math.max(0, Math.min(NWEEKS - 1, w));
 
 /* Photo de la semaine w : dernier état enregistré au plus tard cette semaine-là */

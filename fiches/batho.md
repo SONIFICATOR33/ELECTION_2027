@@ -2,12 +2,13 @@
 
 **Génération écologie** · 54 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/batho.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/batho.webp" alt="" width="240">
+
+Photo [Delphine Batho (cropped-2).png](https://commons.wikimedia.org/wiki/File:Delphine_Batho_(cropped-2).png) · DeuxSevres79 · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 25 novembre 2025, investie par Génération écologie le 6 juin 2026
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : aucune
 - Primaire écologiste 2021 : 3e au 1er tour (22,32 %)
 

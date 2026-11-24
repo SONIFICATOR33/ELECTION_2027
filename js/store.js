@@ -2,6 +2,7 @@
    STOCKAGE — même interface en mode essai (localStorage) et en mode partagé (Firebase)
    ===================================================================== */
 import { FIREBASE } from './config.js';
+import { groupsStore } from './groups.js';
 import { weekOf, clampWeek } from './scoring.js';
 
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
@@ -60,6 +61,7 @@ class FirebaseStore {
     this.db = fs.getFirestore(this.app);
     const user = await new Promise(res => { const u = auth.onAuthStateChanged(this.auth, x => { u(); res(x); }); });
     this.user = user || (await auth.signInAnonymously(this.auth)).user;
+    this.groups = groupsStore(this);
     const dev = await fs.getDoc(fs.doc(this.db, 'devices', this.user.uid));
     if (dev.exists()) {
       const pid = dev.data().pid, pl = await fs.getDoc(fs.doc(this.db, 'players', pid));
@@ -101,22 +103,23 @@ class FirebaseStore {
   async loadAll(force) {
     if (!force && this.cache && Date.now() - this.cacheAt < 60e3) return this.cache;
     const { F } = this;
-    const [a, b] = await Promise.all([F.getDocs(F.collection(this.db, 'players')), F.getDocs(F.collection(this.db, 'pronos'))]);
     const players = {}, pronos = {};
-    a.forEach(d => players[d.id] = { pseudo: d.data().pseudo });
-    b.forEach(d => { const x = d.data(); delete x.updatedAt; pronos[d.id] = x; });
+    if (this._me) {
+      const { pid, pseudo } = this._me;
+      const own = await F.getDoc(F.doc(this.db, 'pronos', pid));
+      players[pid] = { pseudo };
+      if (own.exists()) pronos[pid] = own.data();
+    }
     this.cache = { players, pronos }; this.cacheAt = Date.now();
     return this.cache;
   }
   async save(patch, gp) {
     const { F } = this; if (!this._me) throw new StoreError('auth', 'Choisis d’abord ton pseudo.');
     const ref = F.doc(this.db, 'pronos', this._me.pid);
-    const base = Object.assign({}, patch, { updatedAt: F.serverTimestamp() });
     const w0 = clampWeek(weekOf(Date.now()));
     /* l'horloge du téléphone peut différer de celle du serveur autour de lundi minuit */
     for (const w of gp ? [w0, w0 + 1, w0 - 1] : [null]) {
-      const data = Object.assign({}, base); if (gp) data['weeks.' + w] = gp;
-      try { await F.updateDoc(ref, data); this.cache = null; return; }
+      try { await this.groups.writeProno(ref, patch, gp, w); this.cache = null; return; }
       catch (e) { if (!gp || e.code !== 'permission-denied') throw new StoreError('net', 'Enregistrement impossible : ' + (e.code === 'permission-denied' ? 'ce pari est clos.' : 'vérifie ta connexion.')); }
     }
     throw new StoreError('net', 'Enregistrement refusé : ce pari est peut-être clos.');

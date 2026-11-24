@@ -2,12 +2,13 @@
 
 **Nous sommes la France** · 52 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/polony.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/polony.webp" alt="" width="240">
+
+Photo [Natacha Polony Cannes 2015.jpg](https://commons.wikimedia.org/wiki/File:Natacha_Polony_Cannes_2015.jpg) · Georges Biard · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 14 octobre 2026
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

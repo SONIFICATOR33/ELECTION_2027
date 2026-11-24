@@ -2,12 +2,13 @@
 
 **La France humaniste** · 73 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/villepin.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/villepin.webp" alt="" width="240">
+
+Photo [Dominique de Villepin 20100330 Salon du livre de Paris 2 cropped.jpg](https://commons.wikimedia.org/wiki/File:Dominique_de_Villepin_20100330_Salon_du_livre_de_Paris_2_cropped.jpg) · Georges Seguin (Okki) · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature officialisée le 20 novembre 2026
-- **Repère sondages** : 1,5 %
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

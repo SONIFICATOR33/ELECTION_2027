@@ -2,12 +2,13 @@
 
 **La France insoumise** · 75 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/melenchon.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/melenchon.webp" alt="" width="240">
+
+Photo [Portrait officiel JLM 20-01-2026.jpg](https://commons.wikimedia.org/wiki/File:Portrait_officiel_JLM_20-01-2026.jpg) · jlm2017.fr · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidat déclaré le 3 mai 2026
-- **Repère sondages** : 17,8 %
 - **Présidentielles passées** : 2012 : 11,10 % · 2017 : 19,58 % · 2022 : 21,95 %
 
 ## Aujourd’hui

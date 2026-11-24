@@ -2,7 +2,7 @@
    FICHES DES CANDIDATS — lues dans fiches/fiches.json, ouvertes en feuille
    Image : fiches/img/<id>.jpg|png|webp si présente, sinon médaillon.
    ===================================================================== */
-import { C, by, TOUR1, MOVES } from './data.js';
+import { C, by, TOUR1 } from './data.js';
 import { snd } from './sound.js';
 
 const $ = s => document.querySelector(s);
@@ -11,7 +11,6 @@ const ini = c => (c.p[0] + c.n.replace(/^de /, '')[0]).toUpperCase();
 const pct = (v, d = 2) => v.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d }) + ' %';
 const ORDER = C.map(c => c.id);
 const AX = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
-const MV = {}; MOVES.forEach(([, l]) => l.forEach(([id, up, t]) => { MV[id] = [up, t]; }));
 const TAG = { 'élu': ['élu', 'élue'], 'nommé': ['nommé', 'nommée'] };
 
 /* âge au 1er tour, à l'heure de Paris */
@@ -27,54 +26,31 @@ const load = () => loading || (loading = fetch('fiches/fiches.json', { cache: 'n
   .then(j => (DATA = j))
   .catch(e => { loading = null; throw e; }));
 
-/* image facultative : on essaie jpg, png puis webp, une seule fois par candidat */
-const IMG = new Map();
-function findImg(id) {
-  if (IMG.has(id)) return IMG.get(id);
-  const p = new Promise(res => {
-    const ex = ['jpg', 'png', 'webp'];
-    const next = i => {
-      if (i >= ex.length) return res(null);
-      const im = new Image(), u = `fiches/img/${id}.${ex[i]}`;
-      im.onload = () => res(u); im.onerror = () => next(i + 1); im.src = u;
-    };
-    next(0);
-  });
-  IMG.set(id, p);
-  return p;
-}
-
 const el = () => $('#fiche');
 let cur = null, opener = null;
 
-const ARROW = { up: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>', dn: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>' };
-
 function body(id) {
   const c = by[id], f = DATA.candidats[id] || {}, fem = !!f.f;
-  const age = f.naissance ? ageAu(f.naissance, TOUR1) : null;
-  const mv = MV[id];
-  const poll = c.main && c.poll != null
-    ? `<b>${esc(c.poll.toLocaleString('fr-FR'))} %</b>${mv ? `<em class="${mv[0] ? 'up' : 'dn'}">${mv[0] ? ARROW.up : ARROW.dn}${esc(mv[1])}</em>` : ''}`
-    : '<span class="mut">Peu ou pas testé</span>';
   const pres = (f.pres || []).length
     ? `<ul class="fpres">${f.pres.map(([y, v, n]) => `<li><b>${y}</b>${v == null ? '' : `<span>${pct(v)}</span>`}${n ? `<small>${esc(n)}</small>` : ''}</li>`).join('')}</ul>`
     : '<p class="mut">Aucune</p>';
   const tl = (f.parcours || []).map(([d, t, k]) => `<li><time>${esc(d)}</time><span>${esc(t)}</span><i class="k-${esc(k.normalize('NFD').replace(/[̀-ͯ]/g, ''))}">${esc(TAG[k] ? TAG[k][fem ? 1 : 0] : k)}</i></li>`).join('');
   const src = (f.sources || []).map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join(', ');
+  const photo = f.portrait;
+  const credit = photo ? `<p class="fsrc">Photo <a href="${esc(photo.source)}">${esc(photo.titre)}</a> · ${esc(photo.auteur)} · <a href="${esc(photo.licenceUrl)}">${esc(photo.licence)}</a> · redimensionnée et recadrée à l’affichage.</p>` : '';
   const maj = DATA.maj ? new Date(DATA.maj + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
   return `
   <section class="fsec">
     <h3>Dans la course</h3>
     <p class="fstat">${esc(f.statut || '')}</p>
-    <div class="frow"><span class="fl">Repère sondages</span><div class="fv">${poll}</div></div>
     <div class="frow"><span class="fl">Présidentielles passées</span><div class="fv">${pres}${f.autre ? `<p class="mut">${esc(f.autre)}</p>` : ''}</div></div>
   </section>
-  <section class="fsec"><h3>Aujourd’hui</h3><p>${esc(f.aujourdhui || '')}</p></section>
   <section class="fsec"><h3>Parcours</h3><ol class="ftl">${tl}</ol></section>
   <section class="fsec">
     <div class="frow"><span class="fl">Formation</span><p class="fv">${esc(f.formation || 'Non communiquée')}</p></div>
     <div class="frow"><span class="fl">Métier</span><p class="fv">${esc(f.metier || 'Non communiqué')}</p></div>
   </section>
+  ${credit}
   <p class="fsrc">Sources : ${src}. À jour le ${esc(maj)}.</p>`;
 }
 
@@ -88,7 +64,14 @@ function head(id) {
   $('#fAge').innerHTML = age != null ? `<b>${age}</b> ans au 1er tour` : '';
   $('#fPos').textContent = `${i + 1} sur ${ORDER.length}`;
   $('#fTicks').innerHTML = ORDER.map((x, k) => `<i class="${k === i ? 'on' : ''}${by[x].off ? ' off' : ''}"></i>`).join('');
-  findImg(id).then(u => { if (u && cur === id) $('#fImg').innerHTML = `<img src="${u}" alt="">`; });
+  $('#fRole').textContent = f.aujourdhui || '';
+  if (f.portrait && /^[a-z0-9_-]+\.webp$/.test(f.portrait.fichier)) {
+    const img = document.createElement('img');
+    img.alt = '';
+    img.decoding = 'async';
+    img.onload = () => { if (cur === id) $('#fImg').replaceChildren(img); };
+    img.src = 'fiches/img/' + f.portrait.fichier;
+  }
 }
 
 function render(id, dir) {
@@ -100,8 +83,6 @@ function render(id, dir) {
   const card = $('#fCard');
   card.classList.remove('in-l', 'in-r');
   if (dir) { void card.offsetWidth; card.classList.add(dir > 0 ? 'in-r' : 'in-l'); }
-  /* précharge les voisins */
-  [-1, 1].forEach(d => findImg(ORDER[(ORDER.indexOf(id) + d + ORDER.length) % ORDER.length]));
 }
 
 export async function openFiche(id, from) {

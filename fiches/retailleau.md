@@ -2,12 +2,13 @@
 
 **Les Républicains** · 66 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/retailleau.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/retailleau.webp" alt="" width="240">
+
+Photo [Bruno Retailleau - Ministre de l'Intérieur français (cropped).jpg](https://commons.wikimedia.org/wiki/File:Bruno_Retailleau_-_Ministre_de_l%27Int%C3%A9rieur_fran%C3%A7ais_(cropped).jpg) · Anthonymontardyfr · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 12 février 2026
-- **Repère sondages** : 6 %
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui
