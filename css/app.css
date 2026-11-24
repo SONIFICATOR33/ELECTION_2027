@@ -478,3 +478,15 @@ h2{font-weight:600;letter-spacing:-.2px}
 .tile-wrap .tile { padding-top: 30px; }
 .tile-fiche { position: absolute; top: 0; left: 0; width: 36px; height: 36px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--ink); isolation: isolate; font: bold 16px/1 var(--sans); }
 .tile-fiche::before { content: ""; position: absolute; z-index: -1; width: 23px; height: 23px; background: var(--card); border: 1px solid var(--mut); border-radius: 4px; }
+
+.poll-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.poll-date { margin: 0 0 8px; font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+.prono-pct { display: flex; align-items: center; gap: 4px; justify-self: end; white-space: nowrap; }
+.prono-pct input { width: 4.5rem; min-height: 44px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: inherit; font: 700 1.15rem var(--sans); text-align: right; padding-inline: 6px; }
+#v-paris .fine, #v-paris .help { font-size: 1rem; }
+#recap-dialog { width: min(94vw, 540px); max-height: 90dvh; border: 1px solid var(--line); border-radius: 16px; padding: 16px; color: var(--ink); background: var(--bg); }
+#recap-dialog::backdrop { background: rgb(0 0 0 / .55); }
+#recap-image { display: block; width: 100%; height: auto; margin-bottom: 12px; }
+.tabs a[data-t="team"] span { max-width: 100%; hyphens: auto; white-space: normal; text-align: center; line-height: 1.1; }
+#prono-recap { margin-top: 12px; min-height: 44px; }
+#v-paris .ms small { font-size: .9rem; }

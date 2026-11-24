@@ -4,8 +4,8 @@ export const GROUP_CODE = /^[a-f0-9]{32}$/;
 export const COMMON_GROUP = 'e1ec7100202700000000000000000001';
 export const STAGES = [
   ['l1', 'Qui sera là le 31 janvier ?', LOCK1],
-  ['l2', 'Qui sera admis sur la ligne de départ ?', LOCK2],
-  ['weeks', 'Grand Prono', LOCKGP]
+  ['l2', 'Qui aura les 500 signatures ?', LOCK2],
+  ['weeks', 'La présidentielle', LOCKGP]
 ];
 
 export function groupsStore(store) {

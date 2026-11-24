@@ -28,7 +28,7 @@ export const mult = w => Math.round((2 - w / (NWEEKS - 1)) * 100) / 100;
 export const MILESTONES = [
   { at: LOCK1, short: '11 déc.', label: 'Clôture du pari « Qui sera là ? »', kind: 'lock' },
   { at: RES1, short: '31 janv.', label: 'Résultat : qui est encore là', kind: 'res' },
-  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « Ligne de départ »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
+  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « 500 signatures »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
   { at: DEPOT500, short: '12 mars', label: 'Dépôt des 500 signatures, 18 h', kind: 'off' },
   { at: RES2, short: '26 mars', label: 'Liste officielle attendue au plus tard', kind: 'res' },
   { at: TOUR1, short: '18 avril', label: '1er tour', kind: 'tour' },
@@ -91,7 +91,9 @@ export const PEOPLE_GROUPS = [
 export const POSTES = ['Intérieur', 'Économie et Finances', 'Affaires étrangères', 'Armées', 'Justice', 'Éducation nationale', 'Santé', 'Travail et Emploi', 'Écologie et Énergie', 'Agriculture'];
 
 /* ---------- Sondages (repris à la main chaque semaine) ---------- */
-export const POLL_DATE = 'Moyenne Sondax au 23 nov. 2026, 14 sondages de 7 instituts';
+export const LAST_POLL_DATE = new Date('2026-11-19T12:00:00Z');
+export const PODIUM_DATE = new Date('2026-11-23T12:00:00Z');
+export const POLL_DATE = 'Moyenne Sondax · 14 sondages de 7 instituts';
 export const POD = [['lepen', 31.6], ['melenchon', 17.8], ['glucksmann', 9.8]];
 export const MOVES = [
   ['Ils montent', [['lisnard', 1, '+2 pts chez Harris (19 nov.), +4 chez Elabe (13 nov.)'], ['riner', 1, 'Candidat depuis le 9 nov., déjà jusqu’à 4,5 % chez Elabe']]],

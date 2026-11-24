@@ -1,6 +1,6 @@
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_CODE, STAGES } from './groups.js';
+import { COMMON_GROUP, GROUP_CODE, STAGES } from './groups.js?v=19';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -39,7 +39,7 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
         <span class="player-points">${fmt(row.total)} pts</span>
         <div class="group-actions">
           <button class="ghost" data-player="${escape(row.pid)}" data-detail="pronos" ${player.shared ? '' : 'disabled'}>Pronos</button>
-          <button class="ghost" data-player="${escape(row.pid)}" data-detail="team" ${Object.hasOwn(data.teams, row.pid) ? '' : 'disabled'}>Dream Team</button>
+          <button class="ghost" data-player="${escape(row.pid)}" data-detail="team" ${Object.hasOwn(data.teams, row.pid) ? '' : 'disabled'}>Gouvernement</button>
         </div></li>`;
     }).join('') + '</ul>' : '<p>Aucun joueur dans ce groupe.</p>';
   }
@@ -91,7 +91,7 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
       root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Rejoindre le groupe invité</button></p>' : '') +
         (group && group.code !== COMMON_GROUP ? '<h3>' + escape(group.name) + '</h3>' : '') +
         roster(data, store.me().pid) +
-        (group ? '<p class="help">Les pronos partagés se révèlent à la clôture. Les Dream Teams sont visibles si leur auteur les partage.</p>' : '') +
+        (group ? '<p class="help">Les pronos partagés se révèlent à la clôture. Les gouvernements sont visibles si leur auteur les partage.</p>' : '') +
         '<details class="player-groups"><summary>Choisir ou gérer mes groupes</summary>' +
         (groups.length ? '<label>Afficher les joueurs de <select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
@@ -112,7 +112,7 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
   async function showPlayer(id, kind) {
     const player = display?.players[id];
     if (!player) return;
-    heading.textContent = (kind === 'team' ? 'Dream Team de ' : 'Pronos de ') + player.pseudo;
+    heading.textContent = (kind === 'team' ? 'Gouvernement de ' : 'Pronos de ') + player.pseudo;
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
     else details.textContent = 'Chargement de l’image…';
     dialog.showModal();

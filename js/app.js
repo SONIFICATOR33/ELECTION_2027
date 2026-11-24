@@ -1,8 +1,8 @@
-import { groupView } from './group-view.js';
+import { groupView } from './group-view.js?v=19';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js';
+import * as D from './data.js?v=19';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
 import { openStore } from './store.js';
@@ -91,28 +91,14 @@ function deadline(k) {
 }
 const done = k => { const p = mine(); return k === 'gp' ? !!S.current(p) : !!(p[k] && p[k].length); };
 
-function renderCTA() {
-  const el = $('#cta');
-  if (!ME) {
-    el.innerHTML = `<h2>Entre dans le jeu</h2><p>Un pseudo et un code à 4 chiffres, pas d'email. Le premier pari se clôt le ${dateFr(D.LOCK1, { day: 'numeric', month: 'long' })}.</p><button class="big" data-join>Choisir mon pseudo</button>`;
-    return;
-  }
-  const todo = ['l1', 'l2', 'gp'].filter(k => isOpen(k) && !done(k));
-  const names = { l1: 'Étape 1 : qui sera encore là le 31 janvier ?', l2: 'Étape 2 : qui sera sur la ligne de départ ?', gp: 'Le Grand Prono : qui va gagner, 1er tour, finale' };
-  const anchor = { l1: 'st1', l2: 'st2', gp: 'st3' };
-  if (todo.length) {
-    const k = todo[0], dl = deadline(k);
-    el.innerHTML = `<h2>${esc(ME.pseudo)}, ${todo.length === 1 ? 'il te reste un pari' : `il te reste ${todo.length} paris`}</h2><p><b>${names[k]}</b><br>${dl.txt}.</p><button class="big" data-go="paris#${anchor[k]}">Faire ce pari</button>`;
-  } else {
-    const w = S.clampWeek(S.weekOf(now()));
-    el.innerHTML = `<h2>Tous tes paris sont faits</h2><p>Tu peux encore ajuster ton Grand Prono : la photo de lundi prochain comptera ×${fmt(D.mult(Math.min(w + 1, D.NWEEKS - 1)))}.</p><button class="big" data-go="classement">Voir le classement</button>`;
-  }
-}
-
 function renderPollsHome() {
   const box = $('#pollsHome');
   if (inBlackout()) { box.innerHTML = '<p class="blackout">Sondages masqués la veille et le jour du vote, comme le veut la loi du 19 juillet 1977.</p>'; return; }
-  $('#podSrc').textContent = D.POLL_DATE;
+  const longDate = { day: 'numeric', month: 'long', year: 'numeric' };
+  $('#podDate').textContent = 'Dernier sondage présenté · ' + dateFr(D.LAST_POLL_DATE, longDate);
+  $('#podSrc').textContent = `${D.POLL_DATE} · Moyenne au ${dateFr(D.PODIUM_DATE, longDate)}`;
+  $('#movesDate').dateTime = D.PODIUM_DATE.toISOString().slice(0, 10);
+  $('#movesDate').textContent = 'MàJ le ' + dateFr(D.PODIUM_DATE, { day: 'numeric', month: 'long', year: 'numeric' });
   $('#podium').innerHTML = [1, 0, 2].map(i => { const [id, v] = D.POD[i], c = by[id]; return `<div class="pcol p${i + 1}" data-fiche="${id}" role="button" tabindex="0" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}">${av(c, i === 0 ? 62 : 50)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><div class="blk"><span class="rk">${i + 1}</span><span class="pv">${fmt(v)} %</span></div></div>`; }).join('');
   const UP = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
   const DN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
@@ -123,7 +109,7 @@ function renderPollsHome() {
 
 /* ===================== MES PARIS ===================== */
 function renderParisSummary() {
-  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui sera sur la ligne de départ ?', 'st2'], ['gp', 'Le Grand Prono', 'st3']];
+  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k), dl = deadline(k);
     return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'} · ${dl.txt}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
@@ -171,7 +157,7 @@ function renderStages() {
   $('#save' + n).addEventListener('click', () => withMe(async () => {
     if (!draft[key].length) { snd.error(); toast('Touche au moins un candidat'); return; }
     await store.save({ [key]: draft[key].slice(), [key + 'at']: now() });
-    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Pari « Ligne de départ » enregistré');
+    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Pari « 500 signatures » enregistré');
   }));
 });
 $('#pre1').onclick = () => { draft.l1 = D.U1.filter(id => !by[id].und); dirty.l1 = true; renderStage('l1'); snd.sweep(draft.l1.map(AXIS)); toast('Les déclarés actuels sont cochés : décoche ceux qui vont renoncer'); };
@@ -191,57 +177,57 @@ function renderSB() {
     const p = mine();
     let t;
     if (k === 'gp') { const c = S.current(p); t = c ? `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
-    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'seront sur la ligne de départ'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
+    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     $('#sum' + i).textContent = t;
   });
 }
 $$('.tog').forEach(b => b.onclick = () => { const i = +b.dataset.sb; SB[i] = !SB[i]; renderSB(); if (SB[i]) b.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 
 /* ---- Grand Prono ---- */
-let filt = 'main';
-const list = () => filt === 'main' ? C.filter(c => c.main) : C;
 const gp = () => draft.gp;
 function renderPhoto() {
   const el = $('#photo'), w = S.weekOf(now()), dl = deadline('gp');
   const e = $('#dl3'); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot);
-  if (!isOpen('gp')) { el.innerHTML = '<p class="okbar">Le Grand Prono est clos. Rendez-vous au classement.</p>'; return; }
+  if (!isOpen('gp')) { el.innerHTML = '<p class="okbar">Pronostic clos.</p>'; return; }
   const cw = S.clampWeek(w);
   el.innerHTML = done('gp')
-    ? `<div class="photo"><b>×${fmt(D.mult(cw))}</b><span>Ta photo de cette semaine compte ×${fmt(D.mult(cw))}. Si tu ne changes rien, elle est reprise automatiquement chaque lundi.</span></div>`
-    : `<div class="photo" style="background:var(--rougebg)"><b style="color:var(--rouge)">×${fmt(D.mult(cw))}</b><span>Pas encore de Grand Prono : cette semaine compterait ×${fmt(D.mult(cw))}. Chaque semaine sans prono compte zéro.</span></div>`;
+    ? `<div class="photo"><b>×${fmt(D.mult(cw))}</b><span>Ton prono est repris chaque lundi.</span></div>`
+    : `<div class="photo" style="background:var(--rougebg)"><b style="color:var(--rouge)">×${fmt(D.mult(cw))}</b><span>Une semaine sans prono vaut zéro.</span></div>`;
 }
-$$('.seg button').forEach(b => b.onclick = () => {
-  filt = b.dataset.f;
-  $$('.seg button').forEach(x => {
-    x.classList.toggle('on', x === b);
-    x.setAttribute('aria-pressed', String(x === b));
-  });
-  renderPick();
-});
-
 function renderPick() {
-  const ids = new Set(list().map(c => c.id)); gp().top.forEach(t => ids.add(t.id));
-  $('#pick').innerHTML = C.filter(c => ids.has(c.id)).map(c => {
+  $('#pick').innerHTML = C.map(c => {
     const i = gp().top.findIndex(t => t.id === c.id);
     const fullName = esc(c.p + ' ' + c.n);
-    return `<span class="candidate-choice"><button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${fullName}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button><button class="ghost candidate-help" data-fiche="${c.id}" aria-label="Fiche de ${fullName}">i</button></span>`;
+    return `<span class="candidate-choice"><button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${fullName}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button><button class="ghost candidate-help" data-fiche="${c.id}" aria-label="Fiche de ${fullName}">?</button></span>`;
   }).join('');
 }
 $('#pick').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; const id = b.dataset.id, i = gp().top.findIndex(t => t.id === id);
-  if (i >= 0) { gp().top.splice(i, 1); snd.unpick(AXIS(id)); } else if (gp().top.length < 5) { gp().top.push({ id, pct: Math.round((by[id].poll || 2) * 2) / 2 }); snd.rank(gp().top.length - 1, AXIS(id)); } else { snd.error(); toast('Top 5 complet : retire d’abord un nom'); return; }
+  if (i >= 0) { gp().top.splice(i, 1); snd.unpick(AXIS(id)); } else if (gp().top.length < 5) { gp().top.push({ id, pct: 0 }); snd.rank(gp().top.length - 1, AXIS(id)); } else { snd.error(); toast('Top 5 complet : retire d’abord un nom'); return; }
   dirty.gp = true; renderPick(); renderSlots(); renderDuel(); renderGPBtn();
 });
 function renderSlots() {
-  let h = ''; for (let i = 0; i < 5; i++) {
-    const t = gp().top[i];
-    h += t ? `<li><span class="rkb">${i + 1}</span>${av(by[t.id], 34)}<span class="sn">${esc(by[t.id].p + ' ' + by[t.id].n)}</span><span class="step"><button data-i="${i}" data-s="-0.5" aria-label="Moins">−</button><output>${fmt(t.pct)} %</output><button data-i="${i}" data-s="0.5" aria-label="Plus">+</button></span></li>`
-      : `<li class="empty"><span class="rkb">${i + 1}</span><span></span><span>À choisir</span><span></span></li>`;
-  }
-  $('#slots').innerHTML = h; renderTotal();
+  const slots = $('#slots');
+  const locked = !isOpen('gp');
+  slots.hidden = !gp().top.length;
+  slots.innerHTML = gp().top.map((t, i) => {
+    const c = by[t.id], fullName = esc(c.p + ' ' + c.n);
+    return `<li><span class="rkb">${i + 1}</span>${av(c, 34)}<b class="sn">${fullName}</b><label class="prono-pct">
+      <input type="number" min="0" max="60" step="any" inputmode="decimal" data-rank="${i}" value="${t.pct}" aria-label="Pourcentage de ${fullName}" ${locked ? 'disabled' : ''}> %
+    </label></li>`;
+  }).join('');
+  renderTotal();
 }
-$('#slots').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const t = gp().top[+b.dataset.i]; t.pct = Math.min(60, Math.max(0, t.pct + +b.dataset.s)); snd.tick(t.pct); dirty.gp = true; renderSlots(); renderGPBtn(); });
+$('#slots').addEventListener('input', e => {
+  const i = e.target.dataset.rank;
+  if (i === undefined || !isOpen('gp')) return;
+  gp().top[+i].pct = e.target.valueAsNumber || 0;
+  dirty.gp = true;
+  renderTotal();
+  renderGPBtn();
+});
 function renderTotal() {
+  $('#total').hidden = !gp().top.length;
   const s = gp().top.reduce((a, t) => a + t.pct, 0), over = s > 100;
   $('#total').className = 'total' + (over ? ' over' : '');
   $('#total').innerHTML = `<p>${over ? `Ton top 5 fait ${fmt(s)} %, ça dépasse 100 %` : `Top 5 : ${fmt(s)} %, il reste ${fmt(100 - s)} % pour les autres`}</p><div class="tr"><i style="width:${Math.min(100, s)}%;--c:${over ? 'var(--rouge)' : 'var(--bleuT)'}"></i></div>`;
@@ -258,7 +244,7 @@ function renderDuel() {
   renderCoh();
 }
 function renderCoh() {
-  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari sur la ligne de départ' : 'ton pari « Qui sera là ? »';
+  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari des 500 signatures' : 'ton pari « Qui sera là ? »';
   const out = ref.length ? [g.pres, ...g.top.map(t => t.id)].filter((id, i, a) => id && a.indexOf(id) === i && !ref.includes(id)) : [];
   el.hidden = !out.length;
   if (out.length) el.textContent = `Attention : ${out.map(id => by[id].n).join(', ')} ${out.length > 1 ? 'ne sont pas' : 'n’est pas'} dans ${lab}. C’est permis, mais pas très cohérent.`;
@@ -267,16 +253,13 @@ $('#duel').addEventListener('click', e => { const b = e.target.closest('.fin'); 
 $('#duel').addEventListener('input', e => { if (e.target.id !== 'win') return; const g = gp(); g.win = +e.target.value; snd.tick((g.win - 50) * 1.5); const l = g.top[0].id === g.pres ? g.top[1].id : g.top[0].id; $('#duel .score').innerHTML = `<span>${by[g.pres].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span>`; dirty.gp = true; renderGPBtn(); });
 function renderGPBtn() {
   const b = $('#saveGP'); b.hidden = !isOpen('gp');
-  const g = gp();
-  $('#prono-review').textContent = g.top.length === 5 && g.top.slice(0, 2).some(t => t.id === g.pres)
-    ? `Ton récapitulatif · ${g.top.map(t => by[t.id].n + ' ' + fmt(t.pct) + ' %').join(', ')}. Finale : ${by[g.pres].n} gagne avec ${fmt(g.win)} %.`
-    : '';
-  b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Grand Prono enregistré') : 'Enregistrer mon Grand Prono';
+  b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Prono enregistré') : 'Enregistrer mon prono';
 }
 $('#saveGP').onclick = () => withMe(async () => {
   const g = gp(), er = [], s = g.top.reduce((a, t) => a + t.pct, 0);
   if (!g.pres) er.push('Choisis qui va gagner.');
   if (g.top.length < 5) er.push('Complète ton top 5 du 1er tour.');
+  if (s === 0 || g.top.some(t => t.pct < 0 || t.pct > 60)) er.push('Renseigne les scores du top 5, entre 0 et 60 %.');
   if (s > 100) er.push('Ton top 5 dépasse 100 %.');
   if (g.top.some((t, i) => i && t.pct > g.top[i - 1].pct)) er.push('Les % doivent suivre l’ordre d’arrivée.');
   if (g.pres && g.top.length >= 2 && g.top[0].id !== g.pres && g.top[1].id !== g.pres) er.push('Ton gagnant doit être dans ta finale.');
@@ -284,16 +267,74 @@ $('#saveGP').onclick = () => withMe(async () => {
   if (er.length) { snd.error(); E.innerHTML = er.map(esc).join('<br>'); E.classList.add('on'); E.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   E.classList.remove('on');
   await store.save({}, { pres: g.pres, top: g.top.map(t => ({ id: t.id, pct: t.pct })), win: g.win });
-  snd.vote(); dirty.gp = false; await refresh(true); renderAll(); toast('Grand Prono enregistré : photo de la semaine prise');
+  snd.vote(); dirty.gp = false; await refresh(true); renderAll(); toast('Prono enregistré');
 });
-$('#copy').onclick = async () => {
-  const g = gp(), t = ['Les pronos des vieux boucs' + (ME ? ' (' + ME.pseudo + ')' : ''),
-  'Mon prono pour l’Élysée : ' + (g.pres ? by[g.pres].p + ' ' + by[g.pres].n : 'à choisir'),
-  '1er tour : ' + (g.top.map((x, i) => (i + 1) + '. ' + by[x.id].n + ' ' + fmt(x.pct) + ' %').join(', ') || 'à faire'),
-  g.top.length > 1 && g.pres ? '2nd tour : ' + by[g.pres].n + ' ' + fmt(g.win) + ' %' : '',
-  location.origin + location.pathname].filter(Boolean).join('\n');
-  try { await navigator.clipboard.writeText(t); toast('Copié, colle-le dans WhatsApp'); } catch (e) { toast('Copie impossible depuis cette fenêtre'); }
+const recapDialog = $('#recap-dialog');
+let recapUrl, recapFile;
+recapDialog.addEventListener('close', () => {
+  if (recapUrl) URL.revokeObjectURL(recapUrl);
+  recapUrl = recapFile = null;
+  $('#recap-image').removeAttribute('src');
+});
+$('#prono-recap').onclick = async () => {
+  const blob = await drawPronoRecap();
+  if (!blob) { toast('Impossible de créer l’image.'); return; }
+  recapFile = new File([blob], 'mes-pronos.png', { type: 'image/png' });
+  recapUrl = URL.createObjectURL(recapFile);
+  $('#recap-image').src = recapUrl;
+  recapDialog.showModal();
 };
+$('#recap-share').onclick = async () => {
+  if (navigator.canShare?.({ files: [recapFile] })) {
+    try { await navigator.share({ files: [recapFile], title: 'Mes pronos' }); }
+    catch (err) { if (err.name !== 'AbortError') toast('Partage de l’image impossible.'); }
+  } else {
+    const link = document.createElement('a');
+    link.href = recapUrl;
+    link.download = recapFile.name;
+    link.click();
+  }
+};
+
+async function drawPronoRecap() {
+  const saved = mine(), g = S.current(saved);
+  const candidate = id => by[id] ? by[id].p + ' ' + by[id].n : id;
+  const sections = [
+    ['Encore candidats le 31 janvier', (saved.l1 || []).map(candidate)],
+    ['500 signatures', (saved.l2 || []).map(candidate)],
+    ['Premier tour · Mon top 5', (g?.top || []).map((t, i) => `${i + 1}. ${candidate(t.id)} · ${fmt(t.pct)} %`)],
+    ['Second tour · Mon vainqueur', g?.pres ? [`${candidate(g.pres)} · ${fmt(g.win)} %`] : []]
+  ];
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 230 + sections.reduce((h, [, lines]) => h + 92 + Math.max(lines.length, 1) * 43, 0);
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+  ctx.fillStyle = '#FFFCF6';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#15120E';
+  ctx.fillRect(0, 0, canvas.width, 192);
+  ctx.fillStyle = '#F3E6C8';
+  ctx.font = '64px Georgia';
+  ctx.fillText('Mes pronos', 64, 96);
+  ctx.font = '32px sans-serif';
+  ctx.fillText(ME ? `Prone ton President · ${ME.pseudo}` : 'Prone ton President', 64, 151, 952);
+  let y = 237;
+  for (const [title, lines] of sections) {
+    ctx.fillStyle = '#79591C';
+    ctx.font = 'bold 36px sans-serif';
+    ctx.fillText(title, 64, y, 952);
+    y += 52;
+    ctx.fillStyle = '#15120E';
+    ctx.font = '32px sans-serif';
+    for (const line of lines.length ? lines : ['Prono non enregistré']) {
+      ctx.fillText(line, 64, y, 952);
+      y += 43;
+    }
+    y += 40;
+  }
+  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+}
 
 /* ===================== TEAM DE RÊVE ===================== */
 const CAND_NAMES = C.map(c => c.p + ' ' + c.n);
@@ -340,7 +381,7 @@ async function renderTeamVisibility() {
     const groups = await store.groups.teamVisibility();
     if (request !== visibilityRequest) return;
     visibility.innerHTML = groups.length ? groups.map(g =>
-      `<p><b>${esc(g.name)}</b> · ${g.visible ? 'Visible' : 'Privée'}<br><button class="ghost" data-group="${esc(g.code)}" aria-pressed="${g.visible}">${g.visible ? 'Masquer ma Dream Team' : 'Rendre ma Dream Team visible'}</button>${g.visible ? ` <button class="ghost" data-group="${esc(g.code)}" data-update>Mettre à jour</button>` : ''}</p>`
+      `<p><b>${esc(g.name)}</b> · ${g.visible ? 'Visible' : 'Privé'}<br><button class="ghost" data-group="${esc(g.code)}" aria-pressed="${g.visible}">${g.visible ? 'Masquer mon gouvernement' : 'Rendre mon gouvernement visible'}</button>${g.visible ? ` <button class="ghost" data-group="${esc(g.code)}" data-update>Mettre à jour</button>` : ''}</p>`
     ).join('') : '<button class="ghost" data-go="classement">Créer ou rejoindre un groupe</button>';
   } catch {
     if (request === visibilityRequest) visibility.innerHTML = '<p>Impossible de vérifier la visibilité.</p><button class="ghost" data-retry-visibility>Réessayer</button>';
@@ -359,7 +400,7 @@ visibility.addEventListener('click', async e => {
   try {
     if (hide) await store.groups.unpublishTeam(button.dataset.group);
     else await store.groups.publishTeam(button.dataset.group, clone(draft.team));
-    toast(hide ? 'Dream Team masquée dans ce groupe.' : 'Dream Team visible dans ce groupe.');
+    toast(hide ? 'Gouvernement masqué dans ce groupe.' : 'Gouvernement visible dans ce groupe.');
     await renderTeamVisibility();
   } catch (err) {
     toast(err.message || 'Impossible de modifier la visibilité.');
@@ -393,7 +434,7 @@ $('#teamShare').onclick = async () => {
   const blob = await drawTeam();
   const file = new File([blob], 'ma-team-de-reve.png', { type: 'image/png' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'Ma team de rêve', text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname }); } catch (e) { }
+    try { await navigator.share({ files: [file], title: 'Mon gouvernement', text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname }); } catch (e) { }
   } else {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     toast('Image téléchargée : envoie-la à tes amis');
@@ -408,7 +449,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   x.fillStyle = '#0E0E0E'; x.fillRect(0, 0, W, 250);
   [['#1F3A93', 0], ['#FBF9F4', 1], ['#C8102E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 30, 64, 30, 56); });
   x.strokeStyle = '#C6A15B'; x.lineWidth = 2; x.strokeRect(64, 64, 90, 56);
-  x.fillStyle = '#FBF9F4'; x.font = '500 66px ' + SERIF; x.fillText('Ma team de rêve', 184, 116);
+  x.fillStyle = '#FBF9F4'; x.font = '500 66px ' + SERIF; x.fillText('Mon gouvernement', 184, 116);
   x.fillStyle = '#E9D7A8'; x.font = '500 34px ' + SANS; x.fillText('Le gouvernement de ' + pseudo, 64, 196);
   x.fillStyle = '#C6A15B'; x.fillRect(0, 250, W, 4);
   let y0 = 325;
@@ -489,7 +530,7 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont partagés dans le groupe commun par défaut et révélés à la clôture. Ta Dream Team reste privée jusqu’à ce que tu la partages.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont partagés dans le groupe commun par défaut et révélés à la clôture. Ton gouvernement reste privé jusqu’à ce que tu le partages.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
       <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
@@ -577,7 +618,7 @@ const groupUI = groupView($('#group-view'), {
   getStore: () => store, withUser: withMe, drawTeam, notify: toast
 });
 function renderAll() {
-  renderHeader(); renderSnd(); renderHero(); renderCTA(); renderPollsHome();
+  renderHeader(); renderSnd(); renderHero(); renderPollsHome();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
   renderTeam();
   if (location.hash === '#classement') groupUI.render();

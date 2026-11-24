@@ -19,7 +19,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=15">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=18">
+<link rel="stylesheet" href="css/app.css?v=19">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -78,16 +78,16 @@
     </div>
   </div>
   <div class="wrap stack">
-    <article class="card cta" id="cta"></article>
     <div id="pollsHome">
       <div class="stack" style="padding:0">
         <article class="card">
           <h2>Le podium des sondages</h2>
+          <p class="poll-date" id="podDate"></p>
           <p class="src" id="podSrc"></p>
           <div class="podium" id="podium"></div>
         </article>
         <article class="card">
-          <h2>Ça bouge</h2>
+          <div class="poll-heading"><h2>Ça bouge</h2><time id="movesDate" class="poll-date"></time></div>
           <div class="moves" id="moves"></div>
         </article>
         <article class="card">
@@ -124,6 +124,7 @@
     <article class="card">
       <h2>Mes paris</h2>
       <div class="mini-steps" id="parisSummary"></div>
+      <button class="ghost" id="prono-recap">Voir le récap de mes pronos</button>
     </article>
 
     <article class="card stage" id="st1">
@@ -143,11 +144,11 @@
 
     <article class="card stage" id="st2">
       <div class="shead"><span class="tag">Étape 2</span><span class="dl" id="dl2"></span></div>
-      <h2>Qui sera sur la ligne de départ ?</h2>
+      <h2>Qui aura les 500 signatures ?</h2>
       <p class="ssum" id="sum2"></p>
       <button class="tog" data-sb="2" aria-controls="sb2"></button>
       <div class="sbody" id="sb2">
-      <p class="help">Pour être candidat, il faut 500 parrainages d'élus avant le 12 mars à 18 h. Touche ceux qui les auront et seront sur la liste officielle du 26 mars : ils passent au vert.</p>
+      <p class="help">Touche les candidats qui auront leurs 500 signatures.</p>
       <div class="count"><span><b id="n2">0</b> candidats auront leurs signatures</span><button class="linkbtn" id="pre2">Reprendre mon étape 1</button></div>
       <div class="tiles" id="tiles2"></div>
       <p class="fine">Fait foi : la liste officielle du Conseil constitutionnel, au plus tard le 26 mars. Un candidat qui a ses signatures mais se retire compte comme absent.</p>
@@ -158,8 +159,8 @@
 
     <article class="card stage" id="st3">
       <div class="shead"><span class="tag">Étapes 3 et 4</span><span class="dl" id="dl3"></span></div>
-      <h2>Le Grand Prono</h2>
-      <p class="help">Qui va gagner selon toi, ton top 5 du 1er tour et ta finale. C'est un pronostic, pas un vote : ton président de cœur, mets-le dans « Ma team ». Chaque lundi, l'appli prend une photo de ton prono, les premières comptent double. Tu peux modifier et réenregistrer ton prono jusqu’à la clôture.</p>
+      <h2>La présidentielle</h2>
+      <p class="pick-instruction">Ton top 5 et ton vainqueur.</p>
       <div id="photo"></div>
       <p class="ssum" id="sum3"></p>
       <button class="tog" data-sb="3" aria-controls="sb3"></button>
@@ -167,11 +168,9 @@
     <div class="sbody stack" id="sb3" style="padding:0">
     <article class="card">
       <h2>1er tour : mon top 5</h2>
-      <p class="help">Choisis cinq candidats dans l’ordre, puis ajuste les pourcentages. Le bouton « i » ouvre la fiche.</p>
-      <div class="seg" role="group" aria-label="Filtre des candidats"><button data-f="main" class="on" aria-pressed="true">Testés en sondage</button><button data-f="all" aria-pressed="false">Tous</button></div>
+      <p class="pick-instruction">Choisis 5 candidats dans l’ordre.</p>
       <div class="pick" id="pick"></div>
-      <p class="help" id="top5-percentages"><strong>Pourcentages de départ</strong> · L’appli les préremplit à partir des sondages, ou à 2 % sans estimation. Ajuste-les avec − et + pour saisir ton pronostic.</p>
-      <ol class="slots" id="slots" aria-describedby="top5-percentages"></ol>
+      <ol class="slots" id="slots" aria-label="Pourcentages de ton top 5" hidden></ol>
       <div class="total" id="total"></div>
     </article>
     <article class="card">
@@ -179,10 +178,8 @@
       <div id="duel"></div>
       <p class="warn" id="coh" hidden></p>
     </article>
-    <p class="fine" id="prono-review" aria-live="polite"></p>
     <div class="warn errs" id="errs" role="alert"></div>
-    <button class="big" id="saveGP">Enregistrer mon Grand Prono</button>
-    <button class="ghost" id="copy">Copier mon prono pour WhatsApp</button>
+    <button class="big" id="saveGP">Enregistrer mon prono</button>
     </div>
   </div>
 </section>
@@ -191,9 +188,9 @@
 <section class="view" id="v-team">
   <div class="wrap stack">
     <article class="card">
-      <h2>Ma team de rêve</h2>
+      <h2>Mon gouvernement</h2>
       <p class="help">Ici, ce n'est plus un pronostic : c'est ce que tu voudrais. Ton président de cœur, ton Premier ministre et tes ministres. Ça ne rapporte pas de points.</p>
-      <p class="fine">Ta team reste sur ton téléphone jusqu’à ce que tu la publies dans un groupe ou partages son image.</p>
+      <p class="fine">Ton gouvernement reste sur ton téléphone jusqu’à ce que tu le publies dans un groupe ou partages son image.</p>
     </article>
     <article class="card pm">
       <h2>Mon président de cœur</h2>
@@ -213,7 +210,7 @@
       <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off" maxlength="60"><div id="t-jn"></div></div>
     </article>
     <article class="card">
-      <h2>Visibilité de ma Dream Team</h2>
+      <h2>Visibilité de mon gouvernement</h2>
       <p class="help">Choisis dans quels groupes les membres peuvent voir ta composition.</p>
       <div id="team-visibility"></div>
     </article>
@@ -273,13 +270,13 @@
     <details class="card rules">
       <summary><h2>Comment on marque</h2></summary>
       <ul class="pts">
-        <li><b>1 à 5</b><span><b>« Qui sera là ? » et « Ligne de départ »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour la ligne de départ : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
+        <li><b>1 à 5</b><span><b>« Qui sera là ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
         <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
         <li><b>+2</b><span>par score du 1er tour à 1 point près</span></li>
         <li><b>+5</b><span>par finaliste trouvé</span></li>
         <li><b>10 à 30</b><span>pour le bon président : 10 si tout le monde l'avait choisi, jusqu'à 30 si tu étais presque seul. +3 si son score au 2nd tour est à 2 points près.</span></li>
       </ul>
-      <p class="help"><b>Les photos du lundi :</b> chaque lundi, ton Grand Prono est photographié et noté après l'élection. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
+      <p class="help"><b>Les photos du lundi :</b> chaque lundi, ton pronostic est enregistré pour le calcul des points. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
       <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
     </details>
   </div>
@@ -289,7 +286,7 @@
 <nav class="tabs" aria-label="Onglets">
   <a href="#accueil" data-t="accueil"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg><span>Accueil</span></a>
   <a href="#paris" data-t="paris"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V4h8v7M10.5 7.5l1.5 1.5 2.5-3"/></svg><span>Mes paris</span></a>
-  <a href="#team" data-t="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/></svg><span>Ma team</span></a>
+  <a href="#team" data-t="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/></svg><span>Mon gouvernement</span></a>
   <a href="#sondages" data-t="sondages"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
   <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Les Joueurs</span></a>
 </nav>
@@ -325,9 +322,15 @@
   <h2 id="player-title"></h2>
   <div id="player-detail"></div>
 </dialog>
+<dialog id="recap-dialog" aria-labelledby="recap-title">
+  <form method="dialog"><button class="ghost">Fermer</button></form>
+  <h2 id="recap-title">Mes pronos</h2>
+  <img id="recap-image" alt="Récapitulatif de mes pronostics">
+  <button class="big" id="recap-share">Partager l’image</button>
+</dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=17"></script>
+<script type="module" src="js/app.js?v=19"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
