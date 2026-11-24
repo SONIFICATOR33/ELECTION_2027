@@ -1,9 +1,11 @@
-import { LOCK1, LOCK2, LOCKGP } from './data.js';
+import { LOCK1, LOCK2, LOCKGP } from './data.js?v=22';
+import { monthKey } from './history.js';
 
 export const GROUP_CODE = /^[a-f0-9]{32}$/;
+export const GROUP_ADMIN = 'vince';
 export const COMMON_GROUP = 'e1ec7100202700000000000000000001';
 export const STAGES = [
-  ['l1', 'Qui sera là le 31 janvier ?', LOCK1],
+  ['l1', 'Qui sera là le 31 décembre ?', LOCK1],
   ['l2', 'Qui aura les 500 signatures ?', LOCK2],
   ['weeks', 'La présidentielle', LOCKGP]
 ];
@@ -53,13 +55,18 @@ export function groupsStore(store) {
     },
     resetEnrollment() { commonEnrollment = null; },
     async create(name) {
+      if (pid() !== GROUP_ADMIN) throw new Error('Seul Vincent peut créer un groupe.');
       const title = name.trim();
       if (title.length < 2 || title.length > 48) throw new Error('Choisis un nom de 2 à 48 caractères.');
       const code = crypto.randomUUID().replaceAll('-', '');
       await join(code, title);
+      await this.setSharing(code, true);
       return code;
     },
-    async join(code) { await join(code); return code; },
+    async join(code) {
+      if (await join(code)) await this.setSharing(code, true);
+      return code;
+    },
     async list() {
       const snap = await F.getDoc(settings());
       return Promise.all(Object.entries(snap.data()?.groups || {}).map(async ([code, shared]) => {
@@ -75,7 +82,7 @@ export function groupsStore(store) {
         const values = p.data() || {};
         if (shared) {
           for (const [stage] of STAGES) {
-            if (hasStage(values, stage)) tx.set(entry(code, stage), { value: values[stage] });
+            if (hasStage(values, stage)) tx.set(entry(code, stage), sharedStage(values, stage));
           }
         } else {
           for (const [stage] of STAGES) tx.delete(entry(code, stage));
@@ -96,25 +103,34 @@ export function groupsStore(store) {
     async unpublishTeam(code) {
       await F.deleteDoc(entry(code, 'teams'));
     },
-    async load(code, time) {
-      const visible = STAGES.filter(([, , lock]) => time >= +lock);
+    async load(code, time = Date.now()) {
+      // Old rules may remain in place during the rollout.
+      const readStage = ([stage, , lock]) => F.getDocs(F.collection(db, 'groups', code, stage)).catch(err => {
+        if (err.code === 'permission-denied' && time < +lock) return null;
+        throw err;
+      });
       const [m, teams, ...entries] = await Promise.all([
         F.getDocs(members(code)),
         F.getDocs(F.collection(db, 'groups', code, 'teams')),
-        ...visible.map(([stage]) => F.getDocs(F.collection(db, 'groups', code, stage)))
+        ...STAGES.map(readStage)
       ]);
       const players = Object.fromEntries(m.docs.map(d => [d.id, d.data()]));
       const pronos = {};
       entries.forEach((snapshot, i) => {
+        if (!snapshot) return;
+        const stage = STAGES[i][0];
         for (const d of snapshot.docs) {
           if (!Object.hasOwn(players, d.id)) continue;
           pronos[d.id] ||= {};
-          pronos[d.id][visible[i][0]] = d.data().value;
+          const entry = d.data();
+          pronos[d.id][stage] = entry.value;
+          if (entry.history) (pronos[d.id].history ||= {})[stage] = entry.history;
+          if (entry.at) pronos[d.id][stage + 'at'] = entry.at;
         }
       });
       return { players, pronos, teams: Object.fromEntries(teams.docs.map(d => [d.id, d.data().value])) };
     },
-    async writeProno(ref, patch, gp, week) {
+    async writeProno(ref, patch, gp, week, month = monthKey(Date.now())) {
       await F.runTransaction(db, async tx => {
         const [s, p] = await Promise.all([tx.get(settings()), tx.get(ref)]);
         const data = p.data() || {};
@@ -122,11 +138,12 @@ export function groupsStore(store) {
         const stage = gp ? 'weeks' : Object.hasOwn(patch, 'l1') ? 'l1' : 'l2';
         const value = gp ? { ...data.weeks, [week]: gp } : patch[stage];
         if (gp) change.weeks = value;
+        change.history = { ...data.history, [stage]: { ...data.history?.[stage], [month]: gp || value } };
         tx.update(ref, change);
-        const next = { ...data, [stage]: value };
+        const next = { ...data, ...change, [stage]: value };
         for (const [code, shared] of Object.entries(s.data()?.groups || {})) {
           if (!shared) continue;
-          tx.set(entry(code, stage), { value });
+          tx.set(entry(code, stage), sharedStage(next, stage));
           tx.update(member(code), { submitted: submitted(next) });
         }
       });
@@ -138,3 +155,10 @@ const hasStage = (data, stage) => stage === 'weeks'
   ? Object.keys(data.weeks || {}).length > 0
   : Array.isArray(data[stage]);
 const submitted = data => STAGES.map(([stage]) => stage).filter(stage => hasStage(data, stage));
+
+function sharedStage(prono, stage) {
+  const result = { value: prono[stage] };
+  if (prono.history?.[stage]) result.history = prono.history[stage];
+  if (prono[stage + 'at']) result.at = prono[stage + 'at'];
+  return result;
+}

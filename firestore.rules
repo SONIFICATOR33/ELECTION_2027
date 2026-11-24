@@ -1,7 +1,7 @@
 rules_version = '2';
 // Règles d'accès de la base « Les pronos des membrés ».
 // À coller dans la console Firebase : Firestore > Règles > Publier.
-// Les pronos personnels sont privés. Chaque groupe révèle ses copies à la clôture.
+// Les pronos personnels sont privés. Les copies partagées sont visibles par les membres du groupe.
 service cloud.firestore {
   match /databases/{db}/documents {
 
@@ -14,6 +14,10 @@ service cloud.firestore {
     function weekNow() {
       let shift = nowMs() >= 1806195600000 ? 3600000 : 0;
       return string(int((nowMs() - T0() + shift) / 604800000));
+    }
+    function monthNow() {
+      let local = request.time + duration.value(nowMs() >= 1806195600000 ? 2 : 1, 'h');
+      return string(local.year()) + '-' + (local.month() < 10 ? '0' : '') + string(local.month());
     }
     function candidates() {
       return ['arthaud', 'melenchon', 'roussel', 'tondelier', 'batho', 'glucksmann',
@@ -78,9 +82,28 @@ service cloud.firestore {
     }
 
     match /pronos/{pid} {
+      function historyStage(stage, history, previous, value) {
+        let next = history.get(stage, {});
+        return next is map
+          && next.diff(previous.get(stage, {})).affectedKeys().hasOnly([monthNow()])
+          && next.get(monthNow(), null) == value && value != null;
+      }
+      function historyOk(ch) {
+        let history = request.resource.data.get('history', {});
+        let previous = resource.data.get('history', {});
+        let updated = history.diff(previous).affectedKeys();
+        return history is map && updated.hasOnly(['l1', 'l2', 'weeks'])
+          && (!updated.hasAny(['l1']) || (nowMs() < LOCK1() && ch.hasAny(['l1', 'l1at'])
+              && historyStage('l1', history, previous, request.resource.data.l1)))
+          && (!updated.hasAny(['l2']) || (nowMs() < LOCK2() && ch.hasAny(['l2', 'l2at'])
+              && historyStage('l2', history, previous, request.resource.data.l2)))
+          && (!updated.hasAny(['weeks']) || (nowMs() < LOCKGP()
+              && historyStage('weeks', history, previous, request.resource.data.weeks.get(weekNow(), null))));
+      }
       function changesOk() {
         let ch = request.resource.data.diff(resource.data).affectedKeys();
-        return ch.hasOnly(['l1', 'l1at', 'l2', 'l2at', 'weeks', 'team', 'updatedAt'])
+        return ch.hasOnly(['l1', 'l1at', 'l2', 'l2at', 'weeks', 'team', 'updatedAt', 'history'])
+          && (!ch.hasAny(['history']) || historyOk(ch))
           && (!ch.hasAny(['l1', 'l1at']) || nowMs() < LOCK1())
           && (!ch.hasAny(['l2', 'l2at']) || nowMs() < LOCK2())
           && (!ch.hasAny(['weeks']) || (nowMs() < LOCKGP()
@@ -107,12 +130,6 @@ service cloud.firestore {
         && exists(/databases/$(db)/documents/groups/$(code)/members/$(get(dev()).data.pid));
     }
     function groupDoc(code) { return /databases/$(db)/documents/groups/$(code); }
-    function stageVisible(stage) {
-      return (stage == 'l1' && nowMs() >= LOCK1())
-        || (stage == 'l2' && nowMs() >= LOCK2())
-        || (stage == 'weeks' && nowMs() >= LOCKGP());
-    }
-
     match /players/{pid}/settings/groups {
       allow get: if owner(pid);
       allow create, update: if owner(pid)
@@ -123,6 +140,7 @@ service cloud.firestore {
     match /groups/{code} {
       allow get: if request.auth != null && validCode(code);
       allow create: if validCode(code) && owner(request.resource.data.creator)
+        && (code == 'e1ec7100202700000000000000000001' || owner('vince'))
         && request.resource.data.keys().hasOnly(['name', 'creator'])
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 48;
@@ -144,11 +162,18 @@ service cloud.firestore {
 
       match /{stage}/{pid} {
         function isProno() { return stage in ['l1', 'l2', 'weeks']; }
-        allow read: if inside(code) && (stage == 'teams' || stageVisible(stage));
+        function matchingProno() {
+          let canonical = getAfter(/databases/$(db)/documents/pronos/$(pid)).data;
+          let copy = request.resource.data;
+          return copy.keys().hasOnly(['value', 'history', 'at'])
+            && copy.value == canonical[stage]
+            && (!copy.keys().hasAny(['history']) || copy.history == canonical.get('history', {}).get(stage, null))
+            && (!copy.keys().hasAny(['at']) || copy.at == canonical.get(stage + 'at', null));
+        }
+        allow read: if inside(code) && (stage == 'teams' || isProno());
         allow create, update: if owner(pid) && inside(code)
-          && request.resource.data.keys().hasOnly(['value'])
-          && ((isProno() && request.resource.data.value == getAfter(/databases/$(db)/documents/pronos/$(pid)).data[stage])
-              || (stage == 'teams' && validTeam(request.resource.data.value)));
+          && ((isProno() && matchingProno()) || (stage == 'teams'
+              && request.resource.data.keys().hasOnly(['value']) && validTeam(request.resource.data.value)));
         allow delete: if owner(pid) && inside(code) && (isProno() || stage == 'teams');
       }
     }

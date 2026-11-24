@@ -13,8 +13,8 @@ export function paris(y, m, d, h = 0, mi = 0) {
 /* ---------- Calendrier du jeu ---------- */
 export const T0 = paris(2026, 11, 23);            // lundi de la semaine 0 des photos
 export const WEEK = 7 * 864e5;
-export const LOCK1 = paris(2026, 12, 11, 23, 59); // étape 1 : qui sera là au 31 janvier
-export const RES1 = paris(2027, 1, 31, 23, 59);
+export const LOCK1 = paris(2026, 12, 11, 23, 59); // étape 1 : qui sera là au 31 décembre
+export const RES1 = paris(2026, 12, 31, 23, 59);
 export const LOCK2 = paris(2027, 2, 5, 23, 59);   // étape 2 : provisoire, calé avant la 1re publication des parrainages
 export const LOCK2_PROVISOIRE = true;
 export const DEPOT500 = paris(2027, 3, 12, 18);
@@ -27,7 +27,7 @@ export const mult = w => Math.round((2 - w / (NWEEKS - 1)) * 100) / 100;
 
 export const MILESTONES = [
   { at: LOCK1, short: '11 déc.', label: 'Clôture du pari « Qui sera là ? »', kind: 'lock' },
-  { at: RES1, short: '31 janv.', label: 'Résultat : qui est encore là', kind: 'res' },
+  { at: RES1, short: '31 déc.', label: 'Résultat : qui est encore là', kind: 'res' },
   { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « 500 signatures »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
   { at: DEPOT500, short: '12 mars', label: 'Dépôt des 500 signatures, 18 h', kind: 'off' },
   { at: RES2, short: '26 mars', label: 'Liste officielle attendue au plus tard', kind: 'res' },
@@ -123,7 +123,7 @@ export const NOV = [
 export const DUELS = [['lepen', 65, 'melenchon', 'Harris, 19 nov.'], ['lepen', 54, 'philippe', 'YouGov, 17 nov.'], ['lepen', 55, 'attal', 'YouGov, 17 nov.'], ['lepen', 58, 'glucksmann', 'YouGov, 17 nov.'], ['philippe', 61, 'melenchon', 'YouGov, 17 nov.'], ['lepen', 59, 'hollande', 'Ifop, 19 oct.'], ['lepen', 58, 'retailleau', 'Ifop, 25 août']];
 
 /* ---------- Résultats officiels (null tant qu'ils ne sont pas connus) ----------
-   etape1 : ids des candidats encore déclarés le 31 janvier (source : Toute l'Europe)
+   etape1 : ids des candidats encore déclarés le 31 décembre (source : Toute l'Europe)
    etape2 : ids de la liste officielle du Conseil constitutionnel
    tour1  : [{id, pct}] dans l'ordre, au moins les 5 premiers
    tour2  : {win: id, pct: score du vainqueur} */

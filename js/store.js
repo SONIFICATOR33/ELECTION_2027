@@ -2,7 +2,8 @@
    STOCKAGE — même interface en mode essai (localStorage) et en mode partagé (Firebase)
    ===================================================================== */
 import { FIREBASE } from './config.js';
-import { groupsStore } from './groups.js';
+import { groupsStore } from './groups.js?v=22';
+import { monthKey } from './history.js';
 import { weekOf, clampWeek } from './scoring.js';
 
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
@@ -46,6 +47,9 @@ class LocalStore {
     const p = this.db.pronos[pid] || (this.db.pronos[pid] = { weeks: {} });
     Object.assign(p, patch);
     if (gp) p.weeks[clampWeek(weekOf(Date.now()))] = gp;
+    const stage = gp ? 'weeks' : Object.hasOwn(patch, 'l1') ? 'l1' : 'l2';
+    const history = p.history ||= {};
+    (history[stage] ||= {})[monthKey(Date.now())] = gp || patch[stage];
     p.updatedAt = Date.now(); this.write();
   }
 }
