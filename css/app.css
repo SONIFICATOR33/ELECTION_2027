@@ -260,3 +260,7 @@ select{font:inherit;color:inherit;width:100%;min-height:44px;border:1.5px solid 
 .photo b{flex:none;min-width:52px;text-align:center}
 .snd{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;flex:none}
 .snd .x{display:none}.snd[aria-pressed=false] .x{display:inline}.snd[aria-pressed=false] .w1,.snd[aria-pressed=false] .w2{display:none}
+.pn{display:block;font:600 12px/1.1 Barlow,system-ui,sans-serif;color:var(--mut);letter-spacing:0}
+.pcol .pn{font-size:13px}
+.big:disabled,.big.off{background:var(--line);color:var(--mut);cursor:default}
+.big{line-height:1.15;padding:10px 14px}

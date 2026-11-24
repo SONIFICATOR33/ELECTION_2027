@@ -107,7 +107,7 @@ function renderPollsHome() {
   const box = $('#pollsHome');
   if (inBlackout()) { box.innerHTML = '<p class="blackout">Sondages masqués la veille et le jour du vote, comme le veut la loi du 19 juillet 1977.</p>'; return; }
   $('#podSrc').textContent = D.POLL_DATE;
-  $('#podium').innerHTML = [1, 0, 2].map(i => { const [id, v] = D.POD[i], c = by[id]; return `<div class="pcol p${i + 1}">${av(c, i === 0 ? 62 : 50)}<b>${c.n}</b><div class="blk"><span class="rk">${i + 1}</span><span class="pv">${fmt(v)} %</span></div></div>`; }).join('');
+  $('#podium').innerHTML = [1, 0, 2].map(i => { const [id, v] = D.POD[i], c = by[id]; return `<div class="pcol p${i + 1}">${av(c, i === 0 ? 62 : 50)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><div class="blk"><span class="rk">${i + 1}</span><span class="pv">${fmt(v)} %</span></div></div>`; }).join('');
   const UP = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
   const DN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
   $('#moves').innerHTML = D.MOVES.map(([h, l]) => `<div><h3>${h}</h3>${l.map(([id, u, t]) => `<div class="mv"><span class="ar ${u ? 'up' : 'dn'}">${u ? UP : DN}</span>${av(by[id], 40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
@@ -140,7 +140,7 @@ function tilesHTML(key) {
     if (!D.U1.includes(c.id)) continue;
     if (c.off && !off) { h += '<span class="grp">Hors axe gauche-droite</span>'; off = true; }
     const on = sel.has(c.id);
-    h += `<button class="tile${on ? ' on' : ''}" data-id="${c.id}" aria-pressed="${on}"${open ? '' : ' disabled'}>${av(c, 44)}<b>${esc(c.n)}</b><small>${esc(c.note || c.party || '')}</small><span class="ok">${OKSVG}</span></button>`;
+    h += `<button class="tile${on ? ' on' : ''}" data-id="${c.id}" aria-pressed="${on}"${open ? '' : ' disabled'}>${av(c, 44)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><small>${esc(c.note || c.party || '')}</small><span class="ok">${OKSVG}</span></button>`;
   }
   return h;
 }
@@ -216,7 +216,7 @@ function renderCar() {
   let h = '', sep = false;
   list().forEach(c => {
     if (c.off && !sep) { h += '<div class="sep">Hors axe gauche-droite</div>'; sep = true; }
-    h += `<button class="cand${gp().pres === c.id ? ' sel' : ''}" data-id="${c.id}" aria-pressed="${gp().pres === c.id}">${av(c, 56)}<b>${c.n}</b><small>${esc(c.party || 'Sans parti précisé')}</small>${c.note ? `<em>${esc(c.note)}</em>` : ''}<span class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M5 12l5 5 9-10"/></svg></span></button>`;
+    h += `<button class="cand${gp().pres === c.id ? ' sel' : ''}" data-id="${c.id}" aria-pressed="${gp().pres === c.id}">${av(c, 56)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><small>${esc(c.party || 'Sans parti précisé')}</small>${c.note ? `<em>${esc(c.note)}</em>` : ''}<span class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M5 12l5 5 9-10"/></svg></span></button>`;
   });
   $('#car').innerHTML = h;
 }
@@ -229,7 +229,7 @@ $$('.seg button').forEach(b => b.onclick = () => { filt = b.dataset.f; $$('.seg 
 
 function renderPick() {
   const ids = new Set(list().map(c => c.id)); gp().top.forEach(t => ids.add(t.id));
-  $('#pick').innerHTML = C.filter(c => ids.has(c.id)).map(c => { const i = gp().top.findIndex(t => t.id === c.id); return `<button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${c.n}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button>`; }).join('');
+  $('#pick').innerHTML = C.filter(c => ids.has(c.id)).map(c => { const i = gp().top.findIndex(t => t.id === c.id); return `<button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${esc(c.p + ' ' + c.n)}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button>`; }).join('');
 }
 $('#pick').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; const id = b.dataset.id, i = gp().top.findIndex(t => t.id === id);
@@ -239,7 +239,7 @@ $('#pick').addEventListener('click', e => {
 function renderSlots() {
   let h = ''; for (let i = 0; i < 5; i++) {
     const t = gp().top[i];
-    h += t ? `<li><span class="rkb">${i + 1}</span>${av(by[t.id], 34)}<span class="sn">${by[t.id].n}</span><span class="step"><button data-i="${i}" data-s="-0.5" aria-label="Moins">−</button><output>${fmt(t.pct)} %</output><button data-i="${i}" data-s="0.5" aria-label="Plus">+</button></span></li>`
+    h += t ? `<li><span class="rkb">${i + 1}</span>${av(by[t.id], 34)}<span class="sn">${esc(by[t.id].p + ' ' + by[t.id].n)}</span><span class="step"><button data-i="${i}" data-s="-0.5" aria-label="Moins">−</button><output>${fmt(t.pct)} %</output><button data-i="${i}" data-s="0.5" aria-label="Plus">+</button></span></li>`
       : `<li class="empty"><span class="rkb">${i + 1}</span><span></span><span>À choisir</span><span></span></li>`;
   }
   $('#slots').innerHTML = h; renderTotal();
@@ -254,7 +254,7 @@ function renderDuel() {
   const el = $('#duel'), g = gp();
   if (g.top.length < 2) { el.innerHTML = '<p class="help">Ta finale se remplit toute seule avec tes deux premiers du 1er tour.</p>'; renderCoh(); return; }
   const [a, b] = [g.top[0].id, g.top[1].id], inF = g.pres === a || g.pres === b;
-  const fin = id => `<button class="fin${g.pres === id ? ' win' : ''}" data-id="${id}">${av(by[id], 56)}<b>${by[id].n}</b><span class="fine">${g.pres === id ? 'Mon gagnant' : 'Le faire gagner'}</span></button>`;
+  const fin = id => `<button class="fin${g.pres === id ? ' win' : ''}" data-id="${id}">${av(by[id], 56)}<b><span class="pn">${esc(by[id].p)}</span>${esc(by[id].n)}</b><span class="fine">${g.pres === id ? 'Mon gagnant' : 'Le faire gagner'}</span></button>`;
   const w = inF ? g.pres : null, l = w === a ? b : a;
   el.innerHTML = `<div class="duel">${fin(a)}<span class="vs">contre</span>${fin(b)}</div>` +
     (w ? `<div class="range"><div class="score"><span>${by[w].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span></div><input type="range" id="win" min="50" max="80" step="0.5" value="${g.win}" aria-label="Score du vainqueur au 2nd tour"></div>`
@@ -298,13 +298,15 @@ $('#copy').onclick = async () => {
 /* ===================== TEAM DE RÊVE ===================== */
 const CAND_NAMES = C.map(c => c.p + ' ' + c.n);
 const ALL_NAMES = new Set([...CAND_NAMES, ...D.PEOPLE_GROUPS.flatMap(g => g[1])]);
-const OPTS = '<option value="">Choisir…</option>' +
-  `<optgroup label="Candidats">${C.map(c => `<option>${esc(c.p + ' ' + c.n)}</option>`).join('')}</optgroup>` +
-  D.PEOPLE_GROUPS.map(([g, l]) => `<optgroup label="${esc(g)}">${l.slice().sort((a, b) => a.split(' ').pop().localeCompare(b.split(' ').pop(), 'fr')).map(n => `<option>${esc(n)}</option>`).join('')}</optgroup>`).join('') +
-  '<option value="__autre">Autre…</option>';
-const selHTML = (k, label) => `<div class="sel" data-k="${esc(k)}"><select aria-label="${esc(label)}">${OPTS}</select><input type="text" placeholder="Tape le nom" maxlength="40" autocomplete="off" aria-label="${esc(label)}, autre nom"></div>`;
-$('#t-pm').innerHTML = selHTML('pm', 'Premier ministre');
-$('#t-coeur').innerHTML = `<div class="sel" data-k="coeur"><select aria-label="Mon président de cœur"><option value="">Choisir…</option>${C.map(c => `<option>${esc(c.p + ' ' + c.n)}</option>`).join('')}<option value="__autre">Autre…</option></select><input type="text" placeholder="Tape le nom" maxlength="40" autocomplete="off" aria-label="Président de cœur, autre nom"></div>`;
+const lastName = n => n.replace(/^(\S+\s)+?(?=(de |Le |La )?\S+$)/, '');
+const GROUPS_HTML = D.PEOPLE_GROUPS.map(([g, l]) => `<optgroup label="${esc(g)}">${l.slice().sort((a, b) => lastName(a).localeCompare(lastName(b), 'fr')).map(n => `<option>${esc(n)}</option>`).join('')}</optgroup>`).join('');
+const OPTS = '<option value="">Choisir…</option>' + GROUPS_HTML + '<option value="__autre">Autre…</option>';
+const OPTS_PM = '<option value="">Choisir…</option>' + GROUPS_HTML;
+const OPTS_COEUR = '<option value="">Choisir…</option>' + [['De gauche à droite', C.filter(c => !c.off)], ['Hors axe gauche-droite', C.filter(c => c.off)]]
+  .map(([g, l]) => `<optgroup label="${g}">${l.map(c => `<option>${esc(c.p + ' ' + c.n)}</option>`).join('')}</optgroup>`).join('');
+const selHTML = (k, label, opts = OPTS) => `<div class="sel" data-k="${esc(k)}"><select aria-label="${esc(label)}">${opts}</select><input type="text" placeholder="Tape le nom" maxlength="40" autocomplete="off" aria-label="${esc(label)}, autre nom"></div>`;
+$('#t-pm').innerHTML = selHTML('pm', 'Premier ministre', OPTS_PM);
+$('#t-coeur').innerHTML = selHTML('coeur', 'Mon président de cœur', OPTS_COEUR);
 $('#mins').innerHTML = D.POSTES.map(p => `<div class="minrow"><span>${esc(p)}</span>${selHTML('min:' + p, p)}</div>`).join('');
 $('#t-jn').innerHTML = selHTML('jn', 'Nommé au ministère joker');
 function getT(k) { return ['pm', 'jn', 'coeur'].includes(k) ? draft.team[k] || '' : (draft.team.min || {})[k.slice(4)] || ''; }
@@ -313,31 +315,41 @@ function renderTeam() {
   $$('#v-team .sel').forEach(d => {
     const v = getT(d.dataset.k), s = d.querySelector('select'), i = d.querySelector('input');
     if (!v) { s.value = ''; i.value = ''; d.classList.remove('other'); }
-    else if (ALL_NAMES.has(v)) { s.value = v; i.value = ''; d.classList.remove('other'); }
-    else { s.value = '__autre'; i.value = v; d.classList.add('other'); }
+    else if ([...s.options].some(o => o.value === v)) { s.value = v; i.value = ''; d.classList.remove('other'); }
+    else if ([...s.options].some(o => o.value === '__autre')) { s.value = '__autre'; i.value = v; d.classList.add('other'); }
+    else { s.value = ''; d.classList.remove('other'); }
   });
   $('#t-jl').value = draft.team.jl || '';
+  renderPublish();
+}
+const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
+function renderPublish() {
+  const n = teamCount(), ok = n === 12, b = $('#teamShare');
+  b.disabled = !ok; b.classList.toggle('off', !ok);
+  b.textContent = ok ? 'Publier la photo de mon gouvernement' : `Publier la photo de mon gouvernement (${n}/12)`;
+  $('#pubHelp').textContent = ok ? 'Ton gouvernement est complet : publie la photo et envoie-la à tes amis.' : 'Choisis ton président de cœur, ton Premier ministre et tes 10 ministres pour publier la photo. Le joker est en bonus.';
 }
 $('#v-team').addEventListener('change', e => {
   const d = e.target.closest('.sel'); if (!d || e.target.tagName !== 'SELECT') return;
   const v = e.target.value;
   if (v === '__autre') { d.classList.add('other'); const i = d.querySelector('input'); setT(d.dataset.k, i.value.trim()); i.focus(); }
   else { d.classList.remove('other'); setT(d.dataset.k, v); if (v) snd.pick(v in byName ? AXIS(byName[v]) : null); }
+  const was = !$('#teamShare').disabled; renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux publier la photo !'); }
 });
 $('#v-team').addEventListener('input', e => {
   if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; return; }
-  const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') setT(d.dataset.k, e.target.value.trim());
+  const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); renderPublish(); }
 });
 async function saveTeam() { try { localStorage.setItem(teamKey(), JSON.stringify(draft.team)); } catch (e) { } dirty.team = false; }
 $('#teamSave').onclick = async () => { if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président de cœur ou ton Premier ministre'); return; } await saveTeam(); snd.vote(); toast('Team enregistrée sur ton téléphone'); };
 $('#teamShare').onclick = async () => {
-  if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président de cœur ou ton Premier ministre'); return; }
+  if (teamCount() < 12) { snd.error(); toast('Complète d’abord ton gouvernement'); return; }
   if (dirty.team) await saveTeam();
   snd.logo();
   const blob = await drawTeam();
   const file = new File([blob], 'ma-team-de-reve.png', { type: 'image/png' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'Ma team de rêve', text: 'Mon gouvernement idéal, et toi ? ' + location.origin + location.pathname }); } catch (e) { }
+    try { await navigator.share({ files: [file], title: 'Ma team de rêve', text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname }); } catch (e) { }
   } else {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     toast('Image téléchargée : envoie-la à tes amis');
