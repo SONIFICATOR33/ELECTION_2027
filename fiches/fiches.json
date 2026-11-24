@@ -1,0 +1,1031 @@
+{
+  "maj": "2026-11-24",
+  "note": "Faits vérifiés le 24/11/2026. Le prénom, le nom, le parti, la couleur et le repère sondage viennent de js/data.js. Ici : biographie et statut de candidature. Tags du parcours : élu, nommé, parti, carrière, sport, candidature.",
+  "candidats": {
+    "arthaud": {
+      "f": true,
+      "naissance": "1970-02-23",
+      "statut": "Candidate de Lutte ouvrière",
+      "aujourdhui": "Porte-parole nationale de Lutte ouvrière, depuis 2008",
+      "parcours": [
+        [
+          "2008–2014",
+          "Conseillère municipale de Vaulx-en-Velin",
+          "élu"
+        ],
+        [
+          "2008",
+          "Porte-parole nationale de Lutte ouvrière",
+          "parti"
+        ]
+      ],
+      "formation": "Agrégation d’économie et gestion",
+      "metier": "Professeure d’économie-gestion en lycée",
+      "pres": [
+        [
+          2012,
+          0.56
+        ],
+        [
+          2017,
+          0.64
+        ],
+        [
+          2022,
+          0.56
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Nathalie_Arthaud"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "melenchon": {
+      "naissance": "1951-08-19",
+      "statut": "Candidat déclaré le 3 mai 2026",
+      "aujourdhui": "Fondateur de La France insoumise (2016), sans mandat électif depuis 2022",
+      "parcours": [
+        [
+          "2017–2022",
+          "Député des Bouches-du-Rhône",
+          "élu"
+        ],
+        [
+          "2009–2017",
+          "Député européen",
+          "élu"
+        ],
+        [
+          "2000–2002",
+          "Ministre délégué à l’Enseignement professionnel",
+          "nommé"
+        ],
+        [
+          "1986–2010",
+          "Sénateur de l’Essonne (sauf 2000-2004)",
+          "élu"
+        ]
+      ],
+      "formation": "CAPES de lettres modernes, licence de philosophie",
+      "metier": "Professeur de français en lycée technique",
+      "pres": [
+        [
+          2012,
+          11.1
+        ],
+        [
+          2017,
+          19.58
+        ],
+        [
+          2022,
+          21.95
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Jean-Luc_M%C3%A9lenchon"
+        ],
+        [
+          "Public Sénat, 9 nov. 2026",
+          "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-le-judoka-teddy-riner-se-lance-dans-la-course-a-lelysee-au-milieu-dune-multitude-de-candidats"
+        ]
+      ]
+    },
+    "roussel": {
+      "naissance": "1969-04-16",
+      "statut": "Candidat du PCF",
+      "aujourdhui": "Secrétaire national du PCF depuis 2018, maire de Saint-Amand-les-Eaux depuis 2025",
+      "parcours": [
+        [
+          "2025",
+          "Maire de Saint-Amand-les-Eaux",
+          "élu"
+        ],
+        [
+          "2018",
+          "Secrétaire national du PCF",
+          "parti"
+        ],
+        [
+          "2017–2024",
+          "Député du Nord",
+          "élu"
+        ],
+        [
+          "2014",
+          "Conseiller municipal de Saint-Amand-les-Eaux",
+          "élu"
+        ]
+      ],
+      "formation": "Formation de reporter d’images au CFPJ",
+      "metier": "Journaliste reporter d’images (L’Humanité, télévision)",
+      "pres": [
+        [
+          2022,
+          2.28
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Fabien_Roussel"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "tondelier": {
+      "f": true,
+      "naissance": "1986-08-23",
+      "statut": "Vote des militants des Écologistes le 13 décembre",
+      "aujourdhui": "Secrétaire nationale des Écologistes depuis 2022",
+      "parcours": [
+        [
+          "2022",
+          "Secrétaire nationale d’EELV, devenu Les Écologistes",
+          "parti"
+        ],
+        [
+          "2021",
+          "Conseillère régionale des Hauts-de-France",
+          "élu"
+        ],
+        [
+          "2014",
+          "Conseillère municipale d’Hénin-Beaumont",
+          "élu"
+        ]
+      ],
+      "formation": "Sciences Po Lille (2009), master en management des établissements de santé",
+      "metier": "Déléguée générale d’Atmo France, réseau de surveillance de l’air (2017-2022)",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Marine_Tondelier"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "batho": {
+      "f": true,
+      "naissance": "1973-03-23",
+      "statut": "Candidature annoncée le 25 novembre 2025, investie par Génération écologie le 6 juin 2026",
+      "aujourdhui": "Députée des Deux-Sèvres, présidente de Génération écologie depuis 2018",
+      "parcours": [
+        [
+          "2018",
+          "Présidente de Génération écologie",
+          "parti"
+        ],
+        [
+          "2012–2013",
+          "Ministre de l’Écologie",
+          "nommé"
+        ],
+        [
+          "2012",
+          "Ministre déléguée à la Justice",
+          "nommé"
+        ],
+        [
+          "2007",
+          "Députée des Deux-Sèvres",
+          "élu"
+        ]
+      ],
+      "formation": "Baccalauréat (lycée Henri-IV, 1992)",
+      "metier": "Collaboratrice d’élu au conseil régional d’Île-de-France",
+      "pres": [],
+      "autre": "Primaire écologiste 2021 : 3e au 1er tour (22,32 %)",
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Delphine_Batho"
+        ],
+        [
+          "L’Info durable (AFP)",
+          "https://www.linfodurable.fr/lex-ministre-delphine-batho-candidate-la-presidentielle-pour-conjurer-la-rikikisation-de-lecologie"
+        ]
+      ]
+    },
+    "glucksmann": {
+      "naissance": "1979-10-15",
+      "statut": "Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre",
+      "aujourdhui": "Député européen depuis 2019, cofondateur de Place publique",
+      "parcours": [
+        [
+          "2024",
+          "Réélu député européen, liste PS-Place publique",
+          "élu"
+        ],
+        [
+          "2019",
+          "Député européen",
+          "élu"
+        ],
+        [
+          "2018",
+          "Cofondateur de Place publique",
+          "parti"
+        ],
+        [
+          "2009–2012",
+          "Conseiller du président de la Géorgie",
+          "nommé"
+        ]
+      ],
+      "formation": "Sciences Po Paris",
+      "metier": "Documentariste et essayiste",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Rapha%C3%ABl_Glucksmann"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "hollande": {
+      "naissance": "1954-08-12",
+      "statut": "Pas déclaré : sa décision, d’abord promise pour décembre, est repoussée à janvier",
+      "aujourdhui": "Député de la Corrèze depuis 2024",
+      "parcours": [
+        [
+          "2012–2017",
+          "Président de la République",
+          "élu"
+        ],
+        [
+          "2008–2012",
+          "Président du conseil général de la Corrèze",
+          "élu"
+        ],
+        [
+          "2001–2008",
+          "Maire de Tulle",
+          "élu"
+        ],
+        [
+          "1997–2008",
+          "Premier secrétaire du PS",
+          "parti"
+        ]
+      ],
+      "formation": "ENA (promotion Voltaire, 1980), HEC, Sciences Po",
+      "metier": "Magistrat à la Cour des comptes",
+      "pres": [
+        [
+          2012,
+          28.63,
+          "élu au 2nd tour avec 51,64 %"
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Fran%C3%A7ois_Hollande"
+        ],
+        [
+          "AFP via La Gazette France, nov. 2026",
+          "https://www.lagazettefrance.fr/article/presidentielle-hollande-ne-lache-rien-malgre-la-victoire-de-glucksmann"
+        ]
+      ]
+    },
+    "bouamrane": {
+      "naissance": "1973-02-21",
+      "statut": "Candidature annoncée le 9 juin 2026, hors primaire du PS",
+      "aujourdhui": "Maire de Saint-Ouen-sur-Seine depuis 2020, réélu en 2026",
+      "parcours": [
+        [
+          "2024",
+          "Fondateur de La France humaine et forte",
+          "parti"
+        ],
+        [
+          "2021",
+          "Vice-président du département de Seine-Saint-Denis",
+          "élu"
+        ],
+        [
+          "2020",
+          "Maire de Saint-Ouen-sur-Seine",
+          "élu"
+        ],
+        [
+          "2016",
+          "Porte-parole du PS",
+          "parti"
+        ]
+      ],
+      "formation": "Non communiquée",
+      "metier": "Cadre commercial dans la cybersécurité",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Karim_Bouamrane"
+        ],
+        [
+          "LCP, 9 juin 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-qui-est-karim-bouamrane-le-maire-socialiste-de-saint-ouen-et-nouveau"
+        ]
+      ]
+    },
+    "cazeneuve": {
+      "naissance": "1963-06-02",
+      "statut": "« Lettre aux Français » le 16 juillet 2026, refuse la primaire du PS",
+      "aujourdhui": "Fondateur du mouvement La Convention, avocat",
+      "parcours": [
+        [
+          "2016–2017",
+          "Premier ministre",
+          "nommé"
+        ],
+        [
+          "2014–2016",
+          "Ministre de l’Intérieur",
+          "nommé"
+        ],
+        [
+          "2013–2014",
+          "Ministre délégué au Budget",
+          "nommé"
+        ],
+        [
+          "2001–2012",
+          "Maire de Cherbourg-Octeville",
+          "élu"
+        ]
+      ],
+      "formation": "Sciences Po Bordeaux",
+      "metier": "Avocat",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Bernard_Cazeneuve"
+        ],
+        [
+          "LCP, 30 juil. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-l-objectif-de-bernard-cazeneuve-est-de-devenir-president-de-la"
+        ]
+      ]
+    },
+    "attal": {
+      "naissance": "1989-03-16",
+      "statut": "Candidature annoncée le 22 mai 2026",
+      "aujourdhui": "Secrétaire général de Renaissance et président du groupe à l’Assemblée, depuis 2024",
+      "parcours": [
+        [
+          "2024",
+          "Premier ministre (janvier-septembre)",
+          "nommé"
+        ],
+        [
+          "2023–2024",
+          "Ministre de l’Éducation nationale",
+          "nommé"
+        ],
+        [
+          "2020–2022",
+          "Porte-parole du gouvernement",
+          "nommé"
+        ],
+        [
+          "2017",
+          "Député des Hauts-de-Seine",
+          "élu"
+        ]
+      ],
+      "formation": "Sciences Po Paris",
+      "metier": "Conseiller au cabinet de la ministre de la Santé (2012-2017)",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Gabriel_Attal"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "becht": {
+      "naissance": "1976-04-28",
+      "statut": "Candidature annoncée le 24 septembre 2026",
+      "aujourdhui": "Député du Haut-Rhin depuis 2017",
+      "parcours": [
+        [
+          "2022–2024",
+          "Ministre délégué au Commerce extérieur",
+          "nommé"
+        ],
+        [
+          "2020",
+          "Président du groupe Agir ensemble à l’Assemblée",
+          "parti"
+        ],
+        [
+          "2017",
+          "Député du Haut-Rhin",
+          "élu"
+        ],
+        [
+          "2008",
+          "Maire de Rixheim",
+          "élu"
+        ]
+      ],
+      "formation": "ENA (promotion Senghor, 2004)",
+      "metier": "Magistrat administratif (tribunal administratif de Nancy)",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Olivier_Becht"
+        ],
+        [
+          "Sud Radio",
+          "https://www.sudradio.fr/politique/qui-est-olivier-becht-cet-ancien-ministre-qui-se-lance-dans-la-course-a-lelysee"
+        ]
+      ]
+    },
+    "philippe": {
+      "naissance": "1970-11-28",
+      "statut": "Candidature annoncée le 3 septembre 2024",
+      "aujourdhui": "Maire du Havre depuis 2020, réélu en 2026, président d’Horizons",
+      "parcours": [
+        [
+          "2021",
+          "Fondateur d’Horizons",
+          "parti"
+        ],
+        [
+          "2017–2020",
+          "Premier ministre",
+          "nommé"
+        ],
+        [
+          "2012–2017",
+          "Député de la Seine-Maritime",
+          "élu"
+        ],
+        [
+          "2010–2017",
+          "Maire du Havre",
+          "élu"
+        ]
+      ],
+      "formation": "ENA, Sciences Po",
+      "metier": "Avocat, puis directeur des affaires publiques d’Areva",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/%C3%89douard_Philippe"
+        ],
+        [
+          "Europe 1",
+          "https://www.europe1.fr/politique/edouard-philippe-annonce-officiellement-sa-candidature-a-la-prochaine-election-presidentielle-4265431"
+        ]
+      ]
+    },
+    "bertrand": {
+      "naissance": "1965-03-21",
+      "statut": "« Je le serai » le 27 août 2026, déclaration officielle prévue en fin d’année",
+      "aujourdhui": "Président de la région Hauts-de-France depuis 2016",
+      "parcours": [
+        [
+          "2022",
+          "Fondateur de Nous France",
+          "parti"
+        ],
+        [
+          "2010–2012",
+          "Ministre du Travail, de l’Emploi et de la Santé",
+          "nommé"
+        ],
+        [
+          "2005–2009",
+          "Ministre de la Santé, puis du Travail",
+          "nommé"
+        ],
+        [
+          "2002–2016",
+          "Député de l’Aisne",
+          "élu"
+        ]
+      ],
+      "formation": "Droit public, université de Reims",
+      "metier": "Agent général d’assurances",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Xavier_Bertrand"
+        ],
+        [
+          "LCP, 27 août 2026",
+          "https://lcp.fr/actualites/2027-figure-de-la-droite-xavier-bertrand-confirme-qu-il-sera-candidat-a-l-election"
+        ]
+      ]
+    },
+    "riner": {
+      "naissance": "1989-04-07",
+      "statut": "Candidature annoncée le 9 novembre 2026",
+      "aujourdhui": "Judoka, ambassadeur de l’Unicef depuis 2018",
+      "parcours": [
+        [
+          "2024",
+          "Champion olympique, en individuel et par équipes (Paris)",
+          "sport"
+        ],
+        [
+          "2016",
+          "Champion olympique (Rio)",
+          "sport"
+        ],
+        [
+          "2013",
+          "Président de la commission des athlètes de la Fédération internationale",
+          "élu"
+        ],
+        [
+          "2012",
+          "Champion olympique (Londres)",
+          "sport"
+        ]
+      ],
+      "formation": "Bac pro (2009), certificat Sciences Po pour sportifs de haut niveau",
+      "metier": "Judoka : 5 titres olympiques, 11 titres mondiaux en individuel",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Teddy_Riner"
+        ],
+        [
+          "LCP, 9 nov. 2026",
+          "https://lcp.fr/actualites/le-judoka-teddy-riner-annonce-sa-candidature-a-l-election-presidentielle-de-2027-444920"
+        ]
+      ]
+    },
+    "villepin": {
+      "naissance": "1953-11-14",
+      "statut": "Candidature officialisée le 20 novembre 2026",
+      "aujourdhui": "Fondateur de La France humaniste (juin 2025), avocat",
+      "parcours": [
+        [
+          "2005–2007",
+          "Premier ministre",
+          "nommé"
+        ],
+        [
+          "2004–2005",
+          "Ministre de l’Intérieur",
+          "nommé"
+        ],
+        [
+          "2002–2004",
+          "Ministre des Affaires étrangères",
+          "nommé"
+        ],
+        [
+          "1995–2002",
+          "Secrétaire général de l’Élysée",
+          "nommé"
+        ]
+      ],
+      "formation": "ENA (promotion Voltaire, 1980), Sciences Po",
+      "metier": "Diplomate, puis avocat",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Dominique_de_Villepin"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "retailleau": {
+      "naissance": "1960-11-20",
+      "statut": "Candidature annoncée le 12 février 2026",
+      "aujourdhui": "Président des Républicains depuis mai 2025, sénateur de la Vendée",
+      "parcours": [
+        [
+          "2025",
+          "Président des Républicains",
+          "parti"
+        ],
+        [
+          "2024–2025",
+          "Ministre de l’Intérieur",
+          "nommé"
+        ],
+        [
+          "2010–2015",
+          "Président du conseil général de la Vendée",
+          "élu"
+        ],
+        [
+          "2004",
+          "Sénateur de la Vendée",
+          "élu"
+        ]
+      ],
+      "formation": "Sciences Po Paris (1985)",
+      "metier": "Dirigeant d’une radio locale, puis d’une école de communication",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Bruno_Retailleau"
+        ],
+        [
+          "Public Sénat",
+          "https://www.publicsenat.fr/actualites/politique/https-www-publicsenat-fr-actualites-politique-je-serai-le-president-de-lordre-de-la-justice-et-de-la-fierte-francaise-bruno-retailleau-se-declare-candidat-a-la-presidentielle-de-2027"
+        ]
+      ]
+    },
+    "lisnard": {
+      "naissance": "1969-02-02",
+      "statut": "Candidature annoncée en janvier 2025",
+      "aujourdhui": "Maire de Cannes depuis 2014, réélu en 2026, président de l’Association des maires de France",
+      "parcours": [
+        [
+          "2021",
+          "Président de l’Association des maires de France",
+          "élu"
+        ],
+        [
+          "2017",
+          "Président de l’agglomération Cannes Pays de Lérins",
+          "élu"
+        ],
+        [
+          "2014",
+          "Maire de Cannes",
+          "élu"
+        ],
+        [
+          "2001",
+          "Conseiller municipal de Cannes",
+          "élu"
+        ]
+      ],
+      "formation": "Sciences Po Bordeaux (1992)",
+      "metier": "Chef d’entreprise (magasins de vêtements pour enfants)",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/David_Lisnard"
+        ],
+        [
+          "France-Vote",
+          "https://www.france-vote.fr/candidats"
+        ]
+      ]
+    },
+    "nda": {
+      "naissance": "1961-03-07",
+      "statut": "Candidature annoncée en mars 2025",
+      "aujourdhui": "Maire de Yerres depuis mars 2026, président de Debout la France",
+      "parcours": [
+        [
+          "2026",
+          "Maire de Yerres, à nouveau",
+          "élu"
+        ],
+        [
+          "2008",
+          "Président de Debout la République, devenu Debout la France",
+          "parti"
+        ],
+        [
+          "1997–2024",
+          "Député de l’Essonne",
+          "élu"
+        ],
+        [
+          "1995–2017",
+          "Maire de Yerres",
+          "élu"
+        ]
+      ],
+      "formation": "ENA, Sciences Po",
+      "metier": "Haut fonctionnaire",
+      "pres": [
+        [
+          2012,
+          1.79
+        ],
+        [
+          2017,
+          4.7
+        ],
+        [
+          2022,
+          2.06
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Nicolas_Dupont-Aignan"
+        ],
+        [
+          "France-Vote",
+          "https://www.france-vote.fr/candidats"
+        ]
+      ]
+    },
+    "asselineau": {
+      "naissance": "1957-09-14",
+      "statut": "Campagne lancée",
+      "aujourdhui": "Président de l’UPR, qu’il a fondée en 2007",
+      "parcours": [
+        [
+          "2007",
+          "Fondateur de l’Union populaire républicaine",
+          "parti"
+        ],
+        [
+          "2001–2008",
+          "Conseiller de Paris",
+          "élu"
+        ]
+      ],
+      "formation": "ENA, HEC",
+      "metier": "Inspecteur général des finances",
+      "pres": [
+        [
+          2017,
+          0.92
+        ],
+        [
+          2022,
+          null,
+          "parrainages insuffisants"
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Fran%C3%A7ois_Asselineau"
+        ],
+        [
+          "Slate",
+          "https://www.slate.fr/politique/election-presidentielle-2027-liste-candidats-declares-interesses-primaire-gauche-droite-extreme-lfi-rn-lr-ps-macron"
+        ]
+      ]
+    },
+    "philippot": {
+      "naissance": "1981-10-24",
+      "statut": "Candidature annoncée",
+      "aujourdhui": "Président des Patriotes, qu’il a fondés en 2017",
+      "parcours": [
+        [
+          "2017",
+          "Fondateur des Patriotes",
+          "parti"
+        ],
+        [
+          "2014–2019",
+          "Député européen",
+          "élu"
+        ],
+        [
+          "2012–2017",
+          "Vice-président du Front national",
+          "parti"
+        ]
+      ],
+      "formation": "ENA, HEC",
+      "metier": "Haut fonctionnaire",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Florian_Philippot"
+        ],
+        [
+          "LCP, 23 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ]
+      ]
+    },
+    "lepen": {
+      "f": true,
+      "naissance": "1968-08-05",
+      "statut": "Candidate déclarée le 7 juillet 2026, jour de l’arrêt d’appel qui la laisse éligible ; pourvoi en cassation en attente",
+      "aujourdhui": "Présidente du groupe RN à l’Assemblée depuis 2022, députée du Pas-de-Calais depuis 2017",
+      "parcours": [
+        [
+          "2017",
+          "Députée du Pas-de-Calais",
+          "élu"
+        ],
+        [
+          "2011–2021",
+          "Présidente du FN, devenu RN",
+          "parti"
+        ],
+        [
+          "2004–2017",
+          "Députée européenne",
+          "élu"
+        ],
+        [
+          "1998–2021",
+          "Conseillère régionale",
+          "élu"
+        ]
+      ],
+      "formation": "DEA de droit pénal (université Paris II)",
+      "metier": "Avocate (1992-1998)",
+      "pres": [
+        [
+          2012,
+          17.9
+        ],
+        [
+          2017,
+          21.3,
+          "2nd tour : 33,90 %"
+        ],
+        [
+          2022,
+          23.15,
+          "2nd tour : 41,45 %"
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Marine_Le_Pen"
+        ],
+        [
+          "LCP, 7 juil. 2026",
+          "https://lcp.fr/actualites/ce-soir-je-suis-candidate-a-l-election-presidentielle-annonce-marine-le-pen-438886"
+        ]
+      ]
+    },
+    "zemmour": {
+      "naissance": "1958-08-31",
+      "statut": "Candidature officialisée le 10 novembre 2026",
+      "aujourdhui": "Président de Reconquête, fondé en décembre 2021",
+      "parcours": [
+        [
+          "2021",
+          "Fondateur de Reconquête",
+          "parti"
+        ],
+        [
+          "2019–2021",
+          "Chroniqueur sur CNews",
+          "carrière"
+        ],
+        [
+          "1996–2021",
+          "Journaliste politique au Figaro",
+          "carrière"
+        ],
+        [
+          "1986–1996",
+          "Journaliste au Quotidien de Paris",
+          "carrière"
+        ]
+      ],
+      "formation": "Sciences Po Paris (1979)",
+      "metier": "Journaliste et essayiste",
+      "pres": [
+        [
+          2022,
+          7.07
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/%C3%89ric_Zemmour"
+        ],
+        [
+          "Euronews, 10 nov. 2026",
+          "https://fr.euronews.com/2026/11/10/eric-zemmour-annonce-sa-candidature-a-la-presidentielle"
+        ]
+      ]
+    },
+    "lassalle": {
+      "naissance": "1955-05-03",
+      "statut": "Cagnotte lancée pour une 3e candidature, décision pas encore annoncée",
+      "aujourdhui": "Président de Résistons !, sans mandat depuis 2022",
+      "parcours": [
+        [
+          "2016",
+          "Fondateur de Résistons !",
+          "parti"
+        ],
+        [
+          "2002–2022",
+          "Député des Pyrénées-Atlantiques",
+          "élu"
+        ],
+        [
+          "1982–2015",
+          "Conseiller général des Pyrénées-Atlantiques",
+          "élu"
+        ],
+        [
+          "1977–2017",
+          "Maire de Lourdios-Ichère",
+          "élu"
+        ]
+      ],
+      "formation": "Technicien agricole",
+      "metier": "Ancien berger, selon ses mots",
+      "pres": [
+        [
+          2017,
+          1.21
+        ],
+        [
+          2022,
+          3.13
+        ]
+      ],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Jean_Lassalle"
+        ],
+        [
+          "Europe 1",
+          "https://www.europe1.fr/node/970134"
+        ]
+      ]
+    },
+    "polony": {
+      "f": true,
+      "naissance": "1975-04-15",
+      "statut": "Candidature annoncée le 14 octobre 2026",
+      "aujourdhui": "Présidente du mouvement Nous sommes la France (2026)",
+      "parcours": [
+        [
+          "2018–2025",
+          "Directrice de la rédaction de Marianne",
+          "carrière"
+        ],
+        [
+          "2011–2014",
+          "Chroniqueuse à « On n’est pas couché » (France 2)",
+          "carrière"
+        ],
+        [
+          "2002",
+          "Candidate aux législatives à Paris (Pôle républicain)",
+          "candidature"
+        ],
+        [
+          "2001",
+          "Secrétaire nationale du Mouvement des citoyens",
+          "parti"
+        ]
+      ],
+      "formation": "Agrégation de lettres modernes (1999), Sciences Po",
+      "metier": "Journaliste et essayiste, ancienne professeure de lettres",
+      "pres": [],
+      "sources": [
+        [
+          "Wikipédia",
+          "https://fr.wikipedia.org/wiki/Natacha_Polony"
+        ],
+        [
+          "LCP, 14 oct. 2026",
+          "https://lcp.fr/actualites/natacha-polony-annonce-sa-candidature-a-l-election-presidentielle-443808"
+        ]
+      ]
+    }
+  }
+}

@@ -15,6 +15,8 @@ En ligne : https://sonificator33.github.io/ELECTION_2027/
 - `js/store.js` : stockage (Firebase, ou mode essai sur le téléphone).
 - `js/config.js` : configuration Firebase.
 - `js/sound.js` : identité sonore (Web Audio, aucun fichier son).
+- `js/fiches.js` : affichage des fiches candidats (toucher un candidat, glisser pour passer au suivant).
+- `fiches/` : les fiches des candidats. `fiches.json` est lu par l’appli, une page `.md` par candidat pour lire sur GitHub, `img/` pour les dessins à venir. Voir [fiches/README.md](fiches/README.md).
 - `firestore.rules` : règles d'accès à coller dans la console Firebase.
 
 ## Typographie

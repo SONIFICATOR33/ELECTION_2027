@@ -7,6 +7,7 @@ import * as S from './scoring.js';
 import { openStore } from './store.js';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
+import { initFiches } from './fiches.js';
 
 /* place de chaque candidat sur l'axe gauche-droite (-1 à 1), null = hors axe : sert au son */
 const AXIS = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
@@ -112,12 +113,12 @@ function renderPollsHome() {
   const box = $('#pollsHome');
   if (inBlackout()) { box.innerHTML = '<p class="blackout">Sondages masqués la veille et le jour du vote, comme le veut la loi du 19 juillet 1977.</p>'; return; }
   $('#podSrc').textContent = D.POLL_DATE;
-  $('#podium').innerHTML = [1, 0, 2].map(i => { const [id, v] = D.POD[i], c = by[id]; return `<div class="pcol p${i + 1}">${av(c, i === 0 ? 62 : 50)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><div class="blk"><span class="rk">${i + 1}</span><span class="pv">${fmt(v)} %</span></div></div>`; }).join('');
+  $('#podium').innerHTML = [1, 0, 2].map(i => { const [id, v] = D.POD[i], c = by[id]; return `<div class="pcol p${i + 1}" data-fiche="${id}" role="button" tabindex="0" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}">${av(c, i === 0 ? 62 : 50)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><div class="blk"><span class="rk">${i + 1}</span><span class="pv">${fmt(v)} %</span></div></div>`; }).join('');
   const UP = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
   const DN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
-  $('#moves').innerHTML = D.MOVES.map(([h, l]) => `<div><h3>${h}</h3>${l.map(([id, u, t]) => `<div class="mv"><span class="ar ${u ? 'up' : 'dn'}">${u ? UP : DN}</span>${av(by[id], 40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
+  $('#moves').innerHTML = D.MOVES.map(([h, l]) => `<div><h3>${h}</h3>${l.map(([id, u, t]) => `<div class="mv" data-fiche="${id}" role="button" tabindex="0"><span class="ar ${u ? 'up' : 'dn'}">${u ? UP : DN}</span>${av(by[id], 40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
   $('#lastSrc').textContent = D.LAST_SRC;
-  $('#last').innerHTML = D.LAST.map(([id, v]) => `<div class="bar">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${v / 35 * 100}%;--c:${by[id].col}"></i></div><span class="v">${v} %</span></div>`).join('');
+  $('#last').innerHTML = D.LAST.map(([id, v]) => `<div class="bar" data-fiche="${id}" role="button" tabindex="0">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${v / 35 * 100}%;--c:${by[id].col}"></i></div><span class="v">${v} %</span></div>`).join('');
 }
 
 function renderHomePlayers() {
@@ -603,6 +604,8 @@ $('#brandBtn').onclick = () => showSplash();
 
 /* ===================== DÉMARRAGE ===================== */
 (async function start() {
+  initFiches();
+  window.addEventListener('fiche-error', () => toast('Fiches indisponibles pour le moment, réessaie dans un instant'));
   store = await openStore();
   ME = store.me();
   await refresh(true);

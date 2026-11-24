@@ -361,3 +361,76 @@ h2{font-weight:600;letter-spacing:-.2px}
 @media (max-height:740px){.portrait{width:min(44vw,180px);margin-bottom:16px}.punch{font-size:clamp(38px,11vw,52px)}.splash .jbig{margin-top:16px}}
 .portrait img{display:block;width:100%;height:100%;object-fit:cover;border-radius:2px}
 .portrait{aspect-ratio:640/859;width:min(54vw,220px)}
+/* v6 : fiches des candidats */
+[data-fiche][role=button]{cursor:pointer;border-radius:10px}
+.medal{--s:64px;width:var(--s);height:var(--s);border-radius:50%;background:var(--c);color:#FAF6EE;display:inline-grid;place-items:center;font:600 calc(var(--s)*.38)/1 var(--cond);letter-spacing:.5px;flex:none;box-shadow:0 0 0 2px #121110,0 0 0 3.5px var(--or)}
+.medal.sm{--s:46px;box-shadow:0 0 0 2px var(--card),0 0 0 3px var(--or)}
+.rail{display:flex;gap:4px;overflow-x:auto;scroll-snap-type:x proximity;margin:8px -16px 0;padding:6px 16px 6px;scrollbar-width:none;overscroll-behavior-x:contain}
+.rail::-webkit-scrollbar{display:none}
+.rc{flex:0 0 74px;scroll-snap-align:start;display:grid;justify-items:center;align-content:start;gap:7px;padding:6px 2px;border:0;background:none;text-align:center;border-radius:12px}
+.rc b{font:600 14px/1.05 var(--cond)}
+.rc .pn{font-size:11px;margin-bottom:1px}
+.rc:active .medal{transform:scale(.95)}
+.rsep{flex:0 0 1px;align-self:stretch;margin:6px 8px 26px;background:var(--or);opacity:.5}
+.flink{display:block;text-align:left;margin:0 0 6px}
+.fiche{position:fixed;inset:0;z-index:45;background:rgba(10,9,8,.55);display:flex;align-items:flex-end;justify-content:center}
+.fiche[hidden]{display:none}
+.fcard{width:100%;max-width:560px;height:94vh;height:94dvh;display:flex;flex-direction:column;background:var(--bg);border-radius:18px 18px 0 0;overflow:hidden;box-shadow:0 -12px 40px rgba(0,0,0,.35)}
+.fhead{flex:none;background:#0E0E0E;color:#FAF6EE;padding:6px 14px 12px;border-bottom:1px solid var(--or)}
+.fbar{display:flex;align-items:center;gap:2px}
+.fx{width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--orC);display:grid;place-items:center;flex:none}
+.fx:active{background:rgba(233,215,168,.12)}
+.fpos{flex:1;padding-left:8px;font:500 13px/1 var(--sans);color:var(--orC);letter-spacing:.3px;font-variant-numeric:tabular-nums}
+.fid{display:grid;grid-template-columns:108px minmax(0,1fr);gap:16px;align-items:center;margin-top:4px}
+.fimg{margin:0;aspect-ratio:4/5;padding:4px;border-radius:3px;display:grid;place-items:center;overflow:hidden;
+  background:radial-gradient(circle at 50% 40%,#3A352F,#121110 72%) content-box,linear-gradient(145deg,#E2C98C,#A8843F 45%,#E9D7A8 70%,#8C6B2E) border-box;box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.fimg img{width:100%;height:100%;object-fit:cover;display:block;border-radius:1px}
+.fwho h2{margin:0;color:#FAF6EE;font:600 clamp(26px,8vw,32px)/1 var(--cond);letter-spacing:-.3px;text-wrap:balance}
+.fwho .pn{color:var(--orC);font-size:14px;margin-bottom:5px}
+.fparty{margin:10px 0 0;color:var(--orC);font-size:15px;line-height:1.25}
+.fage{margin:6px 0 0;font-size:15px;line-height:1.2;color:#FAF6EE}
+.fage b{font:800 22px/1 var(--sans);letter-spacing:-.3px}
+.fticks{display:flex;gap:3px;align-items:center;height:6px;margin-top:14px}
+.fticks i{flex:1;height:2px;border-radius:1px;background:rgba(233,215,168,.22)}
+.fticks i.on{height:6px;background:var(--or)}
+.fticks i:not(.off)+i.off{margin-left:7px}
+.fbody{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:2px 16px calc(28px + env(safe-area-inset-bottom))}
+.fsec{padding:14px 0;border-bottom:1px solid var(--line)}
+.fsec h3{margin:0 0 8px;font:italic 500 20px/1.1 var(--cond);color:var(--bleuT)}
+.fsec p{margin:0}
+.fstat{font-weight:600;line-height:1.4;margin-bottom:8px!important}
+.frow{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:6px 0;align-items:baseline}
+.fl{font-size:13px;line-height:1.3;color:var(--mut)}
+.fv{margin:0;line-height:1.4}
+.fv>b{font:800 20px/1 var(--sans);font-variant-numeric:tabular-nums}
+.fv em{display:flex;align-items:flex-start;gap:4px;margin-top:5px;font-style:normal;font-size:13px;line-height:1.3}
+.fv em svg{flex:none;margin-top:1px}
+.fv em.up{color:var(--vert)}.fv em.dn{color:var(--rouge)}
+.mut{color:var(--mut)}
+.fpres{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.fpres li{display:grid;gap:2px;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.fpres b{font:700 12px/1 var(--sans);color:var(--mut)}
+.fpres span{font:800 16px/1.1 var(--sans);font-variant-numeric:tabular-nums}
+.fpres small{font-size:12px;line-height:1.2;color:var(--mut)}
+.fv .fpres+.mut{margin-top:6px;font-size:13px}
+.ftl{list-style:none;margin:0;padding:0}
+.ftl li{position:relative;display:grid;grid-template-columns:84px minmax(0,1fr);grid-template-rows:auto 1fr;column-gap:12px;padding:0 0 16px 18px}
+.ftl li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;transform:rotate(45deg);background:var(--or)}
+.ftl li:not(:last-child)::after{content:"";position:absolute;left:3px;top:17px;bottom:2px;width:1px;background:var(--line)}
+.ftl li:last-child{padding-bottom:2px}
+.ftl time{font:700 14px/1.4 var(--sans);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ftl span{font-size:15px;line-height:1.4}
+.ftl span{grid-column:2;grid-row:1/span 2}
+.ftl i{grid-column:1;grid-row:2;justify-self:start;margin-top:5px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);font:600 11px/1.1 var(--sans);font-style:normal;color:var(--mut)}
+.ftl i.k-elu{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.ftl i.k-nomme{border-color:var(--or);color:var(--bleuT)}
+.fsrc{margin:14px 0 0;font-size:13px;line-height:1.45;color:var(--mut)}
+.fsrc a{color:var(--bleuT);text-underline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  .fiche.open .fcard{animation:fup .32s cubic-bezier(.2,.8,.2,1)}
+  .fcard.in-r .fid,.fcard.in-r .fbody{animation:fsr .26s ease-out}
+  .fcard.in-l .fid,.fcard.in-l .fbody{animation:fsl .26s ease-out}
+}
+@keyframes fup{from{transform:translateY(48px);opacity:.5}to{transform:none;opacity:1}}
+@keyframes fsr{from{transform:translateX(26px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fsl{from{transform:translateX(-26px);opacity:0}to{transform:none;opacity:1}}

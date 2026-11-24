@@ -48,7 +48,7 @@ export const C = [
   { id: 'tondelier', p: 'Marine', n: 'Tondelier', party: 'Les Écologistes', col: '#2E9E4F', main: 1, poll: 2.5, note: 'Choix du parti le 13 déc.' },
   { id: 'batho', p: 'Delphine', n: 'Batho', party: 'Génération écologie', col: '#5E9A2E' },
   { id: 'glucksmann', p: 'Raphaël', n: 'Glucksmann', party: 'Place publique', col: 'var(--c-rg)', main: 1, poll: 9.8 },
-  { id: 'hollande', p: 'François', n: 'Hollande', party: 'PS', col: '#C24F86', main: 1, poll: 7, und: 1, note: 'Décision en décembre' },
+  { id: 'hollande', p: 'François', n: 'Hollande', party: 'PS', col: '#C24F86', main: 1, poll: 7, und: 1, note: 'Décision en janvier' },
   { id: 'bouamrane', p: 'Karim', n: 'Bouamrane', party: 'PS, hors primaire', col: '#C7608F' },
   { id: 'cazeneuve', p: 'Bernard', n: 'Cazeneuve', party: 'La Convention', col: '#A85C80' },
   { id: 'attal', p: 'Gabriel', n: 'Attal', party: 'Renaissance', col: '#C99700', main: 1, poll: 5 },
