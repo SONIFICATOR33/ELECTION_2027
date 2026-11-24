@@ -258,3 +258,5 @@ select{font:inherit;color:inherit;width:100%;min-height:44px;border:1.5px solid 
 .sbody[hidden]{display:none}
 #sb3{margin-top:0}
 .photo b{flex:none;min-width:52px;text-align:center}
+.snd{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;display:grid;place-items:center;flex:none}
+.snd .x{display:none}.snd[aria-pressed=false] .x{display:inline}.snd[aria-pressed=false] .w1,.snd[aria-pressed=false] .w2{display:none}

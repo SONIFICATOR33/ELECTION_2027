@@ -28,9 +28,9 @@ export const mult = w => Math.round((2 - w / (NWEEKS - 1)) * 100) / 100;
 export const MILESTONES = [
   { at: LOCK1, short: '11 déc.', label: 'Clôture du pari « Qui sera là ? »', kind: 'lock' },
   { at: RES1, short: '31 janv.', label: 'Résultat : qui est encore là', kind: 'res' },
-  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « Ligne de départ »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
+  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « 500 signatures »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
   { at: DEPOT500, short: '12 mars', label: 'Dépôt des 500 signatures, 18 h', kind: 'off' },
-  { at: RES2, short: '26 mars', label: 'Liste officielle des candidats', kind: 'res' },
+  { at: RES2, short: '26 mars', label: 'Résultat : qui a ses 500 signatures', kind: 'res' },
   { at: TOUR1, short: '18 avril', label: '1er tour', kind: 'tour' },
   { at: TOUR2, short: '2 mai', label: '2nd tour', kind: 'tour' }
 ];

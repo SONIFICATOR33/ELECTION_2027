@@ -5,6 +5,11 @@ import * as D from './data.js';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
 import { openStore } from './store.js';
+import { snd } from './sound.js';
+
+/* place de chaque candidat sur l'axe gauche-droite (-1 à 1), null = hors axe : sert au son */
+const AXIS = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
+const byName = Object.fromEntries(C.map(c => [c.p + ' ' + c.n, c.id]));
 
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -24,7 +29,9 @@ const toast = m => { toastEl.textContent = m; toastEl.classList.add('on'); clear
 
 /* ---------- état ---------- */
 let store, ME = null, ALL = { players: {}, pronos: {} };
-const blankTeam = () => ({ pm: '', min: {}, jl: '', jn: '' });
+const blankTeam = () => ({ coeur: '', pm: '', min: {}, jl: '', jn: '' });
+const teamKey = () => 'pdm-team-' + (ME ? ME.pid : 'anon');
+const readTeam = () => { try { return JSON.parse(localStorage.getItem(teamKey())) || {}; } catch (e) { return {}; } };
 let draft = { l1: [], l2: [], gp: { pres: null, top: [], win: 52 }, team: blankTeam() };
 const dirty = { l1: false, l2: false, gp: false, team: false };
 let pending = null;
@@ -37,7 +44,7 @@ function loadDraft() {
   const p = mine();
   draft.l1 = (p.l1 || []).slice(); draft.l2 = (p.l2 || []).slice();
   const cur = S.current(p); draft.gp = cur ? clone(cur) : { pres: null, top: [], win: 52 };
-  draft.team = Object.assign(blankTeam(), clone(p.team || {}));
+  draft.team = Object.assign(blankTeam(), readTeam());
   for (const k in dirty) dirty[k] = false;
 }
 
@@ -85,7 +92,7 @@ function renderCTA() {
     return;
   }
   const todo = ['l1', 'l2', 'gp'].filter(k => isOpen(k) && !done(k));
-  const names = { l1: 'Étape 1 : qui sera encore là le 31 janvier ?', l2: 'Étape 2 : la ligne de départ du 26 mars', gp: 'Le Grand Prono : président, 1er tour, finale' };
+  const names = { l1: 'Étape 1 : qui sera encore là le 31 janvier ?', l2: 'Étape 2 : qui aura ses 500 signatures ?', gp: 'Le Grand Prono : qui va gagner, 1er tour, finale' };
   const anchor = { l1: 'st1', l2: 'st2', gp: 'st3' };
   if (todo.length) {
     const k = todo[0], dl = deadline(k);
@@ -118,7 +125,7 @@ function renderHomePlayers() {
 
 /* ===================== MES PARIS ===================== */
 function renderParisSummary() {
-  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'La ligne de départ', 'st2'], ['gp', 'Le Grand Prono', 'st3']];
+  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui aura ses 500 signatures ?', 'st2'], ['gp', 'Le Grand Prono', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k), dl = deadline(k);
     return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'} · ${dl.txt}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
@@ -159,17 +166,18 @@ function renderStages() {
     const id = b.dataset.id, i = draft[key].indexOf(id);
     if (i >= 0) draft[key].splice(i, 1); else draft[key].push(id);
     dirty[key] = true; b.classList.toggle('on', i < 0); b.setAttribute('aria-pressed', i < 0);
+    if (i < 0) snd.pick(AXIS(id)); else snd.unpick(AXIS(id));
     $('#n' + n).textContent = draft[key].length;
     $('#save' + n).textContent = done(key) ? 'Enregistrer mes changements' : 'Valider mon pari';
   });
   $('#save' + n).addEventListener('click', () => withMe(async () => {
-    if (!draft[key].length) { toast('Touche au moins un candidat'); return; }
+    if (!draft[key].length) { snd.error(); toast('Touche au moins un candidat'); return; }
     await store.save({ [key]: draft[key].slice(), [key + 'at']: now() });
-    dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Ligne de départ enregistrée');
+    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Pari « 500 signatures » enregistré');
   }));
 });
-$('#pre1').onclick = () => { draft.l1 = D.U1.filter(id => !by[id].und); dirty.l1 = true; renderStage('l1'); toast('Les déclarés actuels sont cochés : décoche ceux qui vont renoncer'); };
-$('#pre2').onclick = () => { if (!draft.l1.length) { toast('Fais d’abord ton étape 1'); return; } draft.l2 = draft.l1.slice(); dirty.l2 = true; renderStage('l2'); toast('Repris de ton étape 1 : décoche ceux qui n’auront pas leurs 500 signatures'); };
+$('#pre1').onclick = () => { draft.l1 = D.U1.filter(id => !by[id].und); dirty.l1 = true; renderStage('l1'); snd.sweep(draft.l1.map(AXIS)); toast('Les déclarés actuels sont cochés : décoche ceux qui vont renoncer'); };
+$('#pre2').onclick = () => { if (!draft.l1.length) { toast('Fais d’abord ton étape 1'); return; } draft.l2 = draft.l1.slice(); dirty.l2 = true; renderStage('l2'); snd.sweep(draft.l2.map(AXIS)); toast('Repris de ton étape 1 : décoche ceux qui n’auront pas leurs signatures'); };
 
 /* ---- Repli des étapes ---- */
 const SB = { 1: false, 2: false, 3: false }, SBK = { 1: 'l1', 2: 'l2', 3: 'gp' };
@@ -184,8 +192,8 @@ function renderSB() {
     b.textContent = SB[i] ? 'Replier' : isOpen(k) ? (done(k) ? 'Voir et modifier mon pari' : 'Faire ce pari') : 'Voir mon pari';
     const p = mine();
     let t;
-    if (k === 'gp') { const c = S.current(p); t = c ? `Président : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
-    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'sur la ligne de départ'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
+    if (k === 'gp') { const c = S.current(p); t = c ? `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
+    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     $('#sum' + i).textContent = t;
   });
 }
@@ -213,7 +221,7 @@ function renderCar() {
   $('#car').innerHTML = h;
 }
 const syncCar = () => $$('.cand').forEach(b => { const s = b.dataset.id === gp().pres; b.classList.toggle('sel', s); b.setAttribute('aria-pressed', s); });
-$('#car').addEventListener('click', e => { const b = e.target.closest('.cand'); if (!b) return; gp().pres = gp().pres === b.dataset.id ? null : b.dataset.id; dirty.gp = true; syncCar(); renderDuel(); renderGPBtn(); if (gp().pres) toast(by[gp().pres].n + ' est ton président'); });
+$('#car').addEventListener('click', e => { const b = e.target.closest('.cand'); if (!b) return; gp().pres = gp().pres === b.dataset.id ? null : b.dataset.id; dirty.gp = true; if (gp().pres) snd.pick(AXIS(gp().pres), true); else snd.unpick(AXIS(b.dataset.id)); syncCar(); renderDuel(); renderGPBtn(); if (gp().pres) toast('Tu vois ' + by[gp().pres].n + ' gagner'); });
 const scr = dir => { const c = $('#car'); c.scrollBy({ left: dir * Math.max(200, c.clientWidth * .8), behavior: 'smooth' }); };
 $('#prev').onclick = () => scr(-1); $('#next').onclick = () => scr(1);
 $('#car').addEventListener('keydown', e => { if (e.key === 'ArrowRight') { scr(1); e.preventDefault(); } if (e.key === 'ArrowLeft') { scr(-1); e.preventDefault(); } });
@@ -225,7 +233,7 @@ function renderPick() {
 }
 $('#pick').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; const id = b.dataset.id, i = gp().top.findIndex(t => t.id === id);
-  if (i >= 0) gp().top.splice(i, 1); else if (gp().top.length < 5) gp().top.push({ id, pct: Math.round((by[id].poll || 2) * 2) / 2 }); else { toast('Top 5 complet : retire d’abord un nom'); return; }
+  if (i >= 0) { gp().top.splice(i, 1); snd.unpick(AXIS(id)); } else if (gp().top.length < 5) { gp().top.push({ id, pct: Math.round((by[id].poll || 2) * 2) / 2 }); snd.rank(gp().top.length - 1, AXIS(id)); } else { snd.error(); toast('Top 5 complet : retire d’abord un nom'); return; }
   dirty.gp = true; renderPick(); renderSlots(); renderDuel(); renderGPBtn();
 });
 function renderSlots() {
@@ -236,7 +244,7 @@ function renderSlots() {
   }
   $('#slots').innerHTML = h; renderTotal();
 }
-$('#slots').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const t = gp().top[+b.dataset.i]; t.pct = Math.min(60, Math.max(0, t.pct + +b.dataset.s)); dirty.gp = true; renderSlots(); renderGPBtn(); });
+$('#slots').addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (!b) return; const t = gp().top[+b.dataset.i]; t.pct = Math.min(60, Math.max(0, t.pct + +b.dataset.s)); snd.tick(t.pct); dirty.gp = true; renderSlots(); renderGPBtn(); });
 function renderTotal() {
   const s = gp().top.reduce((a, t) => a + t.pct, 0), over = s > 100;
   $('#total').className = 'total' + (over ? ' over' : '');
@@ -246,41 +254,41 @@ function renderDuel() {
   const el = $('#duel'), g = gp();
   if (g.top.length < 2) { el.innerHTML = '<p class="help">Ta finale se remplit toute seule avec tes deux premiers du 1er tour.</p>'; renderCoh(); return; }
   const [a, b] = [g.top[0].id, g.top[1].id], inF = g.pres === a || g.pres === b;
-  const fin = id => `<button class="fin${g.pres === id ? ' win' : ''}" data-id="${id}">${av(by[id], 56)}<b>${by[id].n}</b><span class="fine">${g.pres === id ? 'Mon président' : 'Le désigner'}</span></button>`;
+  const fin = id => `<button class="fin${g.pres === id ? ' win' : ''}" data-id="${id}">${av(by[id], 56)}<b>${by[id].n}</b><span class="fine">${g.pres === id ? 'Mon gagnant' : 'Le faire gagner'}</span></button>`;
   const w = inF ? g.pres : null, l = w === a ? b : a;
   el.innerHTML = `<div class="duel">${fin(a)}<span class="vs">contre</span>${fin(b)}</div>` +
     (w ? `<div class="range"><div class="score"><span>${by[w].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span></div><input type="range" id="win" min="50" max="80" step="0.5" value="${g.win}" aria-label="Score du vainqueur au 2nd tour"></div>`
-      : `<p class="warn">${g.pres ? `Ton président (${by[g.pres].n}) n'est pas dans ta finale. Touche un finaliste ou revois ton top 2.` : 'Touche le finaliste que tu vois gagner.'}</p>`);
+      : `<p class="warn">${g.pres ? `Ton gagnant (${by[g.pres].n}) n'est pas dans ta finale. Touche un finaliste ou revois ton top 2.` : 'Touche le finaliste que tu vois gagner.'}</p>`);
   renderCoh();
 }
 function renderCoh() {
-  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ta ligne de départ (étape 2)' : 'ta liste de l’étape 1';
+  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari des 500 signatures' : 'ton pari « Qui sera là ? »';
   const out = ref.length ? [g.pres, ...g.top.map(t => t.id)].filter((id, i, a) => id && a.indexOf(id) === i && !ref.includes(id)) : [];
   el.hidden = !out.length;
   if (out.length) el.textContent = `Attention : ${out.map(id => by[id].n).join(', ')} ${out.length > 1 ? 'ne sont pas' : 'n’est pas'} dans ${lab}. C’est permis, mais pas très cohérent.`;
 }
-$('#duel').addEventListener('click', e => { const b = e.target.closest('.fin'); if (!b) return; gp().pres = b.dataset.id; dirty.gp = true; syncCar(); renderDuel(); renderGPBtn(); });
-$('#duel').addEventListener('input', e => { if (e.target.id !== 'win') return; const g = gp(); g.win = +e.target.value; const l = g.top[0].id === g.pres ? g.top[1].id : g.top[0].id; $('#duel .score').innerHTML = `<span>${by[g.pres].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span>`; dirty.gp = true; renderGPBtn(); });
+$('#duel').addEventListener('click', e => { const b = e.target.closest('.fin'); if (!b) return; gp().pres = b.dataset.id; snd.pick(AXIS(b.dataset.id), true); dirty.gp = true; syncCar(); renderDuel(); renderGPBtn(); });
+$('#duel').addEventListener('input', e => { if (e.target.id !== 'win') return; const g = gp(); g.win = +e.target.value; snd.tick((g.win - 50) * 1.5); const l = g.top[0].id === g.pres ? g.top[1].id : g.top[0].id; $('#duel .score').innerHTML = `<span>${by[g.pres].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span>`; dirty.gp = true; renderGPBtn(); });
 function renderGPBtn() {
   const b = $('#saveGP'); b.hidden = !isOpen('gp');
   b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Grand Prono enregistré') : 'Enregistrer mon Grand Prono';
 }
 $('#saveGP').onclick = () => withMe(async () => {
   const g = gp(), er = [], s = g.top.reduce((a, t) => a + t.pct, 0);
-  if (!g.pres) er.push('Choisis ton président.');
+  if (!g.pres) er.push('Choisis qui va gagner.');
   if (g.top.length < 5) er.push('Complète ton top 5 du 1er tour.');
   if (s > 100) er.push('Ton top 5 dépasse 100 %.');
   if (g.top.some((t, i) => i && t.pct > g.top[i - 1].pct)) er.push('Les % doivent suivre l’ordre d’arrivée.');
-  if (g.pres && g.top.length >= 2 && g.top[0].id !== g.pres && g.top[1].id !== g.pres) er.push('Ton président doit être dans ta finale.');
+  if (g.pres && g.top.length >= 2 && g.top[0].id !== g.pres && g.top[1].id !== g.pres) er.push('Ton gagnant doit être dans ta finale.');
   const E = $('#errs');
-  if (er.length) { E.innerHTML = er.map(esc).join('<br>'); E.classList.add('on'); E.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  if (er.length) { snd.error(); E.innerHTML = er.map(esc).join('<br>'); E.classList.add('on'); E.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   E.classList.remove('on');
   await store.save({}, { pres: g.pres, top: g.top.map(t => ({ id: t.id, pct: t.pct })), win: g.win });
-  dirty.gp = false; await refresh(true); renderAll(); toast('Grand Prono enregistré : photo de la semaine prise');
+  snd.vote(); dirty.gp = false; await refresh(true); renderAll(); toast('Grand Prono enregistré : photo de la semaine prise');
 });
 $('#copy').onclick = async () => {
   const g = gp(), t = ['Les pronos des membrés' + (ME ? ' (' + ME.pseudo + ')' : ''),
-  'Président : ' + (g.pres ? by[g.pres].p + ' ' + by[g.pres].n : 'à choisir'),
+  'Mon prono pour l’Élysée : ' + (g.pres ? by[g.pres].p + ' ' + by[g.pres].n : 'à choisir'),
   '1er tour : ' + (g.top.map((x, i) => (i + 1) + '. ' + by[x.id].n + ' ' + fmt(x.pct) + ' %').join(', ') || 'à faire'),
   g.top.length > 1 && g.pres ? '2nd tour : ' + by[g.pres].n + ' ' + fmt(g.win) + ' %' : '',
   location.origin + location.pathname].filter(Boolean).join('\n');
@@ -296,10 +304,11 @@ const OPTS = '<option value="">Choisir…</option>' +
   '<option value="__autre">Autre…</option>';
 const selHTML = (k, label) => `<div class="sel" data-k="${esc(k)}"><select aria-label="${esc(label)}">${OPTS}</select><input type="text" placeholder="Tape le nom" maxlength="40" autocomplete="off" aria-label="${esc(label)}, autre nom"></div>`;
 $('#t-pm').innerHTML = selHTML('pm', 'Premier ministre');
+$('#t-coeur').innerHTML = `<div class="sel" data-k="coeur"><select aria-label="Mon président de cœur"><option value="">Choisir…</option>${C.map(c => `<option>${esc(c.p + ' ' + c.n)}</option>`).join('')}<option value="__autre">Autre…</option></select><input type="text" placeholder="Tape le nom" maxlength="40" autocomplete="off" aria-label="Président de cœur, autre nom"></div>`;
 $('#mins').innerHTML = D.POSTES.map(p => `<div class="minrow"><span>${esc(p)}</span>${selHTML('min:' + p, p)}</div>`).join('');
 $('#t-jn').innerHTML = selHTML('jn', 'Nommé au ministère joker');
-function getT(k) { return k === 'pm' ? draft.team.pm : k === 'jn' ? draft.team.jn : (draft.team.min || {})[k.slice(4)] || ''; }
-function setT(k, v) { if (k === 'pm') draft.team.pm = v; else if (k === 'jn') draft.team.jn = v; else { draft.team.min = draft.team.min || {}; draft.team.min[k.slice(4)] = v; } dirty.team = true; }
+function getT(k) { return ['pm', 'jn', 'coeur'].includes(k) ? draft.team[k] || '' : (draft.team.min || {})[k.slice(4)] || ''; }
+function setT(k, v) { if (['pm', 'jn', 'coeur'].includes(k)) draft.team[k] = v; else { draft.team.min = draft.team.min || {}; draft.team.min[k.slice(4)] = v; } dirty.team = true; }
 function renderTeam() {
   $$('#v-team .sel').forEach(d => {
     const v = getT(d.dataset.k), s = d.querySelector('select'), i = d.querySelector('input');
@@ -313,17 +322,18 @@ $('#v-team').addEventListener('change', e => {
   const d = e.target.closest('.sel'); if (!d || e.target.tagName !== 'SELECT') return;
   const v = e.target.value;
   if (v === '__autre') { d.classList.add('other'); const i = d.querySelector('input'); setT(d.dataset.k, i.value.trim()); i.focus(); }
-  else { d.classList.remove('other'); setT(d.dataset.k, v); }
+  else { d.classList.remove('other'); setT(d.dataset.k, v); if (v) snd.pick(v in byName ? AXIS(byName[v]) : null); }
 });
 $('#v-team').addEventListener('input', e => {
   if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; return; }
   const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') setT(d.dataset.k, e.target.value.trim());
 });
-async function saveTeam() { await store.save({ team: clone(draft.team) }); dirty.team = false; await refresh(true); }
-$('#teamSave').onclick = () => withMe(async () => { if (!draft.team.pm) { toast('Choisis au moins ton Premier ministre'); return; } await saveTeam(); toast('Team enregistrée'); });
-$('#teamShare').onclick = () => withMe(async () => {
-  if (!draft.team.pm) { toast('Choisis au moins ton Premier ministre'); return; }
+async function saveTeam() { try { localStorage.setItem(teamKey(), JSON.stringify(draft.team)); } catch (e) { } dirty.team = false; }
+$('#teamSave').onclick = async () => { if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président de cœur ou ton Premier ministre'); return; } await saveTeam(); snd.vote(); toast('Team enregistrée sur ton téléphone'); };
+$('#teamShare').onclick = async () => {
+  if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président de cœur ou ton Premier ministre'); return; }
   if (dirty.team) await saveTeam();
+  snd.logo();
   const blob = await drawTeam();
   const file = new File([blob], 'ma-team-de-reve.png', { type: 'image/png' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -332,7 +342,7 @@ $('#teamShare').onclick = () => withMe(async () => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     toast('Image téléchargée : envoie-la à tes amis');
   }
-});
+};
 async function drawTeam() {
   try { await Promise.all([document.fonts.load('800 60px "Barlow Condensed"'), document.fonts.load('600 30px Barlow')]); } catch (e) { }
   const cv = $('#cv'), x = cv.getContext('2d'), W = 1080, H = 1350, t = draft.team;
@@ -343,18 +353,25 @@ async function drawTeam() {
   x.fillStyle = '#fff'; x.font = '800 64px "Barlow Condensed", sans-serif'; x.fillText('MA TEAM DE RÊVE', 196, 118);
   x.font = '600 34px Barlow, sans-serif'; x.fillText('Le gouvernement de ' + (ME ? ME.pseudo : 'moi'), 64, 196);
   [['#000091', 0], ['#fff', 1], ['#E1000F', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(i * W / 3, 250, W / 3, 10); });
-  x.fillStyle = '#5B5B66'; x.font = '600 30px Barlow, sans-serif'; x.fillText('PREMIER MINISTRE', 64, 330);
-  x.fillStyle = '#000091'; x.font = '800 76px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.pm || '—', W - 128), 64, 405);
-  let y = 485;
+  let y0 = 325;
+  if (t.coeur) {
+    x.fillStyle = '#E1000F'; x.font = '700 28px Barlow, sans-serif'; x.fillText('MON PRÉSIDENT DE CŒUR', 64, y0);
+    x.fillStyle = '#141414'; x.font = '800 64px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
+    y0 += 125;
+  }
+  x.fillStyle = '#5B5B66'; x.font = '700 28px Barlow, sans-serif'; x.fillText('PREMIER MINISTRE', 64, y0);
+  x.fillStyle = '#000091'; x.font = '800 ' + (t.coeur ? 60 : 76) + 'px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
+  let y = y0 + (t.coeur ? 135 : 155);
+  const step = t.coeur ? 56 : 64;
   x.strokeStyle = '#E1E1E6'; x.lineWidth = 2;
   for (const p of D.POSTES) {
-    x.fillStyle = '#5B5B66'; x.font = '600 28px Barlow, sans-serif'; x.fillText(fit(x, p, 430), 64, y);
-    x.fillStyle = '#141414'; x.font = '700 40px "Barlow Condensed", sans-serif'; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
-    x.beginPath(); x.moveTo(64, y + 22); x.lineTo(W - 64, y + 22); x.stroke(); y += 66;
+    x.fillStyle = '#5B5B66'; x.font = '600 27px Barlow, sans-serif'; x.fillText(fit(x, p, 410), 64, y);
+    x.fillStyle = '#141414'; x.font = '700 38px "Barlow Condensed", sans-serif'; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
+    x.beginPath(); x.moveTo(64, y + 20); x.lineTo(W - 64, y + 20); x.stroke(); y += step;
   }
   if (t.jl && t.jn) {
-    x.fillStyle = '#E1000F'; x.font = '700 30px Barlow, sans-serif'; x.fillText(fit(x, 'JOKER : ' + t.jl.toUpperCase(), W - 128), 64, y + 26);
-    x.fillStyle = '#141414'; x.font = '800 48px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.jn, W - 128), 64, y + 82);
+    x.fillStyle = '#E1000F'; x.font = '700 28px Barlow, sans-serif'; x.fillText(fit(x, 'JOKER : ' + t.jl.toUpperCase(), W - 128), 64, y + 20);
+    x.fillStyle = '#141414'; x.font = '800 44px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
   }
   x.fillStyle = '#000091'; x.fillRect(0, H - 90, W, 90);
   x.fillStyle = '#fff'; x.font = '700 32px "Barlow Condensed", sans-serif'; x.fillText('LES PRONOS DES MEMBRÉS', 64, H - 34);
@@ -439,9 +456,9 @@ function renderMeCard() {
     `<div class="gauges">
       <div class="gg"><div class="lbl"><span>Paris ouverts faits</span><span>${faits}/${ouverts.length || 0}</span></div><div class="tr"><i style="width:${ouverts.length ? faits / ouverts.length * 100 : 100}%"></i></div></div>
       ${isOpen('gp') ? `<div class="gg"><div class="lbl"><span>Points en jeu cette semaine</span><span>×${fmt(m)}</span></div><div class="tr"><i style="width:${(m - 1) * 100}%"></i></div><p>Ta photo du Grand Prono compte ×${fmt(m)} cette semaine, puis un peu moins chaque lundi.</p></div>` : ''}
-      <div class="gg"><div class="lbl"><span>Audace</span><span>${aud == null ? '–' : Math.round(aud * 100) + ' %'}</span></div><div class="tr"><i style="width:${aud == null ? 0 : aud * 100}%"></i></div><p>${cur && cur.pres ? `Vous êtes ${same} sur ${n} à voir ${esc(by[cur.pres].n)} président. Plus tu es seul, plus ça rapporte s'il gagne.` : 'Fais ton Grand Prono pour mesurer ton audace.'}</p></div>
+      <div class="gg"><div class="lbl"><span>Audace</span><span>${aud == null ? '–' : Math.round(aud * 100) + ' %'}</span></div><div class="tr"><i style="width:${aud == null ? 0 : aud * 100}%"></i></div><p>${cur && cur.pres ? `Vous êtes ${same} sur ${n} à voir ${esc(by[cur.pres].n)} gagner. Plus tu es seul, plus ça rapporte si ça arrive.` : 'Fais ton Grand Prono pour mesurer ton audace.'}</p></div>
     </div>
-    <div class="ptsgrid"><div><b>${pts('e1')}</b><span>Étape 1<br>31 janv.</span></div><div><b>${pts('e2')}</b><span>Étape 2<br>26 mars</span></div><div><b>${pts('t1')}</b><span>1er tour<br>18 avril</span></div><div><b>${pts('fin')}</b><span>Finale<br>2 mai</span></div></div>` +
+    <div class="ptsgrid"><div><b>${pts('e1')}</b><span>Qui sera là<br>31 janv.</span></div><div><b>${pts('e2')}</b><span>500 signat.<br>26 mars</span></div><div><b>${pts('t1')}</b><span>1er tour<br>18 avril</span></div><div><b>${pts('fin')}</b><span>Finale<br>2 mai</span></div></div>` +
     (next ? `<p class="fine" style="color:#fff;opacity:.85;margin-top:10px">${next}</p>` : '');
 }
 function renderRank() {
@@ -463,7 +480,7 @@ function renderCons() {
   const { cnt, n } = presShares(), el = $('#cons');
   let h = '';
   if (n) {
-    h += `<h3>Nos présidents (${n} Grand${n > 1 ? 's' : ''} Prono${n > 1 ? 's' : ''})</h3>` + Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([id, k]) => `<div class="bar">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${k / n * 100}%;--c:var(--vert)"></i></div><span class="v">${Math.round(k / n * 100)} %</span></div>`).join('');
+    h += `<h3>Qui va gagner selon nous (${n} Grand${n > 1 ? 's' : ''} Prono${n > 1 ? 's' : ''})</h3>` + Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([id, k]) => `<div class="bar">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${k / n * 100}%;--c:var(--vert)"></i></div><span class="v">${Math.round(k / n * 100)} %</span></div>`).join('');
   }
   const bloc = (key, titre, lock) => {
     const bets = Object.keys(ALL.players).map(pid => (ALL.pronos[pid] || {})[key]).filter(x => x && x.length);
@@ -472,7 +489,7 @@ function renderCons() {
     const sh = D.U1.map(id => [id, bets.filter(b => b.includes(id)).length / bets.length]).sort((a, b) => b[1] - a[1]);
     return `<h3>${titre} (${bets.length} paris)</h3>` + sh.map(([id, s]) => `<div class="bar">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${s * 100}%;--c:var(--bleuT)"></i></div><span class="v">${Math.round(s * 100)} %</span></div>`).join('');
   };
-  h += bloc('l1', 'Qui sera là le 31 janvier ?', D.LOCK1) + bloc('l2', 'La ligne de départ', D.LOCK2);
+  h += bloc('l1', 'Qui sera là le 31 janvier ?', D.LOCK1) + bloc('l2', 'Qui aura ses 500 signatures ?', D.LOCK2);
   el.innerHTML = h || '<p class="help">Pas encore de paris. Lance-toi !</p>';
 }
 function renderPList() {
@@ -482,8 +499,8 @@ function renderPList() {
   $('#plist').innerHTML = pl.map(pid => {
     const p = ALL.pronos[pid] || {}, c = S.current(p);
     const reveal = (k, lock) => (p[k] && p[k].length) ? (now() < +lock ? 'pari déposé' : p[k].length + ' candidats') : 'pas joué';
-    return `<div class="prow${ME && pid === ME.pid ? ' mine' : ''}"><div><b>${esc(ALL.players[pid].pseudo)}</b><p class="fine">Étape 1 : ${reveal('l1', D.LOCK1)} · Étape 2 : ${reveal('l2', D.LOCK2)}</p></div>` +
-      (c ? `<div class="avs5" title="Président puis top 5">${av(by[c.pres], 34)}<span style="width:6px"></span>${c.top.map(t => av(by[t.id], 24)).join('')}</div>` : '<span class="fine">pas de Grand Prono</span>') + '</div>';
+    return `<div class="prow${ME && pid === ME.pid ? ' mine' : ''}"><div><b>${esc(ALL.players[pid].pseudo)}</b><p class="fine">Qui sera là : ${reveal('l1', D.LOCK1)} · 500 signatures : ${reveal('l2', D.LOCK2)}</p></div>` +
+      (c ? `<div class="avs5" title="Gagnant pronostiqué puis top 5">${av(by[c.pres], 34)}<span style="width:6px"></span>${c.top.map(t => av(by[t.id], 24)).join('')}</div>` : '<span class="fine">pas de Grand Prono</span>') + '</div>';
   }).join('') || '<p class="help">Aucun joueur trouvé.</p>';
 }
 $('#q').addEventListener('input', renderPList);
@@ -513,16 +530,18 @@ sheet.addEventListener('submit', async e => {
     const keep = clone(draft), kd = Object.assign({}, dirty);
     ME = await store.join(p, c); await refresh(true); loadDraft(); initSB();
     for (const k in kd) if (kd[k]) { draft[k] = keep[k]; dirty[k] = true; }
-    sheet.classList.remove('open'); renderAll(); toast('Salut ' + ME.pseudo + ' !');
+    sheet.classList.remove('open'); renderAll(); snd.logo(); toast('Salut ' + ME.pseudo + ' !');
     if (pending) { const f = pending; pending = null; await f(); }
-  } catch (err) { er.textContent = err.message || 'Erreur'; b.disabled = false; b.textContent = "C'est parti"; }
+  } catch (err) { snd.error(); er.textContent = err.message || 'Erreur'; b.disabled = false; b.textContent = "C'est parti"; }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { sheet.classList.remove('open'); pending = null; } });
 $('#meBtn').onclick = () => openJoin();
 async function withMe(f) {
   if (!ME) { pending = async () => { try { await f(); } catch (e) { toast(e.message || 'Erreur'); } }; openJoin('Choisis d’abord ton pseudo pour enregistrer.'); return; }
-  try { await f(); } catch (e) { toast(e.message || 'Erreur'); }
+  try { await f(); } catch (e) { snd.error(); toast(e.message || 'Erreur'); }
 }
+function renderSnd() { const b = $('#sndBtn'), o = snd.isOn(); b.setAttribute('aria-pressed', o); b.setAttribute('aria-label', o ? 'Son activé, toucher pour couper' : 'Son coupé, toucher pour activer'); }
+$('#sndBtn').onclick = () => { snd.toggle(); renderSnd(); toast(snd.isOn() ? 'Son activé' : 'Son coupé'); };
 
 /* ===================== NAVIGATION ===================== */
 document.addEventListener('click', e => {
@@ -547,7 +566,7 @@ window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boo
 
 function renderClassement() { renderMeCard(); renderRank(); renderCons(); renderPList(); }
 function renderAll() {
-  renderHeader(); renderHero(); renderCTA(); renderPollsHome(); renderHomePlayers();
+  renderHeader(); renderSnd(); renderHero(); renderCTA(); renderPollsHome(); renderHomePlayers();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderCar(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
   renderTeam(); renderClassement();
 }

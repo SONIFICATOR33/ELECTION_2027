@@ -19,7 +19,7 @@ export const current = pr => photo(pr, 999);
 
 const r1 = x => Math.round(x * 10) / 10;
 
-/* ---- Étapes 1 et 2 : « qui sera là » / « ligne de départ » ----
+/* ---- Étapes 1 et 2 : « qui sera là » / « 500 signatures » ----
    Chaque candidat bien jugé : 1 pt × (1 + 4 × part des joueurs qui se sont trompés sur lui) => de 1 à 5 pts.
    Étape 2 : +3 si le nombre de candidats est exact, +1 à un près. */
 export function scoreListe(pronos, key, univers, truth, bonusNombre) {
