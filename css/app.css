@@ -449,12 +449,13 @@ h2{font-weight:600;letter-spacing:-.2px}
 .candidate-choice { display: inline-flex; align-items: stretch; gap: 3px; }
 .candidate-choice .chip, .candidate-help { min-height: 44px; }
 .candidate-choice .candidate-help { min-width: 44px; padding: 0; }
-.player-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.player-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
-.player-list strong { font-size: 1.35rem; overflow-wrap: anywhere; }
+.player-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.player-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; }
+.player-list strong { grid-column: 1 / -1; grid-row: 1; font-size: 1.35rem; overflow-wrap: anywhere; }
 .player-list small { font-size: .8rem; }
-.player-points { font-weight: 800; white-space: nowrap; }
-.player-list .group-actions { grid-column: 1 / -1; }
+.player-points { grid-column: 2; grid-row: 2; font-weight: 800; white-space: nowrap; }
+.player-list .group-actions { grid-column: 1; grid-row: 2; gap: 4px; }
+.player-list .group-actions button { padding-inline: 8px; font-size: .85rem; }
 .player-list button:disabled { opacity: .5; }
 .player-groups > summary { cursor: pointer; }
 .player-groups > form, .player-groups > label, .player-groups > .group-actions { margin-top: 12px; }
