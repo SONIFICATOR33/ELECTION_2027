@@ -593,9 +593,9 @@ function renderAll() {
 const splash = $('#splash');
 function showSplash() {
   $('#splashJ').textContent = `J-${Math.max(0, daysTo(D.TOUR1))}`;
-  $('#splashGo').textContent = ME ? `C’est parti, ${ME.pseudo}` : 'Entrer dans le jeu';
+  $('#splashGo').textContent = 'Faire mes pronos';
   splash.hidden = false; document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.27, alpha: 0.2, scale: 1.05 }));
+  requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.3, alpha: 0.16, scale: 1.1 }));
 }
 function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; try { sessionStorage.setItem('pdm-splash', '1'); } catch (e) { } }
 $('#splashGo').onclick = () => { snd.logo(); hideSplash(); if (!ME) setTimeout(() => openJoin(), 250); };
