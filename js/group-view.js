@@ -38,8 +38,8 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
       return `<li><strong>${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
         <span class="player-points">${fmt(row.total)} pts</span>
         <div class="group-actions">
-          <button class="ghost" data-player="${escape(row.pid)}" data-detail="pronos" ${player.shared ? '' : 'disabled'}>Pronos</button>
-          <button class="ghost" data-player="${escape(row.pid)}" data-detail="team" ${Object.hasOwn(data.teams, row.pid) ? '' : 'disabled'}>Gouvernement</button>
+          <button class="player-action" data-player="${escape(row.pid)}" data-detail="pronos" ${player.shared ? '' : 'disabled'}>Pronos</button>
+          <button class="player-action" data-player="${escape(row.pid)}" data-detail="team" ${Object.hasOwn(data.teams, row.pid) ? '' : 'disabled'}>Gouvernement</button>
         </div></li>`;
     }).join('') + '</ul>' : '<p>Aucun joueur dans ce groupe.</p>';
   }
@@ -88,20 +88,21 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
       if (request !== generation) return;
       data.players = Object.assign(Object.create(null), registered, data.players);
       display = data;
-      root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Rejoindre le groupe invité</button></p>' : '') +
-        (group && group.code !== COMMON_GROUP ? '<h3>' + escape(group.name) + '</h3>' : '') +
-        roster(data, store.me().pid) +
-        (group ? '<p class="help">Les pronos partagés se révèlent à la clôture. Les gouvernements sont visibles si leur auteur les partage.</p>' : '') +
-        '<details class="player-groups"><summary>Choisir ou gérer mes groupes</summary>' +
-        (groups.length ? '<label>Afficher les joueurs de <select id="active-group">' + groups.map(g =>
+      root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Accepter l’invitation au groupe</button></p>' : '') +
+        (groups.length ? '<label class="group-filter">Afficher les joueurs de <select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
           '</select></label>' : '') +
-        (group ? '<div class="group-actions">' +
-          (group.code === COMMON_GROUP ? '' : '<button class="ghost" data-group-action="invite">Inviter un ami</button>') +
+        roster(data, store.me().pid) +
+        '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
+        '<p>Crée un groupe pour retrouver tes amis et comparer vos pronos.</p>' +
+        '<details><summary>Créer un groupe</summary>' +
+        '<form id="create-group" class="group-actions"><label>Nom du groupe <input name="name" required minlength="2" maxlength="48"></label>' +
+        '<button class="big">Créer et ouvrir le groupe</button></form></details>' +
+        (group && group.code !== COMMON_GROUP ? '<button class="ghost group-invite" data-group-action="invite">Inviter des amis dans ' + escape(group.name) + '</button>' : '') +
+        (group ? '<details><summary>Partage des pronos</summary><div class="group-actions">' +
           '<button class="ghost" data-group-action="share" aria-pressed="' + group.shared + '">' +
-          (group.shared ? 'Arrêter de partager mes pronos' : 'Partager mes pronos dans ce groupe') + '</button></div>' : '') +
-        '<form id="create-group" class="group-actions"><label>Nom du nouveau groupe <input name="name" required minlength="2" maxlength="48"></label>' +
-        '<button class="ghost">Créer le groupe</button></form></details>';
+          (group.shared ? 'Masquer mes pronos dans ce groupe' : 'Partager mes pronos dans ce groupe') + '</button></div>' +
+          '<p class="help">Les pronos partagés se révèlent à la clôture.</p></details>' : '') + '</section>';
     } catch {
       if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
     } finally {

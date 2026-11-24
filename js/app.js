@@ -1,4 +1,5 @@
-import { groupView } from './group-view.js?v=19';
+import { groupView } from './group-view.js?v=20';
+import { COMMON_GROUP } from './groups.js?v=19';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
@@ -194,37 +195,43 @@ function renderPhoto() {
     ? `<div class="photo"><b>×${fmt(D.mult(cw))}</b><span>Ton prono est repris chaque lundi.</span></div>`
     : `<div class="photo" style="background:var(--rougebg)"><b style="color:var(--rouge)">×${fmt(D.mult(cw))}</b><span>Une semaine sans prono vaut zéro.</span></div>`;
 }
+const rankedTop = () => [...gp().top].sort((a, b) => b.pct - a.pct);
+const finalists = () => rankedTop().filter(t => t.pct > 0).slice(0, 2);
 function renderPick() {
+  const locked = !isOpen('gp');
   $('#pick').innerHTML = C.map(c => {
-    const i = gp().top.findIndex(t => t.id === c.id);
+    const selected = gp().top.find(t => t.id === c.id);
     const fullName = esc(c.p + ' ' + c.n);
-    return `<span class="candidate-choice"><button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${fullName}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button><button class="ghost candidate-help" data-fiche="${c.id}" aria-label="Fiche de ${fullName}">?</button></span>`;
+    return `<div class="candidate-choice"><button class="chip${selected ? ' on' : ''}" data-id="${c.id}" aria-pressed="${!!selected}" ${locked ? 'disabled' : ''}>${av(c, 32)}${fullName}</button>
+      <button class="ghost candidate-help" data-fiche="${c.id}" aria-label="Fiche de ${fullName}">?</button>
+      ${selected ? `<label class="prono-pct"><input type="number" min="0" max="60" step="any" inputmode="decimal" data-score="${c.id}" value="${selected.pct}" aria-label="Pourcentage de ${fullName}" ${locked ? 'disabled' : ''}> %</label>` : ''}</div>`;
   }).join('');
 }
 $('#pick').addEventListener('click', e => {
-  const b = e.target.closest('.chip'); if (!b) return; const id = b.dataset.id, i = gp().top.findIndex(t => t.id === id);
-  if (i >= 0) { gp().top.splice(i, 1); snd.unpick(AXIS(id)); } else if (gp().top.length < 5) { gp().top.push({ id, pct: 0 }); snd.rank(gp().top.length - 1, AXIS(id)); } else { snd.error(); toast('Top 5 complet : retire d’abord un nom'); return; }
-  dirty.gp = true; renderPick(); renderSlots(); renderDuel(); renderGPBtn();
-});
-function renderSlots() {
-  const slots = $('#slots');
-  const locked = !isOpen('gp');
-  slots.hidden = !gp().top.length;
-  slots.innerHTML = gp().top.map((t, i) => {
-    const c = by[t.id], fullName = esc(c.p + ' ' + c.n);
-    return `<li><span class="rkb">${i + 1}</span>${av(c, 34)}<b class="sn">${fullName}</b><label class="prono-pct">
-      <input type="number" min="0" max="60" step="any" inputmode="decimal" data-rank="${i}" value="${t.pct}" aria-label="Pourcentage de ${fullName}" ${locked ? 'disabled' : ''}> %
-    </label></li>`;
-  }).join('');
-  renderTotal();
-}
-$('#slots').addEventListener('input', e => {
-  const i = e.target.dataset.rank;
-  if (i === undefined || !isOpen('gp')) return;
-  gp().top[+i].pct = e.target.valueAsNumber || 0;
+  const button = e.target.closest('.chip');
+  if (!button || !isOpen('gp')) return;
+  const id = button.dataset.id, i = gp().top.findIndex(t => t.id === id);
+  if (i >= 0) {
+    gp().top.splice(i, 1);
+    snd.unpick(AXIS(id));
+  } else if (gp().top.length < 5) {
+    gp().top.push({ id, pct: 0 });
+    snd.rank(gp().top.length - 1, AXIS(id));
+  } else {
+    snd.error();
+    toast('Top 5 complet : retire d’abord un nom');
+    return;
+  }
   dirty.gp = true;
-  renderTotal();
-  renderGPBtn();
+  renderPick(); renderTotal(); renderDuel(); renderGPBtn();
+  $(i < 0 ? `[data-score="${id}"]` : `#pick .chip[data-id="${id}"]`)?.focus({ preventScroll: true });
+});
+$('#pick').addEventListener('input', e => {
+  const id = e.target.dataset.score;
+  if (!id || !isOpen('gp')) return;
+  gp().top.find(t => t.id === id).pct = e.target.valueAsNumber || 0;
+  dirty.gp = true;
+  renderTotal(); renderDuel(); renderGPBtn();
 });
 function renderTotal() {
   $('#total').hidden = !gp().top.length;
@@ -234,13 +241,15 @@ function renderTotal() {
 }
 function renderDuel() {
   const el = $('#duel'), g = gp();
-  if (g.top.length < 2) { el.innerHTML = '<p class="help">Ta finale se remplit toute seule avec tes deux premiers du 1er tour.</p>'; renderCoh(); return; }
-  const [a, b] = [g.top[0].id, g.top[1].id], inF = g.pres === a || g.pres === b;
-  const fin = id => `<button class="fin${g.pres === id ? ' win' : ''}" data-id="${id}">${av(by[id], 56)}<b><span class="pn">${esc(by[id].p)}</span>${esc(by[id].n)}</b><span class="fine">${g.pres === id ? 'Mon gagnant' : 'Le faire gagner'}</span></button>`;
+  const pair = finalists();
+  if (pair.length < 2) { el.innerHTML = '<p class="help">Saisis deux scores au premier tour pour voir ta finale.</p>'; renderCoh(); return; }
+  const [a, b] = pair.map(t => t.id), inF = g.pres === a || g.pres === b;
+  const fin = t => `<button class="fin${g.pres === t.id ? ' win' : ''}" data-id="${t.id}" aria-pressed="${g.pres === t.id}" ${isOpen('gp') ? '' : 'disabled'}>${av(by[t.id], 56)}<b>${esc(by[t.id].p + ' ' + by[t.id].n)}</b><span>${fmt(t.pct)} % au 1er tour</span></button>`;
   const w = inF ? g.pres : null, l = w === a ? b : a;
-  el.innerHTML = `<div class="duel">${fin(a)}<span class="vs">contre</span>${fin(b)}</div>` +
-    (w ? `<div class="range"><div class="score"><span>${by[w].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span></div><input type="range" id="win" min="50" max="80" step="0.5" value="${g.win}" aria-label="Score du vainqueur au 2nd tour"></div>`
-      : `<p class="warn">${g.pres ? `Ton gagnant (${by[g.pres].n}) n'est pas dans ta finale. Touche un finaliste ou revois ton top 2.` : 'Touche le finaliste que tu vois gagner.'}</p>`);
+  el.innerHTML = `<div class="duel">${fin(pair[0])}<span class="vs">contre</span>${fin(pair[1])}</div>` +
+    (w ? `<div class="final-scores"><label class="prono-pct">${esc(by[w].n)} <input type="number" id="win" min="50" max="80" step="any" inputmode="decimal" value="${g.win}" ${isOpen('gp') ? '' : 'disabled'}> %</label>
+      <span>${esc(by[l].n)} <output id="losing-score">${fmt(100 - g.win)}</output> %</span></div>`
+      : '<p class="help">Touche ton vainqueur pour saisir son score.</p>');
   renderCoh();
 }
 function renderCoh() {
@@ -249,8 +258,22 @@ function renderCoh() {
   el.hidden = !out.length;
   if (out.length) el.textContent = `Attention : ${out.map(id => by[id].n).join(', ')} ${out.length > 1 ? 'ne sont pas' : 'n’est pas'} dans ${lab}. C’est permis, mais pas très cohérent.`;
 }
-$('#duel').addEventListener('click', e => { const b = e.target.closest('.fin'); if (!b) return; gp().pres = b.dataset.id; snd.pick(AXIS(b.dataset.id), true); dirty.gp = true; renderDuel(); renderGPBtn(); });
-$('#duel').addEventListener('input', e => { if (e.target.id !== 'win') return; const g = gp(); g.win = +e.target.value; snd.tick((g.win - 50) * 1.5); const l = g.top[0].id === g.pres ? g.top[1].id : g.top[0].id; $('#duel .score').innerHTML = `<span>${by[g.pres].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span>`; dirty.gp = true; renderGPBtn(); });
+$('#duel').addEventListener('click', e => {
+  const button = e.target.closest('.fin');
+  if (!button || !isOpen('gp')) return;
+  gp().pres = button.dataset.id;
+  dirty.gp = true;
+  snd.pick(AXIS(gp().pres), true);
+  renderDuel(); renderGPBtn();
+  $('#win')?.focus({ preventScroll: true });
+});
+$('#duel').addEventListener('input', e => {
+  if (e.target.id !== 'win' || !isOpen('gp')) return;
+  gp().win = e.target.valueAsNumber;
+  $('#losing-score').textContent = Number.isFinite(gp().win) ? fmt(100 - gp().win) : '—';
+  dirty.gp = true;
+  renderGPBtn();
+});
 function renderGPBtn() {
   const b = $('#saveGP'); b.hidden = !isOpen('gp');
   b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Prono enregistré') : 'Enregistrer mon prono';
@@ -261,12 +284,12 @@ $('#saveGP').onclick = () => withMe(async () => {
   if (g.top.length < 5) er.push('Complète ton top 5 du 1er tour.');
   if (s === 0 || g.top.some(t => t.pct < 0 || t.pct > 60)) er.push('Renseigne les scores du top 5, entre 0 et 60 %.');
   if (s > 100) er.push('Ton top 5 dépasse 100 %.');
-  if (g.top.some((t, i) => i && t.pct > g.top[i - 1].pct)) er.push('Les % doivent suivre l’ordre d’arrivée.');
-  if (g.pres && g.top.length >= 2 && g.top[0].id !== g.pres && g.top[1].id !== g.pres) er.push('Ton gagnant doit être dans ta finale.');
+  if (g.pres && !finalists().some(t => t.id === g.pres)) er.push('Choisis le vainqueur parmi les deux meilleurs scores.');
+  if (!Number.isFinite(g.win) || g.win < 50 || g.win > 80) er.push('Saisis un score de finale entre 50 et 80 %.');
   const E = $('#errs');
   if (er.length) { snd.error(); E.innerHTML = er.map(esc).join('<br>'); E.classList.add('on'); E.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   E.classList.remove('on');
-  await store.save({}, { pres: g.pres, top: g.top.map(t => ({ id: t.id, pct: t.pct })), win: g.win });
+  await store.save({}, { pres: g.pres, top: rankedTop().map(t => ({ id: t.id, pct: t.pct })), win: g.win });
   snd.vote(); dirty.gp = false; await refresh(true); renderAll(); toast('Prono enregistré');
 });
 const recapDialog = $('#recap-dialog');
@@ -337,17 +360,17 @@ async function drawPronoRecap() {
 }
 
 /* ===================== TEAM DE RÊVE ===================== */
-const CAND_NAMES = C.map(c => c.p + ' ' + c.n);
-const ALL_NAMES = new Set([...CAND_NAMES, ...D.PEOPLE_GROUPS.flatMap(g => g[1])]);
+const excludedFromTeam = new Set(['Delphine Batho', 'Karim Bouamrane', 'Olivier Becht']);
+const teamCandidates = C.filter(c => !excludedFromTeam.has(c.p + ' ' + c.n));
 const lastName = n => n.replace(/^(\S+\s)+?(?=(de |Le |La )?\S+$)/, '');
-const GROUPS_HTML = D.PEOPLE_GROUPS.map(([g, l]) => `<optgroup label="${esc(g)}">${l.slice().sort((a, b) => lastName(a).localeCompare(lastName(b), 'fr')).map(n => `<option>${esc(n)}</option>`).join('')}</optgroup>`).join('');
+const GROUPS_HTML = D.PEOPLE_GROUPS.map(([g, l]) => `<optgroup label="${esc(g)}">${l.filter(n => !excludedFromTeam.has(n)).sort((a, b) => lastName(a).localeCompare(lastName(b), 'fr')).map(n => `<option>${esc(n)}</option>`).join('')}</optgroup>`).join('');
 const OPTS = '<option value="">Choisir…</option>' + GROUPS_HTML + '<option value="__autre">Autre…</option>';
 const OPTS_PM = '<option value="">Choisir…</option>' + GROUPS_HTML;
-const OPTS_COEUR = '<option value="">Choisir…</option>' + [['De gauche à droite', C.filter(c => !c.off)], ['Hors axe gauche-droite', C.filter(c => c.off)]]
+const OPTS_COEUR = '<option value="">Choisir…</option>' + [['De gauche à droite', teamCandidates.filter(c => !c.off)], ['Hors axe gauche-droite', teamCandidates.filter(c => c.off)]]
   .map(([g, l]) => `<optgroup label="${g}">${l.map(c => `<option>${esc(c.p + ' ' + c.n)}</option>`).join('')}</optgroup>`).join('');
 const selHTML = (k, label, opts = OPTS) => `<div class="sel" data-k="${esc(k)}"><select aria-label="${esc(label)}">${opts}</select><input type="text" placeholder="Tape le nom" maxlength="40" autocomplete="off" aria-label="${esc(label)}, autre nom"></div>`;
 $('#t-pm').innerHTML = selHTML('pm', 'Premier ministre', OPTS_PM);
-$('#t-coeur').innerHTML = selHTML('coeur', 'Mon président de cœur', OPTS_COEUR);
+$('#t-coeur').innerHTML = selHTML('coeur', 'Président', OPTS_COEUR);
 $('#mins').innerHTML = D.POSTES.map(p => `<div class="minrow"><span>${esc(p)}</span>${selHTML('min:' + p, p)}</div>`).join('');
 $('#t-jn').innerHTML = selHTML('jn', 'Nommé au ministère joker');
 function getT(k) { return ['pm', 'jn', 'coeur'].includes(k) ? draft.team[k] || '' : (draft.team.min || {})[k.slice(4)] || ''; }
@@ -358,7 +381,7 @@ function renderTeam() {
     if (!v) { s.value = ''; i.value = ''; d.classList.remove('other'); }
     else if ([...s.options].some(o => o.value === v)) { s.value = v; i.value = ''; d.classList.remove('other'); }
     else if ([...s.options].some(o => o.value === '__autre')) { s.value = '__autre'; i.value = v; d.classList.add('other'); }
-    else { s.value = ''; d.classList.remove('other'); }
+    else { s.add(new Option(v, v)); s.value = v; d.classList.remove('other'); }
   });
   $('#t-jl').value = draft.team.jl || '';
   renderPublish();
@@ -380,27 +403,36 @@ async function renderTeamVisibility() {
     await store.groups.ensureCommonGroup().catch(console.warn);
     const groups = await store.groups.teamVisibility();
     if (request !== visibilityRequest) return;
-    visibility.innerHTML = groups.length ? groups.map(g =>
-      `<p><b>${esc(g.name)}</b> · ${g.visible ? 'Visible' : 'Privé'}<br><button class="ghost" data-group="${esc(g.code)}" aria-pressed="${g.visible}">${g.visible ? 'Masquer mon gouvernement' : 'Rendre mon gouvernement visible'}</button>${g.visible ? ` <button class="ghost" data-group="${esc(g.code)}" data-update>Mettre à jour</button>` : ''}</p>`
-    ).join('') : '<button class="ghost" data-go="classement">Créer ou rejoindre un groupe</button>';
+    const visible = groups.some(g => g.visible);
+    visibility.innerHTML = `<div class="group-actions" role="group" aria-label="Visibilité du gouvernement">
+      <button class="ghost" data-visibility="yes" aria-pressed="${visible}">Oui</button>
+      <button class="ghost" data-visibility="no" aria-pressed="${!visible}">Non</button>
+    </div>`;
   } catch {
     if (request === visibilityRequest) visibility.innerHTML = '<p>Impossible de vérifier la visibilité.</p><button class="ghost" data-retry-visibility>Réessayer</button>';
   }
 }
 visibility.addEventListener('click', async e => {
   if (e.target.closest('[data-retry-visibility]')) { await renderTeamVisibility(); return; }
-  const button = e.target.closest('button[data-group]');
+  const button = e.target.closest('button[data-visibility]');
   if (!button || !ME) return;
-  const hide = button.getAttribute('aria-pressed') === 'true';
+  const hide = button.dataset.visibility === 'no';
   if (!hide && !draft.team.coeur && !draft.team.pm) {
-    toast('Choisis au moins ton président de cœur ou ton Premier ministre.');
+    toast('Choisis au moins ton président ou ton Premier ministre.');
     return;
   }
   for (const b of visibility.querySelectorAll('button')) b.disabled = true;
   try {
-    if (hide) await store.groups.unpublishTeam(button.dataset.group);
-    else await store.groups.publishTeam(button.dataset.group, clone(draft.team));
-    toast(hide ? 'Gouvernement masqué dans ce groupe.' : 'Gouvernement visible dans ce groupe.');
+    const groups = await store.groups.teamVisibility();
+    if (hide) await Promise.all(groups.filter(g => g.visible).map(g => store.groups.unpublishTeam(g.code)));
+    else {
+      const common = groups.find(g => g.code === COMMON_GROUP);
+      if (!common) throw new Error('Le groupe commun est indisponible.');
+      await Promise.all(groups.filter(g => g.visible || g.code === COMMON_GROUP)
+        .map(g => store.groups.publishTeam(g.code, clone(draft.team))));
+      await saveTeam();
+    }
+    toast(hide ? 'Gouvernement privé.' : 'Gouvernement visible.');
     await renderTeamVisibility();
   } catch (err) {
     toast(err.message || 'Impossible de modifier la visibilité.');
@@ -411,28 +443,28 @@ const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D
 function renderPublish() {
   const n = teamCount(), ok = n === 12, b = $('#teamShare');
   b.disabled = !ok; b.classList.toggle('off', !ok);
-  b.textContent = ok ? 'Publier la photo de mon gouvernement' : `Publier la photo de mon gouvernement (${n}/12)`;
-  $('#pubHelp').textContent = ok ? 'Ton gouvernement est complet : publie la photo et envoie-la à tes amis.' : 'Choisis ton président de cœur, ton Premier ministre et tes 10 ministres pour publier la photo. Le joker est en bonus.';
+  b.textContent = 'Faire une image de mon gouvernement';
+  $('#pubHelp').textContent = ok ? '' : `${n}/12 postes remplis`;
 }
 $('#v-team').addEventListener('change', e => {
   const d = e.target.closest('.sel'); if (!d || e.target.tagName !== 'SELECT') return;
   const v = e.target.value;
   if (v === '__autre') { d.classList.add('other'); const i = d.querySelector('input'); setT(d.dataset.k, i.value.trim()); i.focus(); }
   else { d.classList.remove('other'); setT(d.dataset.k, v); if (v) snd.pick(v in byName ? AXIS(byName[v]) : null); }
-  const was = !$('#teamShare').disabled; renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux publier la photo !'); }
+  const was = !$('#teamShare').disabled; renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux faire une image.'); }
 });
 $('#v-team').addEventListener('input', e => {
   if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; return; }
   const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); renderPublish(); }
 });
 async function saveTeam() { try { localStorage.setItem(teamKey(), JSON.stringify(draft.team)); } catch (e) { } dirty.team = false; }
-$('#teamSave').onclick = async () => { if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président de cœur ou ton Premier ministre'); return; } await saveTeam(); snd.vote(); toast('Team enregistrée sur ton téléphone'); };
+$('#teamSave').onclick = async () => { if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président ou ton Premier ministre'); return; } await saveTeam(); snd.vote(); toast('Team enregistrée sur ton téléphone'); };
 $('#teamShare').onclick = async () => {
   if (teamCount() < 12) { snd.error(); toast('Complète d’abord ton gouvernement'); return; }
   if (dirty.team) await saveTeam();
   snd.logo();
   const blob = await drawTeam();
-  const file = new File([blob], 'ma-team-de-reve.png', { type: 'image/png' });
+  const file = new File([blob], 'mon-gouvernement.png', { type: 'image/png' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file], title: 'Mon gouvernement', text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname }); } catch (e) { }
   } else {
@@ -454,7 +486,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   x.fillStyle = '#C6A15B'; x.fillRect(0, 250, W, 4);
   let y0 = 325;
   if (t.coeur) {
-    x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Mon président de cœur', 64, y0);
+    x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Président', 64, y0);
     x.fillStyle = '#1A1A1A'; x.font = '600 62px ' + SERIF; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
     y0 += 125;
   }
@@ -619,7 +651,7 @@ const groupUI = groupView($('#group-view'), {
 });
 function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderPollsHome();
-  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
+  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
   renderTeam();
   if (location.hash === '#classement') groupUI.render();
 }
