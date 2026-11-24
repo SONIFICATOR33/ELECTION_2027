@@ -54,7 +54,9 @@ async function refresh(force) {
 
 /* ===================== EN-TÊTE ===================== */
 function renderHeader() {
-  $('#meBtn').textContent = ME ? ME.pseudo : 'Entrer';
+  const mb = $('#meBtn');
+  mb.textContent = ME ? ME.pseudo.replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2).toUpperCase() || '?' : 'Entrer';
+  mb.classList.toggle('in', !!ME); mb.setAttribute('aria-label', ME ? 'Tu joues en tant que ' + ME.pseudo : 'Entrer dans le jeu');
   const b = $('#banner');
   if (store.mode === 'local') {
     b.hidden = false;
@@ -287,7 +289,7 @@ $('#saveGP').onclick = () => withMe(async () => {
   snd.vote(); dirty.gp = false; await refresh(true); renderAll(); toast('Grand Prono enregistré : photo de la semaine prise');
 });
 $('#copy').onclick = async () => {
-  const g = gp(), t = ['Les pronos des membrés' + (ME ? ' (' + ME.pseudo + ')' : ''),
+  const g = gp(), t = ['Les pronos des vieux boucs' + (ME ? ' (' + ME.pseudo + ')' : ''),
   'Mon prono pour l’Élysée : ' + (g.pres ? by[g.pres].p + ' ' + by[g.pres].n : 'à choisir'),
   '1er tour : ' + (g.top.map((x, i) => (i + 1) + '. ' + by[x.id].n + ' ' + fmt(x.pct) + ' %').join(', ') || 'à faire'),
   g.top.length > 1 && g.pres ? '2nd tour : ' + by[g.pres].n + ' ' + fmt(g.win) + ' %' : '',
@@ -355,39 +357,41 @@ $('#teamShare').onclick = async () => {
     toast('Image téléchargée : envoie-la à tes amis');
   }
 };
+const x0 = () => $('#cv').getContext('2d');
 async function drawTeam() {
-  try { await Promise.all([document.fonts.load('800 60px "Barlow Condensed"'), document.fonts.load('600 30px Barlow')]); } catch (e) { }
+  try { await Promise.all([document.fonts.load('800 60px "Bricolage Grotesque"'), document.fonts.load('600 30px "Bricolage Grotesque"')]); } catch (e) { }
+  try { x0().fontStretch = 'condensed'; } catch (e) { }
   const cv = $('#cv'), x = cv.getContext('2d'), W = 1080, H = 1350, t = draft.team;
   x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#000091'; x.fillRect(0, 0, W, 250);
-  [['#2730C9', 0], ['#fff', 1], ['#E1000F', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 34, 58, 34, 66); });
+  x.fillStyle = '#38433E'; x.fillRect(0, 0, W, 250);
+  [['#2140C9', 0], ['#fff', 1], ['#E3262E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 34, 58, 34, 66); });
   x.strokeStyle = 'rgba(255,255,255,.7)'; x.lineWidth = 2; x.strokeRect(64, 58, 102, 66);
-  x.fillStyle = '#fff'; x.font = '800 64px "Barlow Condensed", sans-serif'; x.fillText('MA TEAM DE RÊVE', 196, 118);
-  x.font = '600 34px Barlow, sans-serif'; x.fillText('Le gouvernement de ' + (ME ? ME.pseudo : 'moi'), 64, 196);
-  [['#000091', 0], ['#fff', 1], ['#E1000F', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(i * W / 3, 250, W / 3, 10); });
+  x.fillStyle = '#fff'; x.font = '800 64px "Bricolage Grotesque", sans-serif'; x.fillText('MA TEAM DE RÊVE', 196, 118);
+  x.font = '600 34px "Bricolage Grotesque", sans-serif'; x.fillText('Le gouvernement de ' + (ME ? ME.pseudo : 'moi'), 64, 196);
+  [['#2140C9', 0], ['#fff', 1], ['#E3262E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(i * W / 3, 250, W / 3, 10); });
   let y0 = 325;
   if (t.coeur) {
-    x.fillStyle = '#E1000F'; x.font = '700 28px Barlow, sans-serif'; x.fillText('MON PRÉSIDENT DE CŒUR', 64, y0);
-    x.fillStyle = '#141414'; x.font = '800 64px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
+    x.fillStyle = '#E1000F'; x.font = '700 28px "Bricolage Grotesque", sans-serif'; x.fillText('MON PRÉSIDENT DE CŒUR', 64, y0);
+    x.fillStyle = '#141414'; x.font = '800 64px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
     y0 += 125;
   }
-  x.fillStyle = '#5B5B66'; x.font = '700 28px Barlow, sans-serif'; x.fillText('PREMIER MINISTRE', 64, y0);
-  x.fillStyle = '#000091'; x.font = '800 ' + (t.coeur ? 60 : 76) + 'px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
+  x.fillStyle = '#5B5B66'; x.font = '700 28px "Bricolage Grotesque", sans-serif'; x.fillText('PREMIER MINISTRE', 64, y0);
+  x.fillStyle = '#2140C9'; x.font = '800 ' + (t.coeur ? 60 : 76) + 'px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
   let y = y0 + (t.coeur ? 135 : 155);
   const step = t.coeur ? 56 : 64;
   x.strokeStyle = '#E1E1E6'; x.lineWidth = 2;
   for (const p of D.POSTES) {
-    x.fillStyle = '#5B5B66'; x.font = '600 27px Barlow, sans-serif'; x.fillText(fit(x, p, 410), 64, y);
-    x.fillStyle = '#141414'; x.font = '700 38px "Barlow Condensed", sans-serif'; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
+    x.fillStyle = '#5B5B66'; x.font = '600 27px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, p, 410), 64, y);
+    x.fillStyle = '#141414'; x.font = '700 38px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
     x.beginPath(); x.moveTo(64, y + 20); x.lineTo(W - 64, y + 20); x.stroke(); y += step;
   }
   if (t.jl && t.jn) {
-    x.fillStyle = '#E1000F'; x.font = '700 28px Barlow, sans-serif'; x.fillText(fit(x, 'JOKER : ' + t.jl.toUpperCase(), W - 128), 64, y + 20);
-    x.fillStyle = '#141414'; x.font = '800 44px "Barlow Condensed", sans-serif'; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
+    x.fillStyle = '#E1000F'; x.font = '700 28px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, 'JOKER : ' + t.jl.toUpperCase(), W - 128), 64, y + 20);
+    x.fillStyle = '#141414'; x.font = '800 44px "Bricolage Grotesque", sans-serif'; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
   }
-  x.fillStyle = '#000091'; x.fillRect(0, H - 90, W, 90);
-  x.fillStyle = '#fff'; x.font = '700 32px "Barlow Condensed", sans-serif'; x.fillText('LES PRONOS DES MEMBRÉS', 64, H - 34);
-  x.font = '500 26px Barlow, sans-serif'; const u = (location.host + location.pathname).replace(/index\.html$/, '').replace(/\/$/, ''); x.fillText(u, W - 64 - x.measureText(u).width, H - 36);
+  x.fillStyle = '#FFC83D'; x.fillRect(0, H - 90, W, 90);
+  x.fillStyle = '#1C1C28'; x.font = '800 32px "Bricolage Grotesque", sans-serif'; x.fillText('Les pronos des vieux boucs', 64, H - 34);
+  x.font = '500 24px "Bricolage Grotesque", sans-serif'; const u = (location.host + location.pathname).replace(/index\.html$/, '').replace(/\/$/, ''); x.fillText(u, W - 64 - x.measureText(u).width, H - 36);
   return new Promise(r => cv.toBlob(r, 'image/png'));
 }
 function fit(x, s, w) { s = String(s); if (x.measureText(s).width <= w) return s; while (s.length > 1 && x.measureText(s + '…').width > w) s = s.slice(0, -1); return s + '…'; }
@@ -583,6 +587,17 @@ function renderAll() {
   renderTeam(); renderClassement();
 }
 
+/* ===================== AFFICHE D'ACCUEIL ===================== */
+const splash = $('#splash');
+function showSplash() {
+  $('#splashBand').textContent = `J-${Math.max(0, daysTo(D.TOUR1))} avant le 1er tour`;
+  $('#splashGo').textContent = ME ? `C’est parti, ${ME.pseudo}` : 'Entrer dans le jeu';
+  splash.hidden = false; document.body.style.overflow = 'hidden';
+}
+function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; try { sessionStorage.setItem('pdm-splash', '1'); } catch (e) { } }
+$('#splashGo').onclick = () => { snd.logo(); hideSplash(); if (!ME) setTimeout(() => openJoin(), 250); };
+$('#brandBtn').onclick = () => showSplash();
+
 /* ===================== DÉMARRAGE ===================== */
 (async function start() {
   store = await openStore();
@@ -591,5 +606,6 @@ function renderAll() {
   loadDraft(); initSB();
   initPolls();
   renderAll(); show();
-  if (!ME && !sessionStorage.getItem('pdm-skip')) { sessionStorage.setItem('pdm-skip', '1'); setTimeout(() => openJoin(), 600); }
+  let seen = false; try { seen = !!sessionStorage.getItem('pdm-splash'); } catch (e) { }
+  if (!seen) showSplash();
 })();

@@ -1,4 +1,4 @@
-# Les pronos des membrés 🇫🇷
+# Les pronos des vieux boucs et autres craquettes 🇫🇷
 
 Appli mobile de pronostics sur la présidentielle 2027, entre amis.
 En ligne : https://sonificator33.github.io/ELECTION_2027/
@@ -16,3 +16,6 @@ En ligne : https://sonificator33.github.io/ELECTION_2027/
 - `js/config.js` : configuration Firebase.
 - `js/sound.js` : identité sonore (Web Audio, aucun fichier son).
 - `firestore.rules` : règles d'accès à coller dans la console Firebase.
+
+## Typographie
+Bricolage Grotesque (licence SIL OFL 1.1, voir `fonts/`), hébergée dans le dépôt : aucun appel à Google Fonts.

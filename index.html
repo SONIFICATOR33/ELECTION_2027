@@ -3,19 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Les pronos des membrés</title>
+<title>Les pronos des vieux boucs et autres craquettes</title>
 <meta name="description" content="Pronostics de la présidentielle 2027 entre amis : qui sera là, qui aura ses 500 signatures, le 1er tour et la finale.">
-<meta name="theme-color" content="#000091">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/app.css?v=4">
+<meta name="theme-color" content="#38433E">
+<link rel="preload" href="fonts/bricolage-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/app.css?v=5">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.5 1.42" result="m"/><feComposite in="SourceGraphic" in2="m" operator="in"/></filter>
+    <clipPath id="dbody"><ellipse cx="54" cy="74" rx="42" ry="29"/></clipPath>
+    <symbol id="duck" viewBox="0 0 130 118">
+      <path d="M40 100l-7 12h15zM64 101l-5 12h15z" fill="#F08A24" stroke="#1C1C28" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M16 66L3 47l24 9z" fill="#FFC83D" stroke="#1C1C28" stroke-width="3" stroke-linejoin="round"/>
+      <ellipse cx="54" cy="74" rx="42" ry="29" fill="#FFC83D"/>
+      <g clip-path="url(#dbody)"><path d="M62 40L12 102" stroke="#2140C9" stroke-width="8"/><path d="M70 42L20 104" stroke="#fff" stroke-width="8"/><path d="M78 44L28 106" stroke="#E3262E" stroke-width="8"/></g>
+      <ellipse cx="54" cy="74" rx="42" ry="29" fill="none" stroke="#1C1C28" stroke-width="3"/>
+      <path d="M26 74q14-15 33-5q-11 16-30 12z" fill="#F2B21E" stroke="#1C1C28" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="88" cy="38" r="22" fill="#FFC83D" stroke="#1C1C28" stroke-width="3"/>
+      <circle cx="83" cy="48" r="4.5" fill="#FF8FA3" opacity=".75"/>
+      <circle cx="94" cy="32" r="4.2" fill="#1C1C28"/><circle cx="95.5" cy="30.5" r="1.4" fill="#fff"/>
+      <g transform="rotate(-12 116 44)"><rect x="107" y="33" width="19" height="23" rx="1.5" fill="#fff" stroke="#1C1C28" stroke-width="2.5"/><path d="M111 40h11M111 45h7" stroke="#2140C9" stroke-width="2"/></g>
+      <path d="M104 38q16-3 15 7q-11 7-18 1z" fill="#F08A24" stroke="#1C1C28" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="flagS" viewBox="0 0 36 24"><clipPath id="fw"><path d="M1 3Q9.5 0 18 3T35 3V21Q26.5 24 18 21T1 21Z"/></clipPath><g clip-path="url(#fw)"><rect width="12.3" height="24" fill="#2140C9"/><rect x="12.3" width="11.4" height="24" fill="#fff"/><rect x="23.7" width="12.3" height="24" fill="#E3262E"/></g><path d="M1 3Q9.5 0 18 3T35 3V21Q26.5 24 18 21T1 21Z" fill="none" stroke="#fff" stroke-opacity=".7"/></symbol>
+  </defs>
+</svg>
+
+<section class="splash" id="splash" hidden aria-labelledby="punch">
+  <div class="board ribs">
+    <span class="plate" aria-hidden="true">27</span>
+    <div class="torn" aria-hidden="true"></div>
+    <div class="poster">
+      <h2 class="punch" id="punch">Qui va gagner en mai 27&nbsp;?</h2>
+      <div class="posterfoot">
+        <svg class="duckbig" role="img" aria-label="Le canard du jeu, en écharpe tricolore"><use href="#duck"/></svg>
+        <span class="stamp">Faites vos pronos&nbsp;!</span>
+      </div>
+    </div>
+    <div class="band" id="splashBand">J-145 avant le 1er tour</div>
+  </div>
+  <button class="big go" id="splashGo">Entrer dans le jeu</button>
+  <p class="sname"><svg width="30" height="20" aria-hidden="true"><use href="#flagS"/></svg>Les pronos des vieux boucs et autres craquettes</p>
+</section>
+
 <header class="top">
   <div class="wrap toprow">
-    <svg class="flag" viewBox="0 0 36 24" aria-hidden="true"><defs><clipPath id="fw"><path d="M1 3Q9.5 0 18 3T35 3V21Q26.5 24 18 21T1 21Z"/></clipPath></defs><g clip-path="url(#fw)"><rect width="12.3" height="24" fill="#2730C9"/><rect x="12.3" width="11.4" height="24" fill="#fff"/><rect x="23.7" width="12.3" height="24" fill="#E1000F"/></g><path d="M1 3Q9.5 0 18 3T35 3V21Q26.5 24 18 21T1 21Z" fill="none" stroke="#fff" stroke-opacity=".7"/></svg>
-    <h1>Les pronos des membrés</h1>
+    <button class="brand" id="brandBtn" aria-label="Revoir l’affiche du jeu">
+      <span class="flagduck" aria-hidden="true"><svg class="flag" viewBox="0 0 36 24"><use href="#flagS"/></svg><svg class="duckmini" viewBox="0 0 130 118"><use href="#duck"/></svg></span>
+      <span class="bt"><b>Les pronos des vieux boucs</b><small>et autres craquettes</small></span>
+    </button>
     <button class="snd" id="sndBtn" aria-pressed="true" aria-label="Son activé"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path class="w1" d="M15.5 9a4 4 0 0 1 0 6"/><path class="w2" d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
     <button class="me" id="meBtn" aria-haspopup="dialog">Entrer</button>
   </div>
@@ -274,6 +312,6 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=4"></script>
+<script type="module" src="js/app.js?v=5"></script>
 </body>
 </html>
