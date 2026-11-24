@@ -465,3 +465,8 @@ h2{font-weight:600;letter-spacing:-.2px}
 .splash-install { flex: none; min-height: 44px; margin-top: 6px; padding: 0 12px; background: transparent; border: 0; color: var(--orC); font: inherit; text-decoration: underline; cursor: pointer; }
 #splash-install-help { max-width: 360px; color: var(--ivoire); margin: 0 0 12px; }
 .splash { justify-content: safe center; }
+
+.av, .medal { position: relative; }
+.candidate-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 32%; border-radius: inherit; }
+.candidate-thumb { visibility: hidden; }
+.candidate-thumb.loaded { visibility: visible; }

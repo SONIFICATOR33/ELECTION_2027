@@ -8,7 +8,7 @@ import * as S from './scoring.js';
 import { openStore } from './store.js';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
-import { initFiches } from './fiches.js';
+import { initFiches, portraitThumb } from './fiches.js?v=16';
 
 /* place de chaque candidat sur l'axe gauche-droite (-1 à 1), null = hors axe : sert au son */
 const AXIS = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
@@ -18,8 +18,7 @@ const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = v => v == null ? '–' : (+v).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
-const ini = c => (c.p[0] + c.n.replace(/^de /, '')[0]).toUpperCase();
-const av = (c, s = 40) => c ? `<span class="av${c.und ? ' und' : ''}" style="--s:${s}px;--c:${c.col}" aria-hidden="true">${ini(c)}</span>` : '';
+const av = (c, s = 40) => c ? `<span class="av${c.und ? ' und' : ''}" style="--s:${s}px;--c:${c.col}" aria-hidden="true">${portraitThumb(c)}</span>` : '';
 const clone = o => JSON.parse(JSON.stringify(o));
 const OKSVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="4"><path d="M5 12l5 5 9-10"/></svg>';
 const now = () => Date.now();

@@ -8,6 +8,9 @@ import { snd } from './sound.js';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ini = c => (c.p[0] + c.n.replace(/^de /, '')[0]).toUpperCase();
+export function portraitThumb(c) {
+  return `<span>${ini(c)}</span><img class="candidate-thumb" src="fiches/img/${c.id}.webp" alt="" loading="lazy" decoding="async">`;
+}
 const pct = (v, d = 2) => v.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d }) + ' %';
 const ORDER = C.map(c => c.id);
 const AX = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
@@ -108,13 +111,16 @@ export function closeFiche() {
 }
 
 export function initFiches() {
+  document.addEventListener('load', e => {
+    if (e.target.classList?.contains('candidate-thumb')) e.target.classList.add('loaded');
+  }, true);
   /* bandeau d'accueil, de gauche à droite */
   const rail = $('#rail');
   if (rail) {
     let h = '', sep = false;
     for (const c of C) {
       if (c.off && !sep) { h += '<span class="rsep" aria-hidden="true"></span>'; sep = true; }
-      h += `<button class="rc" data-fiche="${c.id}" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}"><span class="medal sm" style="--c:${c.col}" aria-hidden="true">${ini(c)}</span><b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b></button>`;
+      h += `<button class="rc" data-fiche="${c.id}" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}"><span class="medal sm" style="--c:${c.col}" aria-hidden="true">${portraitThumb(c)}</span><b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b></button>`;
     }
     rail.innerHTML = h;
   }
