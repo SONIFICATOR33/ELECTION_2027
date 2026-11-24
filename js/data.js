@@ -82,11 +82,11 @@ export const RETIRES = [
 /* ---------- Personnalités pour Matignon et les ministères (menus déroulants) ----------
    Liste « réaliste » : candidats sérieux et personnalités gouvernementales, par famille. */
 export const PEOPLE_GROUPS = [
-  ['Gauche', ['Jean-Luc Mélenchon', 'Fabien Roussel', 'Marine Tondelier', 'Raphaël Glucksmann', 'François Hollande', 'Bernard Cazeneuve', 'Karim Bouamrane', 'Olivier Faure', 'Boris Vallaud', 'Carole Delga', 'Ségolène Royal', 'Manuel Bompard', 'Mathilde Panot', 'Clémentine Autain', 'François Ruffin', 'Yannick Jadot']],
+  ['Gauche', ['Jean-Luc Mélenchon', 'Fabien Roussel', 'Marine Tondelier', 'Raphaël Glucksmann', 'François Hollande', 'Bernard Cazeneuve', 'Karim Bouamrane', 'Olivier Faure', 'Boris Vallaud', 'Carole Delga', 'Ségolène Royal', 'Manuel Bompard', 'Mathilde Panot', 'Clémentine Autain', 'François Ruffin', 'Yannick Jadot', 'Benoît Hamon']],
   ['Centre', ['Gabriel Attal', 'Édouard Philippe', 'Jean-Louis Borloo', 'François Bayrou', 'Dominique de Villepin', 'Gérald Darmanin', 'Élisabeth Borne', 'Bruno Le Maire', 'Sébastien Lecornu', 'Yaël Braun-Pivet', 'Jean-Noël Barrot', 'Christophe Béchu', 'Jean Castex']],
   ['Droite', ['Bruno Retailleau', 'David Lisnard', 'Xavier Bertrand', 'Laurent Wauquiez', 'Valérie Pécresse', 'Michel Barnier', 'Rachida Dati']],
   ['RN, UDR et Reconquête', ['Marine Le Pen', 'Jordan Bardella', 'Sébastien Chenu', 'Éric Ciotti', 'Éric Zemmour', 'Sarah Knafo']],
-  ['Société civile', ['Laurent Berger', 'Thierry Breton', 'Teddy Riner', 'Natacha Polony']]
+  ['Société civile', ['Christine Lagarde', 'Laurent Berger', 'Thierry Breton', 'Teddy Riner', 'Natacha Polony']]
 ];
 export const POSTES = ['Intérieur', 'Économie et Finances', 'Affaires étrangères', 'Armées', 'Justice', 'Éducation nationale', 'Santé', 'Travail et Emploi', 'Écologie et Énergie', 'Agriculture'];
 
