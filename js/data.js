@@ -39,7 +39,7 @@ export const MILESTONES = [
 export const BLACKOUT = [[paris(2027, 4, 17), paris(2027, 4, 18, 20)], [paris(2027, 5, 1), paris(2027, 5, 2, 20)]];
 
 /* ---------- Candidats ----------
-   Déclarés au 23/11/2026 (Toute l'Europe), rangés de gauche à droite.
+   Déclarés au 23/11/2026 (Toute l'Europe, recoupé avec France-Vote le 24/11), rangés de gauche à droite.
    main = testé dans les sondages ; und = pas (encore) déclaré ; off = hors axe gauche-droite ; poll = repère % */
 export const C = [
   { id: 'arthaud', p: 'Nathalie', n: 'Arthaud', party: 'Lutte ouvrière', col: '#8E1B1B', main: 1, poll: 1 },
@@ -50,36 +50,38 @@ export const C = [
   { id: 'tondelier', p: 'Marine', n: 'Tondelier', party: 'Les Écologistes', col: '#2E9E4F', main: 1, poll: 2.5, note: 'Choix du parti le 13 déc.' },
   { id: 'batho', p: 'Delphine', n: 'Batho', party: 'Génération écologie', col: '#5E9A2E' },
   { id: 'glucksmann', p: 'Raphaël', n: 'Glucksmann', party: 'Place publique', col: 'var(--c-rg)', main: 1, poll: 9.8 },
-  { id: 'hollande', p: 'François', n: 'Hollande', party: 'PS', col: '#C24F86', main: 1, poll: 7, und: 1, note: 'Décision mi-décembre' },
+  { id: 'hollande', p: 'François', n: 'Hollande', party: 'PS', col: '#C24F86', main: 1, poll: 7, und: 1, note: 'Décision en décembre' },
   { id: 'bouamrane', p: 'Karim', n: 'Bouamrane', party: 'PS, hors primaire', col: '#C7608F' },
   { id: 'cazeneuve', p: 'Bernard', n: 'Cazeneuve', party: 'La Convention', col: '#A85C80' },
   { id: 'attal', p: 'Gabriel', n: 'Attal', party: 'Renaissance', col: '#C99700', main: 1, poll: 5 },
   { id: 'becht', p: 'Olivier', n: 'Becht', party: '« Extrême centre »', col: '#B8932A' },
   { id: 'philippe', p: 'Édouard', n: 'Philippe', party: 'Horizons', col: 'var(--c-ep)', main: 1, poll: 9 },
-  { id: 'bertrand', p: 'Xavier', n: 'Bertrand', party: 'Sans étiquette', col: '#2F6FB0', note: 'Intention annoncée' },
+  { id: 'bertrand', p: 'Xavier', n: 'Bertrand', party: 'Nous France', col: '#2F6FB0' },
   { id: 'riner', p: 'Teddy', n: 'Riner', party: 'Sans étiquette', col: '#64748B', main: 1, poll: 3.5 },
   { id: 'villepin', p: 'Dominique', n: 'de Villepin', party: 'La France humaniste', col: '#6C63B5', main: 1, poll: 1.5 },
   { id: 'retailleau', p: 'Bruno', n: 'Retailleau', party: 'Les Républicains', col: 'var(--c-br)', main: 1, poll: 6 },
   { id: 'lisnard', p: 'David', n: 'Lisnard', party: 'Nouvelle Énergie', col: 'var(--c-dl)', main: 1, poll: 10 },
+  { id: 'platret', p: 'Gilles', n: 'Platret', party: 'Divers droite', col: '#4A5C8A' },
   { id: 'nda', p: 'Nicolas', n: 'Dupont-Aignan', party: 'Debout la France', col: '#34427E', main: 1, poll: 1 },
   { id: 'asselineau', p: 'François', n: 'Asselineau', party: 'UPR', col: '#2C6E7F' },
   { id: 'philippot', p: 'Florian', n: 'Philippot', party: 'Les Patriotes', col: '#4B3F8F' },
   { id: 'lepen', p: 'Marine', n: 'Le Pen', party: 'Rassemblement national', col: 'var(--c-lp)', main: 1, poll: 31.6 },
   { id: 'zemmour', p: 'Éric', n: 'Zemmour', party: 'Reconquête', col: '#3A2E57', main: 1, poll: 3.5 },
   { id: 'lassalle', p: 'Jean', n: 'Lassalle', party: 'Résistons !', col: '#7A6A3A', off: 1, und: 1, note: 'Attendu' },
-  { id: 'polony', p: 'Natacha', n: 'Polony', party: '', col: '#7A7A85', off: 1 },
+  { id: 'polony', p: 'Natacha', n: 'Polony', party: 'Nous sommes la France', col: '#7A7A85', off: 1 },
   { id: 'branco', p: 'Juan', n: 'Branco', party: 'Les Ruches', col: '#7A7A85', off: 1 },
   { id: 'egger', p: 'Clara', n: 'Egger', party: 'Solution démocratique', col: '#7A7A85', off: 1 },
   { id: 'markovic', p: 'Mira', n: 'Markovic', party: 'Parti animaliste', col: '#7A7A85', off: 1 },
   { id: 'mikolajczak', p: 'Antoine', n: 'Mikolajczak', party: 'Équinoxe', col: '#7A7A85', off: 1 },
   { id: 'mathieu', p: 'Benoît', n: 'Mathieu', party: 'Sans étiquette', col: '#7A7A85', off: 1 },
-  { id: 'lalanne', p: 'Francis', n: 'Lalanne', party: '', col: '#7A7A85', off: 1 }
+  { id: 'lalanne', p: 'Francis', n: 'Lalanne', party: 'France Libre', col: '#7A7A85', off: 1 },
+  { id: 'durif', p: 'Sylvain', n: 'Durif', party: 'Sans étiquette', col: '#7A7A85', off: 1 }
 ];
 export const by = Object.fromEntries(C.map(c => [c.id, c]));
 
 /* Candidats sur lesquels on parie dans les étapes 1 et 2.
    À FIGER à la clôture de chaque étape : un candidat ajouté ensuite ne compte pas. */
-export const U1 = ['arthaud', 'kazib', 'labib', 'melenchon', 'roussel', 'tondelier', 'batho', 'glucksmann', 'hollande', 'bouamrane', 'cazeneuve', 'attal', 'becht', 'philippe', 'bertrand', 'riner', 'villepin', 'retailleau', 'lisnard', 'nda', 'asselineau', 'philippot', 'lepen', 'zemmour', 'lassalle', 'polony', 'branco', 'egger', 'markovic', 'mikolajczak', 'mathieu', 'lalanne'];
+export const U1 = ['arthaud', 'kazib', 'labib', 'melenchon', 'roussel', 'tondelier', 'batho', 'glucksmann', 'hollande', 'bouamrane', 'cazeneuve', 'attal', 'becht', 'philippe', 'bertrand', 'riner', 'villepin', 'retailleau', 'lisnard', 'platret', 'nda', 'asselineau', 'philippot', 'lepen', 'zemmour', 'lassalle', 'polony', 'branco', 'egger', 'markovic', 'mikolajczak', 'mathieu', 'lalanne', 'durif'];
 export const U2 = U1;
 
 /* Retirés depuis le début du jeu (affichés barrés dans « Qui sera là ? ») */

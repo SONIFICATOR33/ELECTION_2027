@@ -19,3 +19,6 @@ En ligne : https://sonificator33.github.io/ELECTION_2027/
 
 ## Typographie
 Bodoni Moda (titres, chiffres) et Hanken Grotesk (texte), licence SIL OFL 1.1 (voir `fonts/`), hébergées dans le dépôt : aucun appel à Google Fonts.
+
+## Image d’accueil
+`img/habit.jpg` : image générée par IA par Vincent (Poulpe Gourmand Production).

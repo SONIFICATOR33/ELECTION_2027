@@ -365,7 +365,7 @@ async function drawTeam() {
   const cv = $('#cv'), x = cv.getContext('2d'), W = 1080, H = 1350, t = draft.team;
   const SERIF = '"Bodoni Moda", Didot, Georgia, serif', SANS = '"Hanken Grotesk", system-ui, sans-serif';
   x.fillStyle = '#FFFCF6'; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#5B1428'; x.fillRect(0, 0, W, 250);
+  x.fillStyle = '#0E0E0E'; x.fillRect(0, 0, W, 250);
   [['#1F3A93', 0], ['#FBF9F4', 1], ['#C8102E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 30, 64, 30, 56); });
   x.strokeStyle = '#C6A15B'; x.lineWidth = 2; x.strokeRect(64, 64, 90, 56);
   x.fillStyle = '#FBF9F4'; x.font = '500 66px ' + SERIF; x.fillText('Ma team de rêve', 184, 116);
@@ -374,24 +374,24 @@ async function drawTeam() {
   let y0 = 325;
   if (t.coeur) {
     x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Mon président de cœur', 64, y0);
-    x.fillStyle = '#2B1B1F'; x.font = '600 62px ' + SERIF; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
+    x.fillStyle = '#1A1A1A'; x.font = '600 62px ' + SERIF; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
     y0 += 125;
   }
   x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Premier ministre', 64, y0);
-  x.fillStyle = '#2B1B1F'; x.font = '600 ' + (t.coeur ? 56 : 72) + 'px ' + SERIF; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
+  x.fillStyle = '#1A1A1A'; x.font = '600 ' + (t.coeur ? 56 : 72) + 'px ' + SERIF; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
   let y = y0 + (t.coeur ? 135 : 155);
   const step = t.coeur ? 56 : 64;
   x.strokeStyle = '#E8DDCB'; x.lineWidth = 1.5;
   for (const p of D.POSTES) {
     x.fillStyle = '#5D6377'; x.font = '500 26px ' + SANS; x.fillText(fit(x, p, 410), 64, y);
-    x.fillStyle = '#2B1B1F'; x.font = '600 36px ' + SERIF; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
+    x.fillStyle = '#1A1A1A'; x.font = '600 36px ' + SERIF; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
     x.beginPath(); x.moveTo(64, y + 20); x.lineTo(W - 64, y + 20); x.stroke(); y += step;
   }
   if (t.jl && t.jn) {
     x.fillStyle = '#C8102E'; x.font = '600 26px ' + SANS; x.fillText(fit(x, 'Joker : ' + t.jl, W - 128), 64, y + 20);
-    x.fillStyle = '#2B1B1F'; x.font = '500 42px ' + SERIF; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
+    x.fillStyle = '#1A1A1A'; x.font = '500 42px ' + SERIF; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
   }
-  x.fillStyle = '#5B1428'; x.fillRect(0, H - 90, W, 90); x.fillStyle = '#C6A15B'; x.fillRect(0, H - 90, W, 3);
+  x.fillStyle = '#0E0E0E'; x.fillRect(0, H - 90, W, 90); x.fillStyle = '#C6A15B'; x.fillRect(0, H - 90, W, 3);
   x.fillStyle = '#FBF9F4'; x.font = '500 30px ' + SERIF; x.fillText('Les pronos des vieux boucs', 64, H - 34);
   x.fillStyle = '#E9D7A8'; x.font = '500 22px ' + SANS; const u = (location.host + location.pathname).replace(/index\.html$/, '').replace(/\/$/, ''); x.fillText(u, W - 64 - x.measureText(u).width, H - 36);
   return new Promise(r => cv.toBlob(r, 'image/png'));
