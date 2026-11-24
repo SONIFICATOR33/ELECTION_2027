@@ -19,7 +19,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=15">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=16">
+<link rel="stylesheet" href="css/app.css?v=17">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -128,15 +128,14 @@
 
     <article class="card stage" id="st1">
       <div class="shead"><span class="tag">Étape 1</span><span class="dl" id="dl1"></span></div>
-      <h2>Qui sera encore là le 31 janvier ?</h2>
+      <h2>Qui sera candidat déclaré le 31 janvier ?</h2>
       <p class="ssum" id="sum1"></p>
       <button class="tog" data-sb="1" aria-controls="sb1"></button>
       <div class="sbody" id="sb1">
-      <p class="help">Touche ceux qui seront encore candidats déclarés à l'Élysée le 31 janvier : ils passent au vert. Ceux que tu laisses gris, tu paries qu'ils auront renoncé, ou qu'ils ne se seront pas lancés.</p>
+      <p class="pick-instruction">Touche tes candidats. <strong>Vert = oui · Gris = non</strong></p>
       <p class="retires" id="retires"></p>
       <div class="count"><span><b id="n1">0</b> candidats retenus</span><button class="linkbtn" id="pre1">Partir des déclarés actuels</button></div>
       <div class="tiles" id="tiles1"></div>
-      <button class="linkbtn flink" data-fiche="arthaud">Un doute sur quelqu’un ? Ouvre les fiches des candidats</button>
       <p class="fine">Fait foi : la liste des candidats déclarés de Toute l'Europe au 31 janvier. Une candidature à une simple primaire ne compte pas.</p>
       <button class="big" id="save1">Valider mon pari</button>
       </div>
@@ -151,7 +150,6 @@
       <p class="help">Pour être candidat, il faut 500 parrainages d'élus avant le 12 mars à 18 h. Touche ceux qui les auront et seront sur la liste officielle du 26 mars : ils passent au vert.</p>
       <div class="count"><span><b id="n2">0</b> candidats auront leurs signatures</span><button class="linkbtn" id="pre2">Reprendre mon étape 1</button></div>
       <div class="tiles" id="tiles2"></div>
-      <button class="linkbtn flink" data-fiche="arthaud">Un doute sur quelqu’un ? Ouvre les fiches des candidats</button>
       <p class="fine">Fait foi : la liste officielle du Conseil constitutionnel, au plus tard le 26 mars. Un candidat qui a ses signatures mais se retire compte comme absent.</p>
       <p class="fine" id="lock2note"></p>
       <button class="big" id="save2">Valider mon pari</button>
@@ -329,7 +327,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=16"></script>
+<script type="module" src="js/app.js?v=17"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

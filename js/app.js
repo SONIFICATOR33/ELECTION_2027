@@ -138,7 +138,7 @@ function tilesHTML(key) {
     if (!(key === 'l1' ? D.U1 : D.U2).includes(c.id)) continue;
     if (c.off && !off) { h += '<span class="grp">Hors axe gauche-droite</span>'; off = true; }
     const on = sel.has(c.id);
-    h += `<button class="tile${on ? ' on' : ''}" data-id="${c.id}" aria-pressed="${on}"${open ? '' : ' disabled'}>${av(c, 44)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><small>${esc(c.note || c.party || '')}</small><span class="ok">${OKSVG}</span></button>`;
+    h += `<div class="tile-wrap"><button class="tile${on ? ' on' : ''}" data-id="${c.id}" aria-pressed="${on}"${open ? '' : ' disabled'}>${av(c, 44)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><small>${esc(c.note || c.party || '')}</small><span class="ok">${OKSVG}</span></button><button type="button" class="tile-fiche" data-fiche="${c.id}" aria-label="Voir la fiche de ${esc(c.p + ' ' + c.n)}">?</button></div>`;
   }
   return h;
 }
