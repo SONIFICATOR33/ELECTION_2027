@@ -68,10 +68,16 @@ function renderHeader() {
 }
 
 /* ===================== ACCUEIL ===================== */
+function homeMilestone() {
+  return now() <= +D.RES1
+    ? { date: D.RES1, label: 'avant le résultat du premier pari, le 31 décembre' }
+    : { date: D.TOUR1, label: 'avant le premier tour, le 18 avril 2027' };
+}
 function renderHero() {
   requestAnimationFrame(() => guilloche($('#gHero'), { cx: 0.85, cy: 0.3, alpha: 0.16, scale: 1.1 }));
-  const jj = Math.max(0, daysTo(D.TOUR1));
-  $('#jx').textContent = jj; $('#jxl').textContent = (jj > 1 ? 'jours' : 'jour') + ' avant le 1er tour, dimanche 18 avril 2027';
+  const milestone = homeMilestone();
+  const jj = Math.max(0, daysTo(milestone.date));
+  $('#jx').textContent = jj; $('#jxl').textContent = (jj > 1 ? 'jours' : 'jour') + ' ' + milestone.label;
   const a = +D.T0, z = +D.TOUR2, pos = t => Math.max(0, Math.min(100, (t - a) / (z - a) * 100));
   const n = now(), next = D.MILESTONES.find(m => +m.at > n);
   $('#track').innerHTML = `<div class="ln0"></div><div class="ln1" style="width:${pos(n)}%"></div>` +
@@ -714,7 +720,9 @@ function renderAll() {
 /* ===================== AFFICHE D'ACCUEIL ===================== */
 const splash = $('#splash');
 function showSplash() {
-  $('#splashJ').textContent = `J-${Math.max(0, daysTo(D.TOUR1))}`;
+  const milestone = homeMilestone();
+  $('#splashJ').textContent = `J-${Math.max(0, daysTo(milestone.date))}`;
+  $('#splash-date')?.replaceChildren(milestone.label);
   $('#splashGo').textContent = 'Faire mes pronos';
   splash.hidden = false; document.body.style.overflow = 'hidden';
   requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.3, alpha: 0.16, scale: 1.1 }));
