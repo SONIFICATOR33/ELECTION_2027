@@ -68,6 +68,12 @@ export function groupsStore(store) {
         tx.set(settings(), { groups: { ...list, [code]: shared } });
       });
     },
+    async teamVisibility() {
+      const groups = await this.list();
+      return Promise.all(groups.map(async g => ({
+        ...g, visible: (await F.getDoc(entry(g.code, 'teams'))).exists()
+      })));
+    },
     async publishTeam(code, team) {
       await F.setDoc(entry(code, 'teams'), { value: team });
     },

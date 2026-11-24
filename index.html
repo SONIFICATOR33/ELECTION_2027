@@ -205,6 +205,11 @@
       <p class="help">Invente un ministère et nomme quelqu'un, politique ou pas.</p>
       <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off" maxlength="60"><div id="t-jn"></div></div>
     </article>
+    <article class="card">
+      <h2>Visibilité de ma Dream Team</h2>
+      <p class="help">Choisis dans quels groupes les membres peuvent voir ta composition.</p>
+      <div id="team-visibility"></div>
+    </article>
     <p class="help" id="pubHelp"></p>
     <button class="big" id="teamShare" disabled>Partager l’image de mon gouvernement</button>
     <button class="ghost" id="teamSave">Enregistrer sur mon téléphone</button>
@@ -256,6 +261,10 @@
     <article class="card">
       <h2>Mes groupes</h2>
       <div id="group-view"></div>
+      <details id="registered-players" hidden>
+        <summary>Joueurs inscrits</summary>
+        <div id="registered-names"></div>
+      </details>
       <button class="ghost" id="install-app" aria-controls="install-help" aria-expanded="false" hidden>Installer l’app</button>
       <p id="install-help" hidden>Sur iPhone, ouvre le site dans Safari, puis Partager → Sur l’écran d’accueil → Ouvrir comme app web. Sur Android, ouvre le menu de Chrome et choisis Installer l’application ou Ajouter à l’écran d’accueil.</p>
     </article>
@@ -311,7 +320,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=12"></script>
+<script type="module" src="js/app.js?v=13"></script>
 <script type="module" src="js/install.js"></script>
 </body>
 </html>

@@ -50,6 +50,7 @@ service cloud.firestore {
 
     match /players/{pid} {
       allow get: if request.auth != null;
+      allow list: if request.auth != null && exists(dev()) && request.query.limit <= 500;
       allow create: if request.auth != null && validPid(pid)
         && request.resource.data.keys().hasOnly(['pseudo', 'createdAt'])
         && request.resource.data.pseudo is string

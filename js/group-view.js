@@ -106,6 +106,9 @@ export function groupView(root, { getStore, withUser, getTeam, notify }) {
           '<button class="ghost" data-group-action="share" aria-pressed="' + group.shared + '">' +
           (group.shared ? 'Arrêter de partager mes pronos' : 'Partager mes pronos dans ce groupe') + '</button></div>' +
           '<p>Les choix partagés seront visibles par les membres après chaque clôture.</p>' +
+          '<section aria-label="Membres du groupe"><h3>Membres (' + Object.keys(data.players).length +
+          ')</h3><ul>' + Object.values(data.players).map(p => p.pseudo).sort((a, b) => a.localeCompare(b, 'fr'))
+            .map(pseudo => '<li>' + escape(pseudo) + '</li>').join('') + '</ul></section>' +
           '<div class="group-actions" aria-label="Contenu du groupe">' +
           [['pronos', 'Pronos'], ['teams', 'Dream Teams'], ['rank', 'Classement']].map(([tab, label]) =>
             '<button class="ghost" data-tab="' + tab + '" aria-pressed="' + (tab === currentTab) + '">' + label + '</button>').join('') +

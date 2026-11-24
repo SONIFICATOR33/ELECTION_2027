@@ -323,6 +323,49 @@ function renderTeam() {
   $('#t-jl').value = draft.team.jl || '';
   renderPublish();
 }
+const visibility = $('#team-visibility');
+let visibilityRequest = 0;
+async function renderTeamVisibility() {
+  const request = ++visibilityRequest;
+  if (!store.groups) {
+    visibility.textContent = 'Le partage en groupe nécessite une connexion.';
+    return;
+  }
+  if (!ME) {
+    visibility.innerHTML = '<button class="ghost" data-join>Me connecter pour choisir</button>';
+    return;
+  }
+  visibility.textContent = 'Chargement de tes groupes…';
+  try {
+    const groups = await store.groups.teamVisibility();
+    if (request !== visibilityRequest) return;
+    visibility.innerHTML = groups.length ? groups.map(g =>
+      `<p><b>${esc(g.name)}</b> · ${g.visible ? 'Visible' : 'Privée'}<br><button class="ghost" data-group="${esc(g.code)}" aria-pressed="${g.visible}">${g.visible ? 'Masquer ma Dream Team' : 'Rendre ma Dream Team visible'}</button>${g.visible ? ` <button class="ghost" data-group="${esc(g.code)}" data-update>Mettre à jour</button>` : ''}</p>`
+    ).join('') : '<button class="ghost" data-go="classement">Créer ou rejoindre un groupe</button>';
+  } catch {
+    if (request === visibilityRequest) visibility.innerHTML = '<p>Impossible de vérifier la visibilité.</p><button class="ghost" data-retry-visibility>Réessayer</button>';
+  }
+}
+visibility.addEventListener('click', async e => {
+  if (e.target.closest('[data-retry-visibility]')) { await renderTeamVisibility(); return; }
+  const button = e.target.closest('button[data-group]');
+  if (!button || !ME) return;
+  const hide = button.getAttribute('aria-pressed') === 'true';
+  if (!hide && !draft.team.coeur && !draft.team.pm) {
+    toast('Choisis au moins ton président de cœur ou ton Premier ministre.');
+    return;
+  }
+  for (const b of visibility.querySelectorAll('button')) b.disabled = true;
+  try {
+    if (hide) await store.groups.unpublishTeam(button.dataset.group);
+    else await store.groups.publishTeam(button.dataset.group, clone(draft.team));
+    toast(hide ? 'Dream Team masquée dans ce groupe.' : 'Dream Team visible dans ce groupe.');
+    await renderTeamVisibility();
+  } catch (err) {
+    toast(err.message || 'Impossible de modifier la visibilité.');
+    for (const b of visibility.querySelectorAll('button')) b.disabled = false;
+  }
+});
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
 function renderPublish() {
   const n = teamCount(), ok = n === 12, b = $('#teamShare');
@@ -448,7 +491,7 @@ function openJoin(msg) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
-      <p class="err" id="jerr" role="alert"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
+      <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
   }
   sheet.classList.add('open');
   setTimeout(() => { const f = $('#jp') || $('#close'); if (f) f.focus(); }, 50);
@@ -458,15 +501,44 @@ sheet.addEventListener('click', async e => {
   if (e.target.id === 'logout') { await store.logout(); ME = null; loadDraft(); initSB(); renderAll(); openJoin(); }
 });
 sheet.addEventListener('submit', async e => {
-  e.preventDefault(); const p = $('#jp').value.trim(), c = $('#jc').value.trim(), er = $('#jerr'), b = $('#jgo');
-  er.textContent = ''; b.disabled = true; b.textContent = 'Un instant…';
+  e.preventDefault();
+  const form = e.target, b = form.querySelector('#jgo');
+  if (b.disabled) return;
+  const p = form.querySelector('#jp').value.trim(), c = form.querySelector('#jc').value.trim();
+  const er = form.querySelector('#jerr'), status = form.querySelector('#joinStatus');
+  er.textContent = '';
+  status.textContent = 'Connexion en cours…';
+  b.disabled = true;
+  form.setAttribute('aria-busy', 'true');
+  const slow = setTimeout(() => { status.textContent = 'La connexion prend plus de temps que prévu. Vérifie ton réseau.'; }, 8000);
   try {
-    const keep = clone(draft), kd = Object.assign({}, dirty);
-    ME = await store.join(p, c); await refresh(true); loadDraft(); initSB();
-    for (const k in kd) if (kd[k]) { draft[k] = keep[k]; dirty[k] = true; }
-    sheet.classList.remove('open'); renderAll(); snd.logo(); toast('Salut ' + ME.pseudo + ' !');
-    if (pending) { const f = pending; pending = null; await f(); }
-  } catch (err) { snd.error(); er.textContent = err.message || 'Erreur'; b.disabled = false; b.textContent = "C'est parti"; }
+    ME = await store.join(p, c);
+  } catch (err) {
+    er.textContent = err.message || 'Connexion impossible.';
+    status.textContent = '';
+    b.disabled = false;
+    form.removeAttribute('aria-busy');
+    return;
+  } finally {
+    clearTimeout(slow);
+  }
+  const action = pending;
+  pending = null;
+  sheet.classList.remove('open');
+  renderHeader();
+  toast('Salut ' + ME.pseudo + ' !');
+  $('#meBtn').focus({ preventScroll: true });
+  const keep = clone(draft), kd = { ...dirty };
+  if (kd.team) {
+    try { localStorage.setItem(teamKey(), JSON.stringify(keep.team)); } catch {}
+  }
+  await refresh(true);
+  loadDraft();
+  for (const k in kd) if (kd[k]) { draft[k] = keep[k]; dirty[k] = true; }
+  initSB();
+  renderAll();
+  if (location.hash === '#team') renderTeamVisibility();
+  if (action) await action();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { sheet.classList.remove('open'); pending = null; } });
 $('#meBtn').onclick = () => openJoin();
@@ -493,10 +565,30 @@ function show() {
   $$('.tabs a').forEach(a => { const o = a.dataset.t === v; a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
   if (v === 'sondages') requestAnimationFrame(draw);
-  if (v === 'classement') groupUI.render();
+  if (v === 'classement') { groupUI.render(); renderRegisteredPlayers(); }
+  if (v === 'team') renderTeamVisibility();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
+
+const registered = $('#registered-players');
+let rosterRequest = 0;
+async function renderRegisteredPlayers() {
+  const request = ++rosterRequest;
+  registered.hidden = !ME || !store.registeredPlayers;
+  if (registered.hidden || !registered.open) return;
+  const content = $('#registered-names');
+  content.textContent = 'Chargement…';
+  try {
+    const names = await store.registeredPlayers();
+    if (request !== rosterRequest) return;
+    content.innerHTML = '<ul>' + names.sort((a, b) => a.localeCompare(b, 'fr'))
+      .map(pseudo => '<li>' + esc(pseudo) + '</li>').join('') + '</ul>';
+  } catch {
+    if (request === rosterRequest) content.textContent = 'La liste générale est indisponible. Les membres de ton groupe sont affichés plus haut.';
+  }
+}
+registered.addEventListener('toggle', renderRegisteredPlayers);
 
 const groupUI = groupView($('#group-view'), {
   getStore: () => store, withUser: withMe, getTeam: () => clone(draft.team), notify: toast
@@ -505,7 +597,7 @@ function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderCTA(); renderPollsHome();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
   renderTeam();
-  if (location.hash === '#classement') groupUI.render();
+  if (location.hash === '#classement') { groupUI.render(); renderRegisteredPlayers(); }
 }
 
 /* ===================== AFFICHE D'ACCUEIL ===================== */

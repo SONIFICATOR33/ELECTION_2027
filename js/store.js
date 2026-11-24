@@ -100,6 +100,20 @@ class FirebaseStore {
     try { await F.deleteDoc(F.doc(this.db, 'devices', this.user.uid)); } catch (e) { }
     this._me = null; this.cache = null;
   }
+  async registeredPlayers() {
+    const { F } = this;
+    const players = F.collection(this.db, 'players');
+    const names = [];
+    let cursor;
+    do {
+      const conditions = [F.orderBy(F.documentId()), F.limit(500)];
+      if (cursor) conditions.push(F.startAfter(cursor));
+      const page = await F.getDocs(F.query(players, ...conditions));
+      names.push(...page.docs.map(doc => doc.data().pseudo));
+      cursor = page.size === 500 ? page.docs.at(-1) : null;
+    } while (cursor);
+    return names;
+  }
   async loadAll(force) {
     if (!force && this.cache && Date.now() - this.cacheAt < 60e3) return this.cache;
     const { F } = this;
