@@ -1,8 +1,7 @@
 rules_version = '2';
 // Règles d'accès de la base « Les pronos des membrés ».
 // À coller dans la console Firebase : Firestore > Règles > Publier.
-// Principe : tout le monde peut lire les pronos (pseudos uniquement) ;
-// chacun ne peut écrire que les siens, et seulement tant que le pari est ouvert.
+// Les pronos personnels sont privés. Chaque groupe révèle ses copies à la clôture.
 service cloud.firestore {
   match /databases/{db}/documents {
 
@@ -12,7 +11,33 @@ service cloud.firestore {
     function LOCK2()  { return 1801868340000; } // 5 févr. 2027 23h59 : « Ligne de départ » (provisoire)
     function LOCKGP() { return 1807999140000; } // 17 avril 2027 23h59 : Grand Prono
     function nowMs()  { return request.time.toMillis(); }
-    function weekNow() { return string(int((nowMs() - T0()) / 604800000)); }
+    function weekNow() {
+      let shift = nowMs() >= 1806195600000 ? 3600000 : 0;
+      return string(int((nowMs() - T0() + shift) / 604800000));
+    }
+    function candidates() {
+      return ['arthaud', 'melenchon', 'roussel', 'tondelier', 'batho', 'glucksmann',
+        'hollande', 'bouamrane', 'cazeneuve', 'attal', 'becht', 'philippe', 'bertrand',
+        'riner', 'villepin', 'retailleau', 'lisnard', 'nda', 'asselineau', 'philippot',
+        'lepen', 'zemmour', 'lassalle', 'polony'];
+    }
+    function validList(value) {
+      return value is list && value.size() > 0 && value.size() <= candidates().size()
+        && value.hasOnly(candidates()) && value.toSet().size() == value.size();
+    }
+    function slot(v) {
+      return v is map && v.keys().hasOnly(['id', 'pct']) && v.id in candidates()
+        && v.pct is number && v.pct >= 0 && v.pct <= 60;
+    }
+    function validGrand(v) {
+      let t = v.top;
+      return v is map && v.keys().hasOnly(['pres', 'top', 'win']) && t is list && t.size() == 5
+        && slot(t[0]) && slot(t[1]) && slot(t[2]) && slot(t[3]) && slot(t[4])
+        && [t[0].id, t[1].id, t[2].id, t[3].id, t[4].id].toSet().size() == 5
+        && t[0].pct >= t[1].pct && t[1].pct >= t[2].pct && t[2].pct >= t[3].pct && t[3].pct >= t[4].pct
+        && t[0].pct + t[1].pct + t[2].pct + t[3].pct + t[4].pct <= 100
+        && v.pres in [t[0].id, t[1].id] && v.win is number && v.win >= 50 && v.win <= 80;
+    }
 
     function dev() { return /databases/$(db)/documents/devices/$(request.auth.uid); }
     function owner(pid) {
@@ -24,7 +49,7 @@ service cloud.firestore {
     function validPid(pid) { return pid.matches('^[a-z0-9_-]{2,20}$'); }
 
     match /players/{pid} {
-      allow read: if true;
+      allow get: if request.auth != null;
       allow create: if request.auth != null && validPid(pid)
         && request.resource.data.keys().hasOnly(['pseudo', 'createdAt'])
         && request.resource.data.pseudo is string
@@ -58,11 +83,12 @@ service cloud.firestore {
           && (!ch.hasAny(['l1', 'l1at']) || nowMs() < LOCK1())
           && (!ch.hasAny(['l2', 'l2at']) || nowMs() < LOCK2())
           && (!ch.hasAny(['weeks']) || (nowMs() < LOCKGP()
-                && request.resource.data.weeks.diff(resource.data.weeks).affectedKeys().hasOnly([weekNow()])))
-          && (!ch.hasAny(['l1']) || (request.resource.data.l1 is list && request.resource.data.l1.size() <= 60))
-          && (!ch.hasAny(['l2']) || (request.resource.data.l2 is list && request.resource.data.l2.size() <= 60));
+                && request.resource.data.weeks.diff(resource.data.weeks).affectedKeys().hasOnly([weekNow()])
+                && validGrand(request.resource.data.weeks[weekNow()])))
+          && (!ch.hasAny(['l1']) || validList(request.resource.data.l1))
+          && (!ch.hasAny(['l2']) || validList(request.resource.data.l2));
       }
-      allow read: if true;
+      allow get: if owner(pid);
       allow create: if ownerAfter(pid)
         && request.resource.data.keys().hasOnly(['weeks', 'updatedAt'])
         && request.resource.data.weeks.size() == 0
@@ -72,6 +98,67 @@ service cloud.firestore {
         && changesOk();
       allow delete: if false;
 
+    }
+
+    function validCode(code) { return code.matches('^[a-f0-9]{32}$'); }
+    function inside(code) {
+      return request.auth != null && exists(dev())
+        && exists(/databases/$(db)/documents/groups/$(code)/members/$(get(dev()).data.pid));
+    }
+    function groupDoc(code) { return /databases/$(db)/documents/groups/$(code); }
+    function stageVisible(stage) {
+      return (stage == 'l1' && nowMs() >= LOCK1())
+        || (stage == 'l2' && nowMs() >= LOCK2())
+        || (stage == 'weeks' && nowMs() >= LOCKGP());
+    }
+
+    match /players/{pid}/settings/groups {
+      allow get: if owner(pid);
+      allow create, update: if owner(pid)
+        && request.resource.data.keys().hasOnly(['groups'])
+        && request.resource.data.groups is map && request.resource.data.groups.size() <= 5;
+    }
+
+    match /groups/{code} {
+      allow get: if request.auth != null && validCode(code);
+      allow create: if validCode(code) && owner(request.resource.data.creator)
+        && request.resource.data.keys().hasOnly(['name', 'creator'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 48;
+
+      match /members/{pid} {
+        function validMember() {
+          let v = request.resource.data;
+          return v.keys().hasOnly(['pseudo', 'shared', 'submitted'])
+            && v.shared is bool && v.submitted is list && v.submitted.size() <= 3
+            && v.submitted.hasOnly(['l1', 'l2', 'weeks'])
+            && (v.shared || v.submitted.size() == 0);
+        }
+        allow read: if inside(code);
+        allow create: if owner(pid) && validCode(code) && existsAfter(groupDoc(code))
+          && validMember() && !request.resource.data.shared
+          && request.resource.data.pseudo == get(/databases/$(db)/documents/players/$(pid)).data.pseudo;
+        allow update: if owner(pid) && validMember() && request.resource.data.pseudo == resource.data.pseudo;
+      }
+
+      match /{stage}/{pid} {
+        function isProno() { return stage in ['l1', 'l2', 'weeks']; }
+        allow read: if inside(code) && (stage == 'teams' || stageVisible(stage));
+        allow create, update: if owner(pid) && inside(code)
+          && request.resource.data.keys().hasOnly(['value'])
+          && ((isProno() && request.resource.data.value == getAfter(/databases/$(db)/documents/pronos/$(pid)).data[stage])
+              || (stage == 'teams' && validTeam(request.resource.data.value)));
+        allow delete: if owner(pid) && inside(code) && (isProno() || stage == 'teams');
+      }
+    }
+
+    function validTeam(t) {
+      return t is map && t.keys().hasOnly(['coeur', 'pm', 'min', 'jl', 'jn'])
+        && t.coeur is string && t.coeur.size() <= 60
+        && t.pm is string && t.pm.size() <= 60
+        && t.jl is string && t.jl.size() <= 120
+        && t.jn is string && t.jn.size() <= 120
+        && t.min is map && t.min.size() <= 10;
     }
   }
 }

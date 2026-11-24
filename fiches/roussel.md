@@ -2,12 +2,13 @@
 
 **PCF** · 58 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/roussel.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/roussel.webp" alt="" width="240">
+
+Photo [Roussel Fabien 1.jpg](https://commons.wikimedia.org/wiki/File:Roussel_Fabien_1.jpg) · Zouhair NAKARA · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidat du PCF
-- **Repère sondages** : 1 %
 - **Présidentielles passées** : 2022 : 2,28 %
 
 ## Aujourd’hui

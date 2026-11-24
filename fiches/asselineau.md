@@ -2,12 +2,13 @@
 
 **UPR** · 69 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/asselineau.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/asselineau.webp" alt="" width="240">
+
+Photo [François ASSELINEAU.jpg](https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_ASSELINEAU.jpg) · Union Populaire Républicaine · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Campagne lancée
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : 2017 : 0,92 % · 2022 : parrainages insuffisants
 
 ## Aujourd’hui

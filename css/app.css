@@ -434,3 +434,18 @@ h2{font-weight:600;letter-spacing:-.2px}
 @keyframes fup{from{transform:translateY(48px);opacity:.5}to{transform:none;opacity:1}}
 @keyframes fsr{from{transform:translateX(26px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fsl{from{transform:translateX(-26px);opacity:0}to{transform:none;opacity:1}}
+
+#group-view { display: grid; gap: 12px; }
+#group-view label { display: grid; gap: 4px; }
+#group-view input, #group-view select { min-height: 44px; max-width: 100%; font: inherit; }
+.group-actions { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; }
+.group-actions button { min-height: 44px; }
+.group-actions [aria-pressed="true"] { border-color: currentColor; font-weight: 800; }
+.group-stage { padding-block: 10px; border-top: 1px solid var(--line); }
+.group-content li { margin-block: 8px; }
+.group-content summary { cursor: pointer; padding-block: 8px; }
+
+.frole { margin: 6px 0 0; font-size: .85rem; line-height: 1.25; }
+.candidate-choice { display: inline-flex; align-items: stretch; gap: 3px; }
+.candidate-choice .chip, .candidate-help { min-height: 44px; }
+.candidate-choice .candidate-help { min-width: 44px; padding: 0; }

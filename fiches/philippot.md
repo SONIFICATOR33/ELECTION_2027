@@ -2,12 +2,13 @@
 
 **Les Patriotes** · 45 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/philippot.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/philippot.webp" alt="" width="240">
+
+Photo [2022-04-16 16-49-26 MAM-Paris 02.jpg](https://commons.wikimedia.org/wiki/File:2022-04-16_16-49-26_MAM-Paris_02.jpg) · Thomas Bresson · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

@@ -2,12 +2,13 @@
 
 **Lutte ouvrière** · 57 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/arthaud.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/arthaud.webp" alt="" width="240">
+
+Photo [Nathalie Arthaud (LO) 19-05-2024.jpg](https://commons.wikimedia.org/wiki/File:Nathalie_Arthaud_(LO)_19-05-2024.jpg) · Kokluts · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidate de Lutte ouvrière
-- **Repère sondages** : 1 %
 - **Présidentielles passées** : 2012 : 0,56 % · 2017 : 0,64 % · 2022 : 0,56 %
 
 ## Aujourd’hui

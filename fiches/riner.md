@@ -2,12 +2,13 @@
 
 **Sans étiquette** · 38 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/riner.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/riner.webp" alt="" width="240">
+
+Photo [Teddy Riner Cannes 2016.jpg](https://commons.wikimedia.org/wiki/File:Teddy_Riner_Cannes_2016.jpg) · Georges Biard · [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 9 novembre 2026
-- **Repère sondages** : 3,5 % (en hausse : Candidat depuis le 9 nov., déjà jusqu’à 4,5 % chez Elabe)
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

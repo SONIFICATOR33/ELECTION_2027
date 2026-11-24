@@ -14,7 +14,7 @@
 | [Karim Bouamrane](bouamrane.md) | PS, hors primaire | 54 ans | Candidature annoncée le 9 juin 2026, hors primaire du PS |
 | [Bernard Cazeneuve](cazeneuve.md) | La Convention | 63 ans | « Lettre aux Français » le 16 juillet 2026, refuse la primaire du PS |
 | [Gabriel Attal](attal.md) | Renaissance | 38 ans | Candidature annoncée le 22 mai 2026 |
-| [Olivier Becht](becht.md) | « Extrême centre » | 50 ans | Candidature annoncée le 24 septembre 2026 |
+| [Olivier Becht](becht.md) | Apparenté Ensemble pour la République | 50 ans | Candidature annoncée le 24 septembre 2026 |
 | [Édouard Philippe](philippe.md) | Horizons | 56 ans | Candidature annoncée le 3 septembre 2024 |
 | [Xavier Bertrand](bertrand.md) | Nous France | 62 ans | « Je le serai » le 27 août 2026, déclaration officielle prévue en fin d’année |
 | [Teddy Riner](riner.md) | Sans étiquette | 38 ans | Candidature annoncée le 9 novembre 2026 |
@@ -26,13 +26,13 @@
 | [Florian Philippot](philippot.md) | Les Patriotes | 45 ans | Candidature annoncée |
 | [Marine Le Pen](lepen.md) | Rassemblement national | 58 ans | Candidate déclarée le 7 juillet 2026, jour de l’arrêt d’appel qui la laisse éligible ; pourvoi en cassation en attente |
 | [Éric Zemmour](zemmour.md) | Reconquête | 68 ans | Candidature officialisée le 10 novembre 2026 |
-| [Jean Lassalle](lassalle.md) | Résistons ! | 71 ans | Cagnotte lancée pour une 3e candidature, décision pas encore annoncée |
+| [Jean Lassalle](lassalle.md) | Résistons ! | 71 ans | Recherche des soutiens pour une troisième candidature. LCP le cite parmi les annonces, sans date de déclaration personnelle précisée. |
 | [Natacha Polony](polony.md) | Nous sommes la France | 52 ans | Candidature annoncée le 14 octobre 2026 |
 
 ## Comment c’est fait
 
 - `fiches.json` : la source. L’appli la lit directement pour afficher la fiche quand on touche un candidat.
-- `img/` : l’espace image de chaque fiche (voir [img/README.md](img/README.md)). Sans image, l’appli affiche le médaillon aux initiales.
+- `img/` : les portraits et leurs crédits (voir [img/README.md](img/README.md)). Sans image, l’appli affiche le médaillon aux initiales.
 - `<id>.md` : les pages lisibles ici sur GitHub. Elles sont générées : ne pas les modifier à la main.
 - Après une modification de `fiches.json` ou de `js/data.js`, relancer depuis la racine du dépôt : `node fiches/generer.mjs`.
 

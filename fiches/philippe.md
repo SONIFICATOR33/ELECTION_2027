@@ -2,12 +2,13 @@
 
 **Horizons** · 56 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/philippe.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/philippe.webp" alt="" width="240">
+
+Photo [Edouard Philippe 3x4 crop.jpg](https://commons.wikimedia.org/wiki/File:Edouard_Philippe_3x4_crop.jpg) · Wasasaq8 · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée le 3 septembre 2024
-- **Repère sondages** : 9 % (en baisse : −3,6 pts sur 120 jours selon France-Vote)
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

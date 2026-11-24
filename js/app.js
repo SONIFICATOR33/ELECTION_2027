@@ -1,3 +1,4 @@
+import { groupView } from './group-view.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
@@ -24,7 +25,7 @@ const OKSVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" strok
 const now = () => Date.now();
 const mid = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return +d; };
 const daysTo = t => Math.round((mid(t) - mid(now())) / 864e5);
-const dateFr = (t, o = { weekday: 'short', day: 'numeric', month: 'short' }) => new Date(t).toLocaleDateString('fr-FR', o);
+const dateFr = (t, o = { weekday: 'short', day: 'numeric', month: 'short' }) => new Date(t).toLocaleDateString('fr-FR', { ...o, timeZone: 'Europe/Paris' });
 
 const toastEl = $('#toast'); let tt;
 const toast = m => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), 2400); };
@@ -86,8 +87,8 @@ function renderHero() {
 function deadline(k) {
   const t = { l1: D.LOCK1, l2: D.LOCK2, gp: D.LOCKGP }[k], d = daysTo(t);
   if (!isOpen(k)) return { txt: 'Pari clos', hot: false };
-  if (d <= 0) return { txt: 'Clôture ce soir à minuit', hot: true };
-  return { txt: `Clôture dans ${d} j, ${dateFr(t)} minuit`, hot: d <= 3 };
+  if (d <= 0) return { txt: 'Clôture ce soir à 23 h 59 (Paris)', hot: true };
+  return { txt: `Clôture dans ${d} j, ${dateFr(t)} à 23 h 59 (Paris)`, hot: d <= 3 };
 }
 const done = k => { const p = mine(); return k === 'gp' ? !!S.current(p) : !!(p[k] && p[k].length); };
 
@@ -98,7 +99,7 @@ function renderCTA() {
     return;
   }
   const todo = ['l1', 'l2', 'gp'].filter(k => isOpen(k) && !done(k));
-  const names = { l1: 'Étape 1 : qui sera encore là le 31 janvier ?', l2: 'Étape 2 : qui aura ses 500 signatures ?', gp: 'Le Grand Prono : qui va gagner, 1er tour, finale' };
+  const names = { l1: 'Étape 1 : qui sera encore là le 31 janvier ?', l2: 'Étape 2 : qui sera sur la ligne de départ ?', gp: 'Le Grand Prono : qui va gagner, 1er tour, finale' };
   const anchor = { l1: 'st1', l2: 'st2', gp: 'st3' };
   if (todo.length) {
     const k = todo[0], dl = deadline(k);
@@ -121,17 +122,9 @@ function renderPollsHome() {
   $('#last').innerHTML = D.LAST.map(([id, v]) => `<div class="bar" data-fiche="${id}" role="button" tabindex="0">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${v / 35 * 100}%;--c:${by[id].col}"></i></div><span class="v">${v} %</span></div>`).join('');
 }
 
-function renderHomePlayers() {
-  const pl = Object.keys(ALL.players), n = pl.length;
-  const c = k => pl.filter(pid => { const p = ALL.pronos[pid] || {}; return k === 'gp' ? !!S.current(p) : !!(p[k] && p[k].length); }).length;
-  $('#homePlayers').innerHTML = n
-    ? `<div class="stat"><b>${n}</b><p>joueur${n > 1 ? 's' : ''} inscrit${n > 1 ? 's' : ''}</p></div><div class="stat"><b>${c('l1')}</b><p>ont fait l'étape 1, ${c('gp')} leur Grand Prono</p></div>`
-    : '<p class="help">Personne n’est encore inscrit. Sois le premier !</p>';
-}
-
 /* ===================== MES PARIS ===================== */
 function renderParisSummary() {
-  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui aura ses 500 signatures ?', 'st2'], ['gp', 'Le Grand Prono', 'st3']];
+  const rows = [['l1', 'Qui sera là le 31 janvier ?', 'st1'], ['l2', 'Qui sera sur la ligne de départ ?', 'st2'], ['gp', 'Le Grand Prono', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k), dl = deadline(k);
     return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'} · ${dl.txt}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
@@ -143,7 +136,7 @@ function tilesHTML(key) {
   let h = '', off = false;
   h += '<span class="grp">De gauche à droite</span>';
   for (const c of C) {
-    if (!D.U1.includes(c.id)) continue;
+    if (!(key === 'l1' ? D.U1 : D.U2).includes(c.id)) continue;
     if (c.off && !off) { h += '<span class="grp">Hors axe gauche-droite</span>'; off = true; }
     const on = sel.has(c.id);
     h += `<button class="tile${on ? ' on' : ''}" data-id="${c.id}" aria-pressed="${on}"${open ? '' : ' disabled'}>${av(c, 44)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><small>${esc(c.note || c.party || '')}</small><span class="ok">${OKSVG}</span></button>`;
@@ -162,7 +155,7 @@ function renderStage(key) {
 }
 function renderStages() {
   $('#retires').innerHTML = D.RETIRES.length ? 'Déjà retirés : ' + D.RETIRES.map(r => `<s>${esc(r.nom)}</s> (${esc(r.quand)})`).join(', ') : '';
-  $('#lock2note').textContent = D.LOCK2_PROVISOIRE ? 'Date de clôture provisoire : elle sera calée juste avant la première publication des parrainages par le Conseil constitutionnel.' : '';
+  $('#lock2note').textContent = D.LOCK2_PROVISOIRE ? 'La date de clôture du jeu est provisoire. Elle sera confirmée avant la première publication des parrainages.' : '';
   renderStage('l1'); renderStage('l2');
 }
 ['1', '2'].forEach(n => {
@@ -179,7 +172,7 @@ function renderStages() {
   $('#save' + n).addEventListener('click', () => withMe(async () => {
     if (!draft[key].length) { snd.error(); toast('Touche au moins un candidat'); return; }
     await store.save({ [key]: draft[key].slice(), [key + 'at']: now() });
-    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Pari « 500 signatures » enregistré');
+    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Pari « Ligne de départ » enregistré');
   }));
 });
 $('#pre1').onclick = () => { draft.l1 = D.U1.filter(id => !by[id].und); dirty.l1 = true; renderStage('l1'); snd.sweep(draft.l1.map(AXIS)); toast('Les déclarés actuels sont cochés : décoche ceux qui vont renoncer'); };
@@ -199,7 +192,7 @@ function renderSB() {
     const p = mine();
     let t;
     if (k === 'gp') { const c = S.current(p); t = c ? `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
-    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
+    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 janvier' : 'seront sur la ligne de départ'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     $('#sum' + i).textContent = t;
   });
 }
@@ -218,24 +211,22 @@ function renderPhoto() {
     ? `<div class="photo"><b>×${fmt(D.mult(cw))}</b><span>Ta photo de cette semaine compte ×${fmt(D.mult(cw))}. Si tu ne changes rien, elle est reprise automatiquement chaque lundi.</span></div>`
     : `<div class="photo" style="background:var(--rougebg)"><b style="color:var(--rouge)">×${fmt(D.mult(cw))}</b><span>Pas encore de Grand Prono : cette semaine compterait ×${fmt(D.mult(cw))}. Chaque semaine sans prono compte zéro.</span></div>`;
 }
-function renderCar() {
-  let h = '', sep = false;
-  list().forEach(c => {
-    if (c.off && !sep) { h += '<div class="sep">Hors axe gauche-droite</div>'; sep = true; }
-    h += `<button class="cand${gp().pres === c.id ? ' sel' : ''}" data-id="${c.id}" aria-pressed="${gp().pres === c.id}">${av(c, 56)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><small>${esc(c.party || 'Sans parti précisé')}</small>${c.note ? `<em>${esc(c.note)}</em>` : ''}<span class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M5 12l5 5 9-10"/></svg></span></button>`;
+$$('.seg button').forEach(b => b.onclick = () => {
+  filt = b.dataset.f;
+  $$('.seg button').forEach(x => {
+    x.classList.toggle('on', x === b);
+    x.setAttribute('aria-pressed', String(x === b));
   });
-  $('#car').innerHTML = h;
-}
-const syncCar = () => $$('.cand').forEach(b => { const s = b.dataset.id === gp().pres; b.classList.toggle('sel', s); b.setAttribute('aria-pressed', s); });
-$('#car').addEventListener('click', e => { const b = e.target.closest('.cand'); if (!b) return; gp().pres = gp().pres === b.dataset.id ? null : b.dataset.id; dirty.gp = true; if (gp().pres) snd.pick(AXIS(gp().pres), true); else snd.unpick(AXIS(b.dataset.id)); syncCar(); renderDuel(); renderGPBtn(); if (gp().pres) toast('Tu vois ' + by[gp().pres].n + ' gagner'); });
-const scr = dir => { const c = $('#car'); c.scrollBy({ left: dir * Math.max(200, c.clientWidth * .8), behavior: 'smooth' }); };
-$('#prev').onclick = () => scr(-1); $('#next').onclick = () => scr(1);
-$('#car').addEventListener('keydown', e => { if (e.key === 'ArrowRight') { scr(1); e.preventDefault(); } if (e.key === 'ArrowLeft') { scr(-1); e.preventDefault(); } });
-$$('.seg button').forEach(b => b.onclick = () => { filt = b.dataset.f; $$('.seg button').forEach(x => x.classList.toggle('on', x === b)); renderCar(); renderPick(); });
+  renderPick();
+});
 
 function renderPick() {
   const ids = new Set(list().map(c => c.id)); gp().top.forEach(t => ids.add(t.id));
-  $('#pick').innerHTML = C.filter(c => ids.has(c.id)).map(c => { const i = gp().top.findIndex(t => t.id === c.id); return `<button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${esc(c.p + ' ' + c.n)}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button>`; }).join('');
+  $('#pick').innerHTML = C.filter(c => ids.has(c.id)).map(c => {
+    const i = gp().top.findIndex(t => t.id === c.id);
+    const fullName = esc(c.p + ' ' + c.n);
+    return `<span class="candidate-choice"><button class="chip${i >= 0 ? ' on' : ''}" data-id="${c.id}" aria-pressed="${i >= 0}">${av(c, 32)}${fullName}${i >= 0 ? `<span class="n">${i + 1}</span>` : ''}</button><button class="ghost candidate-help" data-fiche="${c.id}" aria-label="Fiche de ${fullName}">i</button></span>`;
+  }).join('');
 }
 $('#pick').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return; const id = b.dataset.id, i = gp().top.findIndex(t => t.id === id);
@@ -268,15 +259,19 @@ function renderDuel() {
   renderCoh();
 }
 function renderCoh() {
-  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari des 500 signatures' : 'ton pari « Qui sera là ? »';
+  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari sur la ligne de départ' : 'ton pari « Qui sera là ? »';
   const out = ref.length ? [g.pres, ...g.top.map(t => t.id)].filter((id, i, a) => id && a.indexOf(id) === i && !ref.includes(id)) : [];
   el.hidden = !out.length;
   if (out.length) el.textContent = `Attention : ${out.map(id => by[id].n).join(', ')} ${out.length > 1 ? 'ne sont pas' : 'n’est pas'} dans ${lab}. C’est permis, mais pas très cohérent.`;
 }
-$('#duel').addEventListener('click', e => { const b = e.target.closest('.fin'); if (!b) return; gp().pres = b.dataset.id; snd.pick(AXIS(b.dataset.id), true); dirty.gp = true; syncCar(); renderDuel(); renderGPBtn(); });
+$('#duel').addEventListener('click', e => { const b = e.target.closest('.fin'); if (!b) return; gp().pres = b.dataset.id; snd.pick(AXIS(b.dataset.id), true); dirty.gp = true; renderDuel(); renderGPBtn(); });
 $('#duel').addEventListener('input', e => { if (e.target.id !== 'win') return; const g = gp(); g.win = +e.target.value; snd.tick((g.win - 50) * 1.5); const l = g.top[0].id === g.pres ? g.top[1].id : g.top[0].id; $('#duel .score').innerHTML = `<span>${by[g.pres].n} ${fmt(g.win)} %</span><span>${by[l].n} ${fmt(100 - g.win)} %</span>`; dirty.gp = true; renderGPBtn(); });
 function renderGPBtn() {
   const b = $('#saveGP'); b.hidden = !isOpen('gp');
+  const g = gp();
+  $('#prono-review').textContent = g.top.length === 5 && g.top.slice(0, 2).some(t => t.id === g.pres)
+    ? `Ton récapitulatif · ${g.top.map(t => by[t.id].n + ' ' + fmt(t.pct) + ' %').join(', ')}. Finale : ${by[g.pres].n} gagne avec ${fmt(g.win)} %.`
+    : '';
   b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Grand Prono enregistré') : 'Enregistrer mon Grand Prono';
 }
 $('#saveGP').onclick = () => withMe(async () => {
@@ -445,86 +440,6 @@ function draw() {
 }
 
 /* ===================== CLASSEMENT ===================== */
-function standings() {
-  const R = D.RESULTS;
-  return { R, has: S.hasResults(R), rows: S.hasResults(R) ? S.classement(ALL.players, ALL.pronos, R, D.U1, D.U2) : [] };
-}
-function presShares() {
-  const cnt = {}; let n = 0;
-  for (const pid in ALL.players) { const c = S.current(ALL.pronos[pid]); if (c && c.pres) { cnt[c.pres] = (cnt[c.pres] || 0) + 1; n++; } }
-  return { cnt, n };
-}
-function renderMeCard() {
-  const el = $('#meCard');
-  if (!ME) { el.innerHTML = '<h2>Ta carte d’analyste</h2><p>Entre dans le jeu pour voir tes points, tes jauges et ton titre.</p><button class="big" data-join style="background:#fff;color:#000091">Choisir mon pseudo</button>'; return; }
-  const { has, rows } = standings(), me = rows.find(r => r.pid === ME.pid);
-  const ouverts = S.parisOuverts(now()), faits = ouverts.filter(done).length;
-  const ti = S.titre({ rank: me && me.rank, n: rows.length, parisFaits: faits, parisOuverts: ouverts.length, results: has });
-  const w = S.clampWeek(S.weekOf(now())), m = D.mult(w);
-  const { cnt, n } = presShares(), cur = S.current(mine());
-  const same = cur && cur.pres ? cnt[cur.pres] || 0 : 0, aud = cur && n ? 1 - same / n : null;
-  let next = '';
-  if (!has) next = ti === 0 ? `Fais tes ${ouverts.length} paris ouverts pour passer ${S.TITRES[1]}.` : 'Prochaine montée en grade avec les premiers résultats, le 31 janvier.';
-  else if (me && ti < 5) {
-    const cut = [0, .75, .5, .25, .1, 0][ti + 1], target = ti + 1 === 5 ? rows[0] : rows[Math.min(rows.length - 1, Math.floor(cut * Math.max(1, rows.length - 1)))];
-    next = target && target.total > me.total ? `Encore ${fmt(Math.round((target.total - me.total) * 10) / 10)} pts pour passer ${S.TITRES[ti + 1]}.` : '';
-  }
-  const pts = k => me ? fmt(me[k]) : '–';
-  el.innerHTML = `<div class="shead"><h2>${esc(ME.pseudo)}</h2><span class="badge">${S.TITRES[ti]}</span></div>` +
-    (has && me ? `<p style="margin:6px 0 0"><b style="font:800 34px/1 var(--cond)">${fmt(me.total)} pts</b> · ${me.rank}${me.rank === 1 ? 'er' : 'e'} sur ${rows.length}</p>` : `<p style="margin:6px 0 0">Premiers points le 31 janvier, avec le résultat de l’étape 1.</p>`) +
-    `<div class="gauges">
-      <div class="gg"><div class="lbl"><span>Paris ouverts faits</span><span>${faits}/${ouverts.length || 0}</span></div><div class="tr"><i style="width:${ouverts.length ? faits / ouverts.length * 100 : 100}%"></i></div></div>
-      ${isOpen('gp') ? `<div class="gg"><div class="lbl"><span>Points en jeu cette semaine</span><span>×${fmt(m)}</span></div><div class="tr"><i style="width:${(m - 1) * 100}%"></i></div><p>Ta photo du Grand Prono compte ×${fmt(m)} cette semaine, puis un peu moins chaque lundi.</p></div>` : ''}
-      <div class="gg"><div class="lbl"><span>Audace</span><span>${aud == null ? '–' : Math.round(aud * 100) + ' %'}</span></div><div class="tr"><i style="width:${aud == null ? 0 : aud * 100}%"></i></div><p>${cur && cur.pres ? `Vous êtes ${same} sur ${n} à voir ${esc(by[cur.pres].n)} gagner. Plus tu es seul, plus ça rapporte si ça arrive.` : 'Fais ton Grand Prono pour mesurer ton audace.'}</p></div>
-    </div>
-    <div class="ptsgrid"><div><b>${pts('e1')}</b><span>Qui sera là<br>31 janv.</span></div><div><b>${pts('e2')}</b><span>500 signat.<br>26 mars</span></div><div><b>${pts('t1')}</b><span>1er tour<br>18 avril</span></div><div><b>${pts('fin')}</b><span>Finale<br>2 mai</span></div></div>` +
-    (next ? `<p class="fine" style="color:#fff;opacity:.85;margin-top:10px">${next}</p>` : '');
-}
-function renderRank() {
-  const { has, rows } = standings(), el = $('#rank');
-  if (has) {
-    el.innerHTML = `<div class="scroll"><table class="rank"><tr><th></th><th>Joueur</th><th>Pts</th></tr>${rows.map(r => {
-      const ti = S.titre({ rank: r.rank, n: rows.length, results: true });
-      return `<tr class="${ME && r.pid === ME.pid ? 'mine' : ''}"><td>${r.rank}</td><td>${esc(r.pseudo)}<small>${S.TITRES[ti]}</small></td><td><b>${fmt(r.total)}</b></td></tr>`;
-    }).join('')}</table></div>`;
-    return;
-  }
-  const pl = Object.keys(ALL.players);
-  const k = pid => ['l1', 'l2'].filter(x => (ALL.pronos[pid] || {})[x] && ALL.pronos[pid][x].length).length + (S.current(ALL.pronos[pid]) ? 1 : 0);
-  const sorted = pl.sort((a, b) => k(b) - k(a) || ALL.players[a].pseudo.localeCompare(ALL.players[b].pseudo, 'fr'));
-  el.innerHTML = `<p class="help">Les premiers points tombent le 31 janvier. En attendant, voici qui a fait ses paris.</p>` +
-    (sorted.length ? `<div class="scroll"><table class="rank"><tr><th></th><th>Joueur</th><th>Paris faits</th></tr>${sorted.map((pid, i) => `<tr class="${ME && pid === ME.pid ? 'mine' : ''}"><td>${i + 1}</td><td>${esc(ALL.players[pid].pseudo)}<small>${S.TITRES[S.titre({ results: false, parisFaits: S.parisOuverts(now()).filter(x => x === 'gp' ? !!S.current(ALL.pronos[pid]) : !!((ALL.pronos[pid] || {})[x] || []).length).length, parisOuverts: S.parisOuverts(now()).length })]}</small></td><td><b>${k(pid)}/3</b></td></tr>`).join('')}</table></div>` : '<p class="help">Personne pour l’instant.</p>');
-}
-function renderCons() {
-  const { cnt, n } = presShares(), el = $('#cons');
-  let h = '';
-  if (n) {
-    h += `<h3>Qui va gagner selon nous (${n} Grand${n > 1 ? 's' : ''} Prono${n > 1 ? 's' : ''})</h3>` + Object.entries(cnt).sort((a, b) => b[1] - a[1]).map(([id, k]) => `<div class="bar">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${k / n * 100}%;--c:var(--vert)"></i></div><span class="v">${Math.round(k / n * 100)} %</span></div>`).join('');
-  }
-  const bloc = (key, titre, lock) => {
-    const bets = Object.keys(ALL.players).map(pid => (ALL.pronos[pid] || {})[key]).filter(x => x && x.length);
-    if (!bets.length) return '';
-    if (now() < +lock) return `<h3>${titre}</h3><p class="help">${bets.length} pari${bets.length > 1 ? 's' : ''} déposé${bets.length > 1 ? 's' : ''}. Les choix de chacun seront dévoilés à la clôture, le ${dateFr(lock, { day: 'numeric', month: 'long' })}.</p>`;
-    const sh = D.U1.map(id => [id, bets.filter(b => b.includes(id)).length / bets.length]).sort((a, b) => b[1] - a[1]);
-    return `<h3>${titre} (${bets.length} paris)</h3>` + sh.map(([id, s]) => `<div class="bar">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${s * 100}%;--c:var(--bleuT)"></i></div><span class="v">${Math.round(s * 100)} %</span></div>`).join('');
-  };
-  h += bloc('l1', 'Qui sera là le 31 janvier ?', D.LOCK1) + bloc('l2', 'Qui aura ses 500 signatures ?', D.LOCK2);
-  el.innerHTML = h || '<p class="help">Pas encore de paris. Lance-toi !</p>';
-}
-function renderPList() {
-  const q = $('#q').value.trim().toLowerCase();
-  const pl = Object.keys(ALL.players).filter(pid => !q || ALL.players[pid].pseudo.toLowerCase().includes(q))
-    .sort((a, b) => ALL.players[a].pseudo.localeCompare(ALL.players[b].pseudo, 'fr'));
-  $('#plist').innerHTML = pl.map(pid => {
-    const p = ALL.pronos[pid] || {}, c = S.current(p);
-    const reveal = (k, lock) => (p[k] && p[k].length) ? (now() < +lock ? 'pari déposé' : p[k].length + ' candidats') : 'pas joué';
-    return `<div class="prow${ME && pid === ME.pid ? ' mine' : ''}"><div><b>${esc(ALL.players[pid].pseudo)}</b><p class="fine">Qui sera là : ${reveal('l1', D.LOCK1)} · 500 signatures : ${reveal('l2', D.LOCK2)}</p></div>` +
-      (c ? `<div class="avs5" title="Gagnant pronostiqué puis top 5">${av(by[c.pres], 34)}<span style="width:6px"></span>${c.top.map(t => av(by[t.id], 24)).join('')}</div>` : '<span class="fine">pas de Grand Prono</span>') + '</div>';
-  }).join('') || '<p class="help">Aucun joueur trouvé.</p>';
-}
-$('#q').addEventListener('input', renderPList);
-
-/* ===================== PSEUDO ===================== */
 const sheet = $('#sheet');
 function openJoin(msg) {
   if (ME) {
@@ -578,16 +493,19 @@ function show() {
   $$('.tabs a').forEach(a => { const o = a.dataset.t === v; a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
   if (v === 'sondages') requestAnimationFrame(draw);
-  if (v === 'classement' || v === 'accueil') refresh().then(() => { renderHomePlayers(); renderClassement(); });
+  if (v === 'classement') groupUI.render();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
 
-function renderClassement() { renderMeCard(); renderRank(); renderCons(); renderPList(); }
+const groupUI = groupView($('#group-view'), {
+  getStore: () => store, withUser: withMe, getTeam: () => clone(draft.team), notify: toast
+});
 function renderAll() {
-  renderHeader(); renderSnd(); renderHero(); renderCTA(); renderPollsHome(); renderHomePlayers();
-  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderCar(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
-  renderTeam(); renderClassement();
+  renderHeader(); renderSnd(); renderHero(); renderCTA(); renderPollsHome();
+  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderSlots(); renderDuel(); renderGPBtn();
+  renderTeam();
+  if (location.hash === '#classement') groupUI.render();
 }
 
 /* ===================== AFFICHE D'ACCUEIL ===================== */
@@ -599,7 +517,13 @@ function showSplash() {
   requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.3, alpha: 0.16, scale: 1.1 }));
 }
 function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; try { sessionStorage.setItem('pdm-splash', '1'); } catch (e) { } }
-$('#splashGo').onclick = () => { snd.logo(); hideSplash(); if (!ME) setTimeout(() => openJoin(), 250); };
+$('#splashGo').onclick = () => {
+  snd.logo();
+  hideSplash();
+  const next = [1, 2, 3].find(i => isOpen(SBK[i]) && !done(SBK[i]));
+  if (next) { SB[next] = true; renderSB(); }
+  location.hash = 'paris';
+};
 $('#brandBtn').onclick = () => showSplash();
 
 /* ===================== DÉMARRAGE ===================== */
@@ -613,5 +537,6 @@ $('#brandBtn').onclick = () => showSplash();
   initPolls();
   renderAll(); show();
   let seen = false; try { seen = !!sessionStorage.getItem('pdm-splash'); } catch (e) { }
-  if (!seen) showSplash();
+  if (groupUI.hasInvite()) { location.hash = 'classement'; }
+  else if (!seen && !location.hash) showSplash();
 })();

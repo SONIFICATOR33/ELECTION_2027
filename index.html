@@ -4,12 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Les pronos des vieux boucs et autres craquettes</title>
-<meta name="description" content="Pronostics de la présidentielle 2027 entre amis : qui sera là, qui aura ses 500 signatures, le 1er tour et la finale.">
+<meta name="description" content="Pronostics de la présidentielle 2027 entre amis : qui sera là, qui sera sur la ligne de départ, le 1er tour et la finale.">
 <meta name="theme-color" content="#0E0E0E">
 <link rel="preload" href="img/habit.jpg" as="image">
 <link rel="preload" href="fonts/bodoni-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/hanken-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/app.css?v=11">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/election-180.png">
+<link rel="icon" href="icons/election-192.png">
+<link rel="stylesheet" href="css/app.css?v=12">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -21,7 +24,7 @@
 
 <section class="splash" id="splash" hidden aria-labelledby="punch">
   <canvas class="gcv" id="gSplash" aria-hidden="true"></canvas>
-  <p class="credit"><svg width="27" height="18" aria-hidden="true"><use href="#flagS"/></svg>Poulpe Gourmand Production présente</p>
+  <p class="credit"><svg width="27" height="18" aria-hidden="true"><use href="#flagS"/></svg>Craquettes et vieux boucs production présente</p>
   <div class="portrait"><img src="img/habit.jpg" width="640" height="859" alt="Habit présidentiel sans tête : nœud papillon blanc, grand cordon, collier et plaques, devant une bibliothèque" decoding="async"></div>
   <h2 class="punch" id="punch">Qui va gagner en mai&nbsp;27&nbsp;?</h2>
   <div class="filet" aria-hidden="true"><i></i></div>
@@ -91,14 +94,14 @@
       <div class="rail" id="rail" aria-label="Fiches des candidats"></div>
     </article>
     <article class="card">
-      <h2>Les joueurs</h2>
-      <div id="homePlayers"></div>
+      <h2>Jouer entre amis</h2>
+      <button class="ghost" data-go="classement">Mes groupes</button>
     </article>
     <details class="card rules">
       <summary><h2>La règle de sélection</h2></summary>
       <ol>
         <li><b>500 parrainages</b> d'élus (maires, parlementaires, élus départementaux et régionaux…), venus d'au moins 30 départements ou collectivités d'outre-mer, sans dépasser 10 % pour un même département. Date limite : 12 mars 2027 à 18 h.</li>
-        <li><b>Liste officielle</b> publiée par le Conseil constitutionnel le 26 mars 2027.</li>
+        <li><b>Liste officielle</b> publiée par le Conseil constitutionnel au plus tard le 26 mars 2027.</li>
         <li><b>1er tour le 18 avril</b> : élu d'office avec la majorité absolue des suffrages exprimés.</li>
         <li><b>Sinon, 2nd tour le 2 mai</b> entre les deux candidats arrivés en tête.</li>
       </ol>
@@ -132,7 +135,7 @@
 
     <article class="card stage" id="st2">
       <div class="shead"><span class="tag">Étape 2</span><span class="dl" id="dl2"></span></div>
-      <h2>Qui aura ses 500 signatures ?</h2>
+      <h2>Qui sera sur la ligne de départ ?</h2>
       <p class="ssum" id="sum2"></p>
       <button class="tog" data-sb="2" aria-controls="sb2"></button>
       <div class="sbody" id="sb2">
@@ -140,7 +143,7 @@
       <div class="count"><span><b id="n2">0</b> candidats auront leurs signatures</span><button class="linkbtn" id="pre2">Reprendre mon étape 1</button></div>
       <div class="tiles" id="tiles2"></div>
       <button class="linkbtn flink" data-fiche="arthaud">Un doute sur quelqu’un ? Ouvre les fiches des candidats</button>
-      <p class="fine">Fait foi : la liste officielle du Conseil constitutionnel, le 26 mars. Un candidat qui a ses signatures mais se retire compte comme absent.</p>
+      <p class="fine">Fait foi : la liste officielle du Conseil constitutionnel, au plus tard le 26 mars. Un candidat qui a ses signatures mais se retire compte comme absent.</p>
       <p class="fine" id="lock2note"></p>
       <button class="big" id="save2">Valider mon pari</button>
       </div>
@@ -149,28 +152,16 @@
     <article class="card stage" id="st3">
       <div class="shead"><span class="tag">Étapes 3 et 4</span><span class="dl" id="dl3"></span></div>
       <h2>Le Grand Prono</h2>
-      <p class="help">Qui va gagner selon toi, ton top 5 du 1er tour et ta finale. C'est un pronostic, pas un vote : ton président de cœur, mets-le dans « Ma team ». Chaque lundi, l'appli prend une photo de ton prono, les premières comptent double. Tu peux changer quand tu veux, sans rien revalider.</p>
+      <p class="help">Qui va gagner selon toi, ton top 5 du 1er tour et ta finale. C'est un pronostic, pas un vote : ton président de cœur, mets-le dans « Ma team ». Chaque lundi, l'appli prend une photo de ton prono, les premières comptent double. Tu peux modifier et réenregistrer ton prono jusqu’à la clôture.</p>
       <div id="photo"></div>
       <p class="ssum" id="sum3"></p>
       <button class="tog" data-sb="3" aria-controls="sb3"></button>
     </article>
     <div class="sbody stack" id="sb3" style="padding:0">
     <article class="card">
-      <h2>Qui va gagner ?</h2>
-      <p class="help">Fais défiler de gauche à droite et touche celui ou celle qui, selon toi, sera élu. Pas forcément ton préféré !</p>
-      <div class="seg" role="group" aria-label="Filtre des candidats"><button data-f="main" class="on">Les principaux</button><button data-f="all">Tous</button></div>
-      <div class="car" id="car" tabindex="0" aria-label="Candidats de gauche à droite"></div>
-      <div class="spec">
-        <button class="nav" id="prev" aria-label="Candidats précédents"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <div><div class="grad"></div><div class="gl"><span>Gauche</span><span>Droite</span></div></div>
-        <button class="nav" id="next" aria-label="Candidats suivants"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg></button>
-      </div>
-      <p class="fine">Placement indicatif sur l'axe. « Principaux » : testés dans les sondages, plus F. Hollande.</p>
-      <button class="linkbtn flink" data-fiche="arthaud">Un doute sur quelqu’un ? Ouvre les fiches des candidats</button>
-    </article>
-    <article class="card">
       <h2>1er tour : mon top 5</h2>
-      <p class="help">Touche 5 candidats dans l'ordre d'arrivée, puis ajuste les %.</p>
+      <p class="help">Choisis cinq candidats dans l’ordre, puis ajuste les pourcentages. Le bouton « i » ouvre la fiche.</p>
+      <div class="seg" role="group" aria-label="Filtre des candidats"><button data-f="main" class="on" aria-pressed="true">Testés en sondage</button><button data-f="all" aria-pressed="false">Tous</button></div>
       <div class="pick" id="pick"></div>
       <ol class="slots" id="slots"></ol>
       <div class="total" id="total"></div>
@@ -180,6 +171,7 @@
       <div id="duel"></div>
       <p class="warn" id="coh" hidden></p>
     </article>
+    <p class="fine" id="prono-review" aria-live="polite"></p>
     <div class="warn errs" id="errs" role="alert"></div>
     <button class="big" id="saveGP">Enregistrer mon Grand Prono</button>
     <button class="ghost" id="copy">Copier mon prono pour WhatsApp</button>
@@ -193,7 +185,7 @@
     <article class="card">
       <h2>Ma team de rêve</h2>
       <p class="help">Ici, ce n'est plus un pronostic : c'est ce que tu voudrais. Ton président de cœur, ton Premier ministre et tes ministres. Ça ne rapporte pas de points.</p>
-      <p class="fine">Ta team reste sur ton téléphone : personne ne la voit, sauf si tu partages l'image.</p>
+      <p class="fine">Ta team reste sur ton téléphone jusqu’à ce que tu la publies dans un groupe ou partages son image.</p>
     </article>
     <article class="card pm">
       <h2>Mon président de cœur</h2>
@@ -213,7 +205,7 @@
       <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off" maxlength="60"><div id="t-jn"></div></div>
     </article>
     <p class="help" id="pubHelp"></p>
-    <button class="big" id="teamShare" disabled>Publier la photo de mon gouvernement</button>
+    <button class="big" id="teamShare" disabled>Partager l’image de mon gouvernement</button>
     <button class="ghost" id="teamSave">Enregistrer sur mon téléphone</button>
     <canvas id="cv" width="1080" height="1350" hidden></canvas>
   </div>
@@ -260,24 +252,16 @@
 <!-- ===================== CLASSEMENT ===================== -->
 <section class="view" id="v-classement">
   <div class="wrap stack">
-    <article class="card me-card" id="meCard"></article>
     <article class="card">
-      <h2>Le classement</h2>
-      <div id="rank"></div>
-    </article>
-    <article class="card">
-      <h2>Le consensus des joueurs</h2>
-      <div class="cons" id="cons"></div>
-    </article>
-    <article class="card">
-      <h2>Les pronos de tout le monde</h2>
-      <input type="text" class="search" id="q" placeholder="Chercher un pseudo" autocomplete="off">
-      <div class="plist" id="plist"></div>
+      <h2>Mes groupes</h2>
+      <div id="group-view"></div>
+      <button class="ghost" id="install-app" aria-controls="install-help" aria-expanded="false" hidden>Installer l’app</button>
+      <p id="install-help" hidden>Sur iPhone, ouvre le site dans Safari, puis Partager → Sur l’écran d’accueil → Ouvrir comme app web. Sur Android, ouvre le menu de Chrome et choisis Installer l’application ou Ajouter à l’écran d’accueil.</p>
     </article>
     <details class="card rules">
       <summary><h2>Comment on marque</h2></summary>
       <ul class="pts">
-        <li><b>1 à 5</b><span><b>« Qui sera là ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
+        <li><b>1 à 5</b><span><b>« Qui sera là ? » et « Ligne de départ »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour la ligne de départ : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
         <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
         <li><b>+2</b><span>par score du 1er tour à 1 point près</span></li>
         <li><b>+5</b><span>par finaliste trouvé</span></li>
@@ -295,7 +279,7 @@
   <a href="#paris" data-t="paris"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V4h8v7M10.5 7.5l1.5 1.5 2.5-3"/></svg><span>Mes paris</span></a>
   <a href="#team" data-t="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/></svg><span>Ma team</span></a>
   <a href="#sondages" data-t="sondages"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
-  <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Classement</span></a>
+  <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Mes groupes</span></a>
 </nav>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT">
@@ -316,6 +300,7 @@
           <h2 id="fName"></h2>
           <p class="fparty" id="fParty"></p>
           <p class="fage" id="fAge"></p>
+          <p class="frole" id="fRole"></p>
         </div>
       </div>
       <div class="fticks" id="fTicks" aria-hidden="true"></div>
@@ -325,6 +310,7 @@
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=11"></script>
+<script type="module" src="js/app.js?v=12"></script>
+<script type="module" src="js/install.js"></script>
 </body>
 </html>

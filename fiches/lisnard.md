@@ -2,12 +2,13 @@
 
 **Nouvelle Énergie** · 58 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/lisnard.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/lisnard.webp" alt="" width="240">
+
+Photo [David Lisnard en 2026.jpg](https://commons.wikimedia.org/wiki/File:David_Lisnard_en_2026.jpg) · Grégor Sauvagère · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature annoncée en janvier 2025
-- **Repère sondages** : 10 % (en hausse : +2 pts chez Harris (19 nov.), +4 chez Elabe (13 nov.))
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

@@ -3,7 +3,7 @@
    à partir de fiches.json et de js/data.js.
    Usage, depuis la racine du dépôt :  node fiches/generer.mjs
    ===================================================================== */
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -23,25 +23,19 @@ export const ageAu = (iso, at) => {
 const pct = v => v == null ? '' : v.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %';
 const tag = (t, f) => ({ 'élu': f ? 'élue' : 'élu', 'nommé': f ? 'nommée' : 'nommé' }[t] || t);
 const dateLongue = iso => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-const imgOf = id => ['jpg', 'png', 'webp'].map(e => `img/${id}.${e}`).find(p => existsSync(join(here, p)));
-
-const moves = {};
-D.MOVES.forEach(([, l]) => l.forEach(([id, up, txt]) => { moves[id] = [up, txt]; }));
-
 const rows = [];
 for (const c of D.C) {
   const f = F.candidats[c.id];
   if (!f) { console.warn('Pas de fiche pour', c.id); continue; }
   const age = ageAu(f.naissance, D.TOUR1);
-  const img = imgOf(c.id);
+  const pic = f.portrait;
   const L = [];
   L.push(`# ${c.p} ${c.n}`, '');
   L.push(`**${c.party}** · ${age} ans au 1er tour (18 avril 2027)`, '');
-  L.push(img ? `<img src="${img}" alt="" width="240">` : `> Espace image : déposer \`img/${c.id}.jpg\` (voir [img/README.md](img/README.md)).`, '');
+  if (pic) L.push(`<img src="img/${pic.fichier}" alt="" width="240">`, '',
+    `Photo [${pic.titre}](${pic.source}) · ${pic.auteur} · [${pic.licence}](${pic.licenceUrl}) · redimensionnée.`, '');
   L.push('## Dans la course', '');
   L.push(`- **Statut** : ${f.statut}`);
-  if (c.main && c.poll != null) L.push(`- **Repère sondages** : ${c.poll.toLocaleString('fr-FR')} %${moves[c.id] ? ` (${moves[c.id][0] ? 'en hausse' : 'en baisse'} : ${moves[c.id][1]})` : ''}`);
-  else L.push('- **Repère sondages** : peu ou pas testé');
   L.push(`- **Présidentielles passées** : ${f.pres.length ? f.pres.map(([y, v, n]) => `${y} : ${[pct(v), n].filter(Boolean).join(', ')}`).join(' · ') : 'aucune'}`);
   if (f.autre) L.push(`- ${f.autre}`);
   L.push('', '## Aujourd’hui', '', f.aujourdhui, '');
@@ -62,7 +56,7 @@ const R = [
   '| Candidat | Parti | Âge au 1er tour | Statut |', '|---|---|---|---|', ...rows, '',
   '## Comment c’est fait', '',
   '- `fiches.json` : la source. L’appli la lit directement pour afficher la fiche quand on touche un candidat.',
-  '- `img/` : l’espace image de chaque fiche (voir [img/README.md](img/README.md)). Sans image, l’appli affiche le médaillon aux initiales.',
+  '- `img/` : les portraits et leurs crédits (voir [img/README.md](img/README.md)). Sans image, l’appli affiche le médaillon aux initiales.',
   '- `<id>.md` : les pages lisibles ici sur GitHub. Elles sont générées : ne pas les modifier à la main.',
   '- Après une modification de `fiches.json` ou de `js/data.js`, relancer depuis la racine du dépôt : `node fiches/generer.mjs`.', '',
   '## Règles de rédaction', '',

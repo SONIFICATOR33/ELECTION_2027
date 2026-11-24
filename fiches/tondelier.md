@@ -2,12 +2,13 @@
 
 **Les Écologistes** · 40 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/tondelier.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/tondelier.webp" alt="" width="240">
+
+Photo [Huma2023MarineTondelier (cropped).jpg](https://commons.wikimedia.org/wiki/File:Huma2023MarineTondelier_(cropped).jpg) · Selbymay · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Vote des militants des Écologistes le 13 décembre
-- **Repère sondages** : 2,5 %
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui

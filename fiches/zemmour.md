@@ -2,12 +2,13 @@
 
 **Reconquête** · 68 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/zemmour.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/zemmour.webp" alt="" width="240">
+
+Photo [Portrait d'Éric Zemmour, avril 2022.jpg](https://commons.wikimedia.org/wiki/File:Portrait_d%27%C3%89ric_Zemmour,_avril_2022.jpg) · Anh De France · [CC0](https://creativecommons.org/publicdomain/zero/1.0/deed.en) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : Candidature officialisée le 10 novembre 2026
-- **Repère sondages** : 3,5 %
 - **Présidentielles passées** : 2022 : 7,07 %
 
 ## Aujourd’hui

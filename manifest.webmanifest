@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "Les pronos des vieux boucs et autres craquettes",
+  "short_name": "Pronos 2027",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#15120e",
+  "theme_color": "#15120e",
+  "icons": [
+    { "src": "icons/election-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/election-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

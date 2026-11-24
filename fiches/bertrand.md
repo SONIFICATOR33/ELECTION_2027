@@ -2,12 +2,13 @@
 
 **Nous France** · 62 ans au 1er tour (18 avril 2027)
 
-> Espace image : déposer `img/bertrand.jpg` (voir [img/README.md](img/README.md)).
+<img src="img/bertrand.webp" alt="" width="240">
+
+Photo [Xavier Bertrand - 2025 (cropped).jpg](https://commons.wikimedia.org/wiki/File:Xavier_Bertrand_-_2025_(cropped).jpg) · Claudio Centonze / European Union, 2025 / EC - Audiovisual Service · [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) · redimensionnée.
 
 ## Dans la course
 
 - **Statut** : « Je le serai » le 27 août 2026, déclaration officielle prévue en fin d’année
-- **Repère sondages** : peu ou pas testé
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui
