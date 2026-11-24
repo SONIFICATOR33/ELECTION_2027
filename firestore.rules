@@ -1,0 +1,77 @@
+rules_version = '2';
+// Règles d'accès de la base « Les pronos des membrés ».
+// À coller dans la console Firebase : Firestore > Règles > Publier.
+// Principe : tout le monde peut lire les pronos (pseudos uniquement) ;
+// chacun ne peut écrire que les siens, et seulement tant que le pari est ouvert.
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    // Dates en millisecondes (heure de Paris), identiques à js/data.js
+    function T0()     { return 1795388400000; } // lundi 23 nov. 2026 0h : semaine 0 des photos
+    function LOCK1()  { return 1797029940000; } // 11 déc. 2026 23h59 : « Qui sera là ? »
+    function LOCK2()  { return 1801868340000; } // 5 févr. 2027 23h59 : « Ligne de départ » (provisoire)
+    function LOCKGP() { return 1807999140000; } // 17 avril 2027 23h59 : Grand Prono
+    function nowMs()  { return request.time.toMillis(); }
+    function weekNow() { return string(int((nowMs() - T0()) / 604800000)); }
+
+    function dev() { return /databases/$(db)/documents/devices/$(request.auth.uid); }
+    function owner(pid) {
+      return request.auth != null && exists(dev()) && get(dev()).data.pid == pid;
+    }
+    function ownerAfter(pid) {
+      return request.auth != null && getAfter(dev()) != null && getAfter(dev()).data.pid == pid;
+    }
+    function validPid(pid) { return pid.matches('^[a-z0-9_-]{2,20}$'); }
+
+    match /players/{pid} {
+      allow read: if true;
+      allow create: if request.auth != null && validPid(pid)
+        && request.resource.data.keys().hasOnly(['pseudo', 'createdAt'])
+        && request.resource.data.pseudo is string
+        && request.resource.data.pseudo.size() >= 2 && request.resource.data.pseudo.size() <= 24
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(db)/documents/secrets/$(pid)) != null;
+      allow update, delete: if false;
+    }
+
+    match /secrets/{pid} {
+      allow read: if false;
+      allow create: if request.auth != null && validPid(pid)
+        && !exists(/databases/$(db)/documents/players/$(pid))
+        && request.resource.data.keys().hasOnly(['pin'])
+        && request.resource.data.pin is string && request.resource.data.pin.size() == 64;
+      allow update, delete: if false;
+    }
+
+    match /devices/{uid} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['pid', 'pin'])
+        && getAfter(/databases/$(db)/documents/secrets/$(request.resource.data.pid)) != null
+        && getAfter(/databases/$(db)/documents/secrets/$(request.resource.data.pid)).data.pin == request.resource.data.pin;
+    }
+
+    match /pronos/{pid} {
+      function changesOk() {
+        let ch = request.resource.data.diff(resource.data).affectedKeys();
+        return ch.hasOnly(['l1', 'l1at', 'l2', 'l2at', 'weeks', 'team', 'updatedAt'])
+          && (!ch.hasAny(['l1', 'l1at']) || nowMs() < LOCK1())
+          && (!ch.hasAny(['l2', 'l2at']) || nowMs() < LOCK2())
+          && (!ch.hasAny(['weeks']) || (nowMs() < LOCKGP()
+                && request.resource.data.weeks.diff(resource.data.weeks).affectedKeys().hasOnly([weekNow()])))
+          && (!ch.hasAny(['l1']) || (request.resource.data.l1 is list && request.resource.data.l1.size() <= 60))
+          && (!ch.hasAny(['l2']) || (request.resource.data.l2 is list && request.resource.data.l2.size() <= 60));
+      }
+      allow read: if true;
+      allow create: if ownerAfter(pid)
+        && request.resource.data.keys().hasOnly(['weeks', 'updatedAt'])
+        && request.resource.data.weeks.size() == 0
+        && request.resource.data.updatedAt == request.time;
+      allow update: if owner(pid)
+        && request.resource.data.updatedAt == request.time
+        && changesOk();
+      allow delete: if false;
+
+    }
+  }
+}

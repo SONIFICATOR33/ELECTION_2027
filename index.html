@@ -2,202 +2,32 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Les pronos des membrés</title>
+<meta name="description" content="Pronostics de la présidentielle 2027 entre amis : qui sera là, la ligne de départ, le 1er tour et la finale.">
+<meta name="theme-color" content="#000091">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-/* VOICE: une bande de copains d'enfance, ambiance soirée électorale entre amis, chambreuse mais claire
-   IDEA: le bulletin glissé dans l'urne et le plateau télé du soir des résultats, en bleu-blanc-rouge
-   PICTURE: compte à rebours géant sur bandeau bleu + urne, puis un podium tricolore qui porte les 3 premiers
-   COLOUR and TYPE: bleu France #000091, blanc, rouge Marianne en accent, vert réservé à "mon choix"; Barlow Condensed + Barlow
-   LAYOUT: appli mobile, en-tête bleu fixe, 5 onglets en bas, une colonne; 560px max centrée sur grand écran */
-:root{color-scheme:light;
---bleu:#000091;--bleuT:#000091;--rouge:#E1000F;--vert:#0F9D4F;--vertbg:#E4F5EA;--rougebg:#FDE8E8;
---bg:#FFFFFF;--card:#F4F4F5;--line:#E1E1E6;--ink:#141414;--mut:#5B5B66;
---c-lp:#3A4BA6;--c-jlm:#D7263D;--c-ep:#2A9DD8;--c-rg:#E0479E;--c-dl:#E07B00;--c-br:#0E8C7E;
---cond:"Barlow Condensed","Arial Narrow",sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;
---bleu:#14178A;--bleuT:#9AA2FF;--vert:#2BC26B;--vertbg:#0F2E1D;--rougebg:#3A1418;
---bg:#0C0E1C;--card:#161931;--line:#2A2E4E;--ink:#F1F1F6;--mut:#A3A6C2;
---c-lp:#7484E6;--c-jlm:#E8404F;--c-ep:#3398CC;--c-rg:#E35BAD;--c-dl:#D47C0C;--c-br:#1FA391}}
-:root[data-theme=dark]{color-scheme:dark;
---bleu:#14178A;--bleuT:#9AA2FF;--vert:#2BC26B;--vertbg:#0F2E1D;--rougebg:#3A1418;
---bg:#0C0E1C;--card:#161931;--line:#2A2E4E;--ink:#F1F1F6;--mut:#A3A6C2;
---c-lp:#7484E6;--c-jlm:#E8404F;--c-ep:#3398CC;--c-rg:#E35BAD;--c-dl:#D47C0C;--c-br:#1FA391}
-*{box-sizing:border-box;min-width:0}
-html{scroll-padding-top:72px}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip;padding-bottom:84px}
-button,input{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:3px solid var(--vert);outline-offset:2px}
-.wrap{max-width:560px;margin:0 auto;padding:0 16px}
-.top{position:sticky;top:0;z-index:10;background:var(--bleu);color:#fff}
-.toprow{display:flex;align-items:center;gap:10px;height:56px}
-.flag{width:34px;height:24px;flex:none}
-.top h1{flex:1;margin:0;font:800 clamp(19px,5.8vw,25px)/1 var(--cond)}
-.me{border:0;background:rgba(255,255,255,.16);color:#fff;border-radius:999px;padding:8px 14px;min-height:40px;font-weight:600;font-size:15px}
-.tri{display:flex;height:4px}.tri i{flex:1}.tri i:nth-child(1){background:#000091}.tri i:nth-child(2){background:#fff}.tri i:nth-child(3){background:#E1000F}
-.view{display:none}.view.on{display:block}
-.stack{display:grid;gap:14px;padding-top:14px;padding-bottom:14px}
-.card{background:var(--card);border-radius:18px;padding:16px}
-h2{margin:0 0 4px;font:800 26px/1.05 var(--cond);text-wrap:balance}
-h3{margin:12px 0 4px;font:700 17px/1.2 var(--cond);color:var(--mut)}
-.src,.fine,.help{margin:0 0 6px;font-size:13px;color:var(--mut)}
-.help{font-size:15px}
-.hero{background:var(--bleu);color:#fff;padding:16px 0 20px}
-.herogrid{display:grid;grid-template-columns:minmax(0,1fr) 116px;align-items:center;gap:8px}
-.jx{font:800 clamp(72px,24vw,132px)/.88 var(--cond);letter-spacing:-1px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.jsub{margin:8px 0 0;font-size:17px}
-.urne{width:116px;height:116px}
-.bul{animation:drop 1.3s cubic-bezier(.3,.7,.3,1) .4s both}
-@keyframes drop{from{transform:translateY(-30px)}to{transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.bul{animation:none}}
-.minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
-.mini{background:rgba(255,255,255,.12);border-radius:12px;padding:8px 10px}
-.mini b{display:block;font:800 24px/1 var(--cond)}.mini span{font-size:13px;line-height:1.25;display:block;margin-top:2px}
-.av{width:var(--s);height:var(--s);border-radius:50%;background:var(--c);color:#fff;display:inline-grid;place-items:center;font:700 calc(var(--s)*.4)/1 var(--cond);flex:none;letter-spacing:.5px}
-.av.und{outline:2px dashed var(--mut);outline-offset:2px}
-.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:6px;margin-top:14px;border-bottom:3px solid var(--ink)}
-.pcol{display:grid;justify-items:center;gap:6px;text-align:center}
-.pcol b{font:700 18px/1.05 var(--cond)}
-.blk{width:100%;border-radius:10px 10px 0 0;display:grid;align-content:start;justify-items:center;padding-top:8px;color:#fff}
-.p1 .blk{height:128px;background:#fff;color:#141414;box-shadow:inset 0 0 0 1.5px #D5D5DC}
-.p2 .blk{height:96px;background:#000091}
-.p3 .blk{height:72px;background:#E1000F}
-.rk{font:800 36px/1 var(--cond)}.pv{font-weight:600;font-size:16px;white-space:nowrap}
-.moves{display:grid;gap:0 16px}
-@media(min-width:440px){.moves{grid-template-columns:1fr 1fr}}
-.mv{display:grid;grid-template-columns:28px 40px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0}
-.mv b{font:700 18px/1.1 var(--cond);display:block}.mv div>span{font-size:13px;color:var(--mut);line-height:1.3;display:block}
-.ar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center}
-.ar.up{background:var(--vertbg);color:var(--vert)}.ar.dn{background:var(--rougebg);color:var(--rouge)}
-.bar{display:grid;grid-template-columns:28px 84px minmax(0,1fr) 46px;gap:8px;align-items:center;margin:7px 0}
-.bar .nm{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tr{height:12px;border-radius:6px;background:var(--line);overflow:hidden}.tr i{display:block;height:100%;border-radius:6px;background:var(--c)}
-.v{text-align:right;font:700 18px/1 var(--cond);font-variant-numeric:tabular-nums;white-space:nowrap}
-.cta{background:var(--bleu);color:#fff}.cta p{margin:4px 0 12px}
-.big{width:100%;min-height:54px;border:0;border-radius:14px;background:var(--bleu);color:#fff;font:700 21px/1 var(--cond)}
-.cta .big{background:#fff;color:#000091}
-.ghost{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:14px;background:transparent;font-weight:600}
-.avs{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
-.mem{display:grid;justify-items:center;gap:4px;font-size:13px;font-weight:600}
-.mem .av{--c:var(--mut)}.mem.ok .av{--c:var(--vert)}
-.rules summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;min-height:44px}
-.rules summary::-webkit-details-marker{display:none}
-.rules summary::after{content:"+";font:800 28px/1 var(--cond);color:var(--bleuT)}.rules[open] summary::after{content:"–"}
-.rules ol{margin:8px 0 0;padding-left:22px}.rules li{margin:6px 0}
-.monthbar{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;border-left:6px solid var(--rouge);padding:2px 0 2px 12px}
-.monthbar b{font:800 24px/1.1 var(--cond)}.monthbar span{font-size:14px;color:var(--mut)}
-.seg{display:inline-flex;background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:3px;margin:6px 0 10px}
-.seg button{border:0;background:transparent;border-radius:999px;padding:8px 14px;min-height:40px;font-weight:600;font-size:15px;color:var(--mut)}
-.seg button.on{background:var(--bleu);color:#fff}
-.car{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;scrollbar-width:none}
-.car::-webkit-scrollbar{display:none}
-.cand{flex:0 0 94px;scroll-snap-align:start;position:relative;display:grid;justify-items:center;align-content:start;gap:5px;padding:12px 4px 10px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);text-align:center;min-height:136px}
-.cand b{font:700 17px/1.05 var(--cond)}
-.cand small{font-size:13px;line-height:1.2;color:var(--mut);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.cand em{font-style:normal;font-size:13px;font-weight:600;color:var(--rouge)}
-.cand.sel{border-color:var(--vert);background:var(--vertbg)}
-.cand.sel .av{box-shadow:0 0 0 3px var(--vertbg),0 0 0 6px var(--vert)}
-.cand .ok{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--vert);color:#fff;display:none;place-items:center}
-.cand.sel .ok{display:grid}
-.sep{flex:0 0 70px;scroll-snap-align:start;display:grid;place-items:center;text-align:center;font-size:13px;color:var(--mut);border-left:2px dashed var(--line)}
-.spec{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;align-items:center}
-.spec .nav{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);display:grid;place-items:center}
-.grad{height:6px;border-radius:3px;background:linear-gradient(90deg,#8E1B1B,#D7263D,#2E9E4F,#E0479E,#D9A400,#2A9DD8,#0E5CAD,#1B2A6B)}
-.gl{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);margin-top:3px}
-.pick{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
-.chip{position:relative;display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 5px;min-height:44px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);font-weight:600;font-size:15px}
-.chip.on{border-color:var(--bleuT)}
-.chip .n{position:absolute;top:-7px;right:-5px;width:22px;height:22px;border-radius:50%;background:var(--bleu);color:#fff;display:grid;place-items:center;font:800 14px/1 var(--cond)}
-.slots{list-style:none;margin:0;padding:0}
-.slots li{display:grid;grid-template-columns:30px 34px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
-.slots li.empty{color:var(--mut)}
-.rkb{font:800 28px/1 var(--cond);color:var(--bleuT)}
-.sn{font-weight:600}
-.step{display:flex;align-items:center;gap:4px}
-.step button{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);font-size:20px;line-height:1}
-.step output{min-width:56px;text-align:center;font:700 21px/1 var(--cond);font-variant-numeric:tabular-nums}
-.total{margin-top:12px}.total p{margin:0 0 6px;font-size:15px}.total .tr{height:10px}.total.over p{color:var(--rouge);font-weight:600}
-.duel{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;margin-top:8px}
-.fin{display:grid;justify-items:center;gap:6px;padding:14px 6px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg)}
-.fin b{font:700 19px/1.05 var(--cond)}
-.fin.win{border-color:var(--vert);background:var(--vertbg)}
-.vs{font:800 18px/1 var(--cond);color:var(--mut)}
-.range{margin-top:14px}.range input{width:100%;accent-color:var(--vert);height:32px}
-.score{display:flex;justify-content:space-between;font:700 20px/1.1 var(--cond)}
-.warn{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:var(--rougebg);font-size:15px}
-.errs{display:none}.errs.on{display:block}
-.okbar{padding:10px 12px;border-radius:12px;background:var(--vertbg);font-size:15px}
-.minrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-weight:600;font-size:15px}
-input[type=text]{width:100%;min-height:44px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);padding:8px 10px;font-size:16px}
-.pm input{font-size:18px;min-height:52px;margin-top:6px}
-.jk{display:grid;gap:8px;margin-top:6px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
-.lchip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);font-size:14px;font-weight:600}
-.lchip i{width:10px;height:10px;border-radius:50%;background:var(--c)}
-.lchip[aria-pressed=false]{opacity:.45}
-.fig{position:relative;min-height:300px;margin-top:4px}.fig>svg{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y}
-.grid{stroke:var(--line);stroke-width:1}.tick{fill:var(--mut);font-size:13px}
-.ln{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}.ln.dash{stroke-dasharray:4 5}
-.dot{stroke:var(--card);stroke-width:2}
-.lab{fill:var(--ink);font:600 13px Barlow,sans-serif}
-.cross{stroke:var(--mut);stroke-width:1}
-.tip{position:absolute;bottom:34px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;pointer-events:none;min-width:130px}
-.tip b{display:block;font-size:14px}.tip div{display:flex;justify-content:space-between;gap:10px}
-details.tbl summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:600;color:var(--bleuT)}
-.scroll{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-th:first-child,td:first-child{text-align:left}
-.poll{padding:10px 0;border-bottom:1px solid var(--line)}.poll b{font-weight:700}.poll p{margin:2px 0 0;font-size:15px}
-.db{margin:12px 0}.db .lbl{display:flex;justify-content:space-between;font-size:15px;font-weight:600}
-.sp{display:flex;height:14px;gap:2px;margin:4px 0 2px}.sp i{background:var(--c)}.sp i:first-child{border-radius:7px 0 0 7px}.sp i:last-child{border-radius:0 7px 7px 0}
-.links{margin:6px 0;padding-left:18px}.links li{margin:4px 0}.links a{color:var(--bleuT)}
-.months{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
-.months span{flex:none;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);font-weight:600;font-size:15px;color:var(--mut)}
-.months span.on{background:var(--bleu);border-color:var(--bleu);color:#fff}
-.mx{min-width:430px}.mx td,.mx th{text-align:center;vertical-align:middle}.mx th{font-weight:600;color:var(--mut);font-size:13px}
-.mx td:first-child{text-align:left;font-weight:600}
-.mx small{display:block;font-size:13px;color:var(--mut)}
-.mx .pres .av{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--vert)}
-.cons{display:grid;gap:10px}.cons p{margin:0}
-.stat{display:flex;gap:12px;align-items:center}.stat b{font:800 30px/1 var(--cond);color:var(--bleuT);min-width:88px;white-space:nowrap}
-.tm{padding:10px 0;border-bottom:1px solid var(--line)}.tm b{font-weight:700}.tm p{margin:2px 0 0;font-size:15px;color:var(--mut)}
-.pts{margin:8px 0;padding:0;list-style:none}.pts li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
-.pts b{font:800 22px/1.1 var(--cond);color:var(--bleuT)}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom)}
-.tabs a{display:grid;justify-items:center;gap:2px;padding:8px 0 10px;color:var(--mut);font-weight:600;font-size:13px;text-decoration:none;min-height:56px}
-.tabs a.on{color:var(--bleuT)}
-.tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.sheet{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.45);display:none;align-items:flex-end}
-.sheet.open{display:flex}
-.sheet .in{background:var(--bg);width:100%;max-width:560px;margin:0 auto;border-radius:20px 20px 0 0;padding:18px 16px 28px}
-.sheet .grid7{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
-.sheet .grid7 button{min-height:52px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-weight:600;font-size:17px}
-.sheet .grid7 button.on{border-color:var(--vert);background:var(--vertbg)}
-.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:15px;transition:.25s;z-index:50;pointer-events:none;max-width:90vw;text-align:center}
-.toast.on{opacity:1;transform:translate(-50%,0)}
-.demo{font-size:13px;color:var(--mut);text-align:center;margin:0}
-</style>
+<link rel="stylesheet" href="css/app.css?v=2">
 </head>
 <body>
 <header class="top">
   <div class="wrap toprow">
     <svg class="flag" viewBox="0 0 36 24" aria-hidden="true"><defs><clipPath id="fw"><path d="M1 3Q9.5 0 18 3T35 3V21Q26.5 24 18 21T1 21Z"/></clipPath></defs><g clip-path="url(#fw)"><rect width="12.3" height="24" fill="#2730C9"/><rect x="12.3" width="11.4" height="24" fill="#fff"/><rect x="23.7" width="12.3" height="24" fill="#E1000F"/></g><path d="M1 3Q9.5 0 18 3T35 3V21Q26.5 24 18 21T1 21Z" fill="none" stroke="#fff" stroke-opacity=".7"/></svg>
     <h1>Les pronos des membrés</h1>
-    <button class="me" id="meBtn" aria-haspopup="dialog">Vincent</button>
+    <button class="me" id="meBtn" aria-haspopup="dialog">Entrer</button>
   </div>
   <div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="banner" id="banner" hidden></div>
 </header>
 
 <main>
+<!-- ===================== ACCUEIL ===================== -->
 <section class="view" id="v-accueil">
   <div class="hero">
     <div class="wrap herogrid">
-      <div><div class="jx" id="jx">J-145</div><p class="jsub">avant le 1er tour, dimanche 18 avril 2027</p></div>
+      <div><div class="jx" id="jx">J-</div><p class="jsub">avant le 1er tour, dimanche 18 avril 2027</p></div>
       <svg class="urne" viewBox="0 0 120 120" aria-hidden="true">
         <defs><clipPath id="above"><rect width="120" height="45"/></clipPath></defs>
         <g clip-path="url(#above)"><g class="bul"><rect x="45" y="12" width="30" height="40" rx="2" fill="#fff"/><rect x="45" y="12" width="10" height="6" fill="#2730C9"/><rect x="65" y="12" width="10" height="6" fill="#E1000F"/><rect x="50" y="24" width="20" height="2.5" rx="1" fill="#000091" opacity=".35"/><rect x="50" y="30" width="14" height="2.5" rx="1" fill="#000091" opacity=".35"/></g></g>
@@ -208,28 +38,34 @@ th:first-child,td:first-child{text-align:left}
         <rect x="42" y="43.5" width="36" height="4" rx="2" fill="#00003D"/>
       </svg>
     </div>
-    <div class="wrap minis" id="minis"></div>
+    <div class="wrap frise" aria-label="Les échéances du jeu">
+      <div class="track" id="track"></div>
+      <div class="steps" id="steps"></div>
+    </div>
   </div>
   <div class="wrap stack">
-    <article class="card">
-      <h2>Le podium des sondages</h2>
-      <p class="src">Moyenne Sondax au 23 nov. 2026, 14 sondages de 7 instituts</p>
-      <div class="podium" id="podium"></div>
-    </article>
-    <article class="card">
-      <h2>Ça bouge</h2>
-      <div class="moves" id="moves"></div>
-    </article>
-    <article class="card">
-      <h2>Dernier sondage</h2>
-      <p class="src">Harris Interactive, terrain du 18 au 19 nov. 2026, 1re hypothèse</p>
-      <div id="last"></div>
-    </article>
     <article class="card cta" id="cta"></article>
+    <div id="pollsHome">
+      <div class="stack" style="padding:0">
+        <article class="card">
+          <h2>Le podium des sondages</h2>
+          <p class="src" id="podSrc"></p>
+          <div class="podium" id="podium"></div>
+        </article>
+        <article class="card">
+          <h2>Ça bouge</h2>
+          <div class="moves" id="moves"></div>
+        </article>
+        <article class="card">
+          <h2>Dernier sondage</h2>
+          <p class="src" id="lastSrc"></p>
+          <div id="last"></div>
+        </article>
+      </div>
+    </div>
     <article class="card">
-      <h2>Le club ce mois-ci</h2>
-      <p class="src">En vert : prono de novembre validé</p>
-      <div class="avs" id="clubStatus"></div>
+      <h2>Les joueurs</h2>
+      <div id="homePlayers"></div>
     </article>
     <details class="card rules">
       <summary><h2>La règle de sélection</h2></summary>
@@ -239,26 +75,67 @@ th:first-child,td:first-child{text-align:left}
         <li><b>1er tour le 18 avril</b> : élu d'office avec la majorité absolue des suffrages exprimés.</li>
         <li><b>Sinon, 2nd tour le 2 mai</b> entre les deux candidats arrivés en tête.</li>
       </ol>
-      <p class="fine">Dans l'appli, ton président doit faire partie de ta finale. La liste des candidats reste provisoire jusqu'au 26 mars.</p>
     </details>
   </div>
 </section>
 
-<section class="view" id="v-prono">
+<!-- ===================== MES PARIS ===================== -->
+<section class="view" id="v-paris">
   <div class="wrap stack">
-    <div class="monthbar"><b>Prono de novembre 2026</b><span>Clôture le 30 nov. à minuit</span></div>
-    <div id="pstate"></div>
+    <article class="card">
+      <h2>Mes paris</h2>
+      <div class="mini-steps" id="parisSummary"></div>
+    </article>
+
+    <article class="card stage" id="st1">
+      <div class="shead"><span class="tag">Étape 1</span><span class="dl" id="dl1"></span></div>
+      <h2>Qui sera encore là le 31 janvier ?</h2>
+      <p class="ssum" id="sum1"></p>
+      <button class="tog" data-sb="1" aria-controls="sb1"></button>
+      <div class="sbody" id="sb1">
+      <p class="help">Touche ceux qui seront encore candidats déclarés à l'Élysée le 31 janvier : ils passent au vert. Ceux que tu laisses gris, tu paries qu'ils auront renoncé, ou qu'ils ne se seront pas lancés.</p>
+      <p class="retires" id="retires"></p>
+      <div class="count"><span><b id="n1">0</b> candidats retenus</span><button class="linkbtn" id="pre1">Partir des déclarés actuels</button></div>
+      <div class="tiles" id="tiles1"></div>
+      <p class="fine">Fait foi : la liste des candidats déclarés de Toute l'Europe au 31 janvier. Une candidature à une simple primaire ne compte pas.</p>
+      <button class="big" id="save1">Valider mon pari</button>
+      </div>
+    </article>
+
+    <article class="card stage" id="st2">
+      <div class="shead"><span class="tag">Étape 2</span><span class="dl" id="dl2"></span></div>
+      <h2>La ligne de départ du 26 mars</h2>
+      <p class="ssum" id="sum2"></p>
+      <button class="tog" data-sb="2" aria-controls="sb2"></button>
+      <div class="sbody" id="sb2">
+      <p class="help">Qui aura ses 500 signatures et figurera sur la liste officielle du Conseil constitutionnel ? Touche ceux que tu vois sur la ligne de départ.</p>
+      <div class="count"><span><b id="n2">0</b> candidats sur ma ligne de départ</span><button class="linkbtn" id="pre2">Reprendre mon étape 1</button></div>
+      <div class="tiles" id="tiles2"></div>
+      <p class="fine" id="lock2note"></p>
+      <button class="big" id="save2">Valider mon pari</button>
+      </div>
+    </article>
+
+    <article class="card stage" id="st3">
+      <div class="shead"><span class="tag">Étapes 3 et 4</span><span class="dl" id="dl3"></span></div>
+      <h2>Le Grand Prono</h2>
+      <p class="help">Ton président, ton top 5 du 1er tour et ta finale. Chaque lundi, l'appli prend une photo de ton prono : les premières photos comptent double. Tu peux changer quand tu veux, sans rien revalider.</p>
+      <div id="photo"></div>
+      <p class="ssum" id="sum3"></p>
+      <button class="tog" data-sb="3" aria-controls="sb3"></button>
+    </article>
+    <div class="sbody stack" id="sb3" style="padding:0">
     <article class="card">
       <h2>Mon président</h2>
       <p class="help">Fais défiler de gauche à droite et touche ton élu : il passe au vert.</p>
-      <div class="seg" role="group" aria-label="Filtre des candidats"><button data-f="main" class="on">Les principaux</button><button data-f="all">Tous les déclarés</button></div>
+      <div class="seg" role="group" aria-label="Filtre des candidats"><button data-f="main" class="on">Les principaux</button><button data-f="all">Tous</button></div>
       <div class="car" id="car" tabindex="0" aria-label="Candidats de gauche à droite"></div>
       <div class="spec">
         <button class="nav" id="prev" aria-label="Candidats précédents"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 5l-7 7 7 7"/></svg></button>
         <div><div class="grad"></div><div class="gl"><span>Gauche</span><span>Droite</span></div></div>
         <button class="nav" id="next" aria-label="Candidats suivants"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg></button>
       </div>
-      <p class="fine">Placement indicatif sur l'axe. « Principaux » : testés dans les sondages de novembre, plus F. Hollande.</p>
+      <p class="fine">Placement indicatif sur l'axe. « Principaux » : testés dans les sondages, plus F. Hollande.</p>
     </article>
     <article class="card">
       <h2>1er tour : mon top 5</h2>
@@ -270,54 +147,65 @@ th:first-child,td:first-child{text-align:left}
     <article class="card">
       <h2>2nd tour : ma finale</h2>
       <div id="duel"></div>
+      <p class="warn" id="coh" hidden></p>
     </article>
     <div class="warn errs" id="errs" role="alert"></div>
-    <button class="big" id="validate">Valider mon prono de novembre</button>
+    <button class="big" id="saveGP">Enregistrer mon Grand Prono</button>
     <button class="ghost" id="copy">Copier mon prono pour WhatsApp</button>
+    </div>
   </div>
 </section>
 
+<!-- ===================== TEAM DE RÊVE ===================== -->
 <section class="view" id="v-team">
   <div class="wrap stack">
-    <div class="monthbar"><b>Ma team idéale</b><span id="teamPres"></span></div>
+    <article class="card">
+      <h2>Ma team de rêve</h2>
+      <p class="help">Pour le plaisir : compose ton gouvernement idéal, puis partage-le en image avec tes amis. Elle ne rapporte pas de points.</p>
+    </article>
     <article class="card pm">
-      <label for="t-pm"><h2>Premier ministre</h2></label>
-      <input type="text" id="t-pm" list="people" placeholder="Ton choix pour Matignon" autocomplete="off">
+      <h2>Premier ministre</h2>
+      <div id="t-pm"></div>
     </article>
     <article class="card">
       <h2>Les 10 ministères clés</h2>
-      <p class="help">Tape un nom, l'appli te propose des personnalités. Tu peux mettre qui tu veux.</p>
       <div id="mins"></div>
     </article>
     <article class="card">
-      <h2>Le joker du club</h2>
+      <h2>Le joker</h2>
       <p class="help">Invente un ministère et nomme quelqu'un, politique ou pas.</p>
-      <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off"><input type="text" id="t-jn" list="people" placeholder="Nommé(e)" autocomplete="off"></div>
+      <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off" maxlength="60"><div id="t-jn"></div></div>
     </article>
-    <button class="big" id="teamSave">Valider ma team</button>
-    <datalist id="people"></datalist>
+    <button class="big" id="teamShare">Partager ma team en image</button>
+    <button class="ghost" id="teamSave">Enregistrer sans partager</button>
+    <canvas id="cv" width="1080" height="1350" hidden></canvas>
   </div>
 </section>
 
+<!-- ===================== SONDAGES ===================== -->
 <section class="view" id="v-sondages">
   <div class="wrap stack">
-    <article class="card">
-      <h2>Les courbes du 1er tour</h2>
-      <p class="src">Moyenne mensuelle des intentions de vote, juillet à novembre 2026</p>
-      <div class="chips" id="lchips"></div>
-      <div class="fig" id="fig"><svg id="chart" role="img" aria-label="Évolution mensuelle des intentions de vote au premier tour"></svg><div class="tip" id="tip" hidden></div></div>
-      <p class="fine">Moyenne simple des sondages listés (1re hypothèse, rangés au mois de fin de terrain). Novembre en pointillé : 4 sondages seulement, chiffre provisoire.</p>
-      <details class="tbl"><summary>Voir les chiffres</summary><div class="scroll"><table id="tbl"></table></div></details>
-    </article>
-    <article class="card">
-      <h2>Les sondages de novembre</h2>
-      <div id="novlist"></div>
-    </article>
-    <article class="card">
-      <h2>Seconds tours testés</h2>
-      <p class="src">Dernière mesure de chaque duel, d'après Sondax</p>
-      <div id="duels"></div>
-    </article>
+    <div id="pollsBody">
+      <div class="stack" style="padding:0">
+        <article class="card">
+          <h2>Les courbes du 1er tour</h2>
+          <p class="src">Moyenne mensuelle des intentions de vote, juillet à novembre 2026</p>
+          <div class="chips" id="lchips"></div>
+          <div class="fig" id="fig"><svg id="chart" role="img" aria-label="Évolution mensuelle des intentions de vote au premier tour"></svg><div class="tip" id="tip" hidden></div></div>
+          <p class="fine">Moyenne simple des sondages listés (1re hypothèse, rangés au mois de fin de terrain). Novembre en pointillé : chiffre provisoire.</p>
+          <details class="tbl"><summary>Voir les chiffres</summary><div class="scroll"><table id="tbl"></table></div></details>
+        </article>
+        <article class="card">
+          <h2>Les derniers sondages</h2>
+          <div id="novlist"></div>
+        </article>
+        <article class="card">
+          <h2>Seconds tours testés</h2>
+          <p class="src">Dernière mesure de chaque duel, d'après Sondax</p>
+          <div id="duels"></div>
+        </article>
+      </div>
+    </div>
     <article class="card">
       <h2>Sources</h2>
       <ul class="links">
@@ -325,347 +213,59 @@ th:first-child,td:first-child{text-align:left}
         <li><a href="https://www.france-vote.fr/sondages">France-Vote</a>, moyennes sur 120 jours</li>
         <li><a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2027_French_presidential_election">Wikipédia</a>, liste des sondages</li>
         <li><a href="https://www.touteleurope.eu/vie-politique-des-etats-membres/presidentielle-2027-qui-sont-les-candidats-deja-declares/">Toute l'Europe</a>, candidats déclarés</li>
-        <li><a href="https://www.vie-publique.fr/election-presidentielle-2027-regles-du-scrutin-role-du-president">Vie-publique</a>, calendrier officiel</li>
+        <li><a href="https://www.conseil-constitutionnel.fr/">Conseil constitutionnel</a>, parrainages et liste officielle</li>
       </ul>
-      <p class="fine">Données arrêtées au 24 nov. 2026. Dans la version finale : mise à jour automatique chaque semaine.</p>
+      <p class="fine">Données arrêtées au 24 nov. 2026, mises à jour chaque semaine.</p>
     </article>
   </div>
 </section>
 
-<section class="view" id="v-club">
+<!-- ===================== CLASSEMENT ===================== -->
+<section class="view" id="v-classement">
   <div class="wrap stack">
-    <div class="months" id="months"></div>
+    <article class="card me-card" id="meCard"></article>
     <article class="card">
-      <h2>Le consensus du club</h2>
+      <h2>Le classement</h2>
+      <div id="rank"></div>
+    </article>
+    <article class="card">
+      <h2>Le consensus des joueurs</h2>
       <div class="cons" id="cons"></div>
     </article>
     <article class="card">
-      <h2>Tous les pronos côte à côte</h2>
-      <div class="scroll"><table class="mx" id="mx"></table></div>
+      <h2>Les pronos de tout le monde</h2>
+      <input type="text" class="search" id="q" placeholder="Chercher un pseudo" autocomplete="off">
+      <div class="plist" id="plist"></div>
     </article>
-    <article class="card">
-      <h2>Les teams</h2>
-      <div id="teams"></div>
-    </article>
-    <article class="card">
-      <h2>Comment on marque</h2>
+    <details class="card rules">
+      <summary><h2>Comment on marque</h2></summary>
       <ul class="pts">
+        <li><b>1 à 5</b><span><b>Étapes 1 et 2</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Étape 2 : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
         <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
         <li><b>+2</b><span>par score du 1er tour à 1 point près</span></li>
         <li><b>+5</b><span>par finaliste trouvé</span></li>
-        <li><b>+10</b><span>pour le bon président, +3 si son score au 2nd tour est à 2 points près</span></li>
-        <li><b>+5</b><span>pour le bon Premier ministre, +2 par ministre au bon poste</span></li>
+        <li><b>10 à 30</b><span>pour le bon président : 10 si tout le monde l'avait choisi, jusqu'à 30 si tu étais presque seul. +3 si son score au 2nd tour est à 2 points près.</span></li>
       </ul>
-      <p class="help"><b>Prime à l'audace :</b> chaque prono mensuel est noté puis multiplié, ×2 en novembre, ×1,8 en décembre, ×1,6 en janvier, ×1,4 en février, ×1,2 en mars, ×1 en avril. Un mois oublié rapporte zéro.</p>
-    </article>
-    <p class="demo">Maquette : les pronos des autres membres sont des exemples fictifs.</p>
+      <p class="help"><b>Les photos du lundi :</b> chaque lundi, ton Grand Prono est photographié et noté après l'élection. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
+      <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
+    </details>
   </div>
 </section>
 </main>
 
 <nav class="tabs" aria-label="Onglets">
   <a href="#accueil" data-t="accueil"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg><span>Accueil</span></a>
-  <a href="#prono" data-t="prono"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V4h8v7M10.5 7.5l1.5 1.5 2.5-3"/></svg><span>Mon prono</span></a>
+  <a href="#paris" data-t="paris"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V4h8v7M10.5 7.5l1.5 1.5 2.5-3"/></svg><span>Mes paris</span></a>
   <a href="#team" data-t="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/></svg><span>Ma team</span></a>
   <a href="#sondages" data-t="sondages"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
-  <a href="#club" data-t="club"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Le club</span></a>
+  <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Classement</span></a>
 </nav>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT">
-  <div class="in"><h2 id="sheetT">Qui es-tu ?</h2><p class="help">Choisis ton nom pour faire ton prono.</p><div class="grid7" id="grid7"></div></div>
+  <div class="in" id="sheetIn"></div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script>
-{
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmt=v=>v==null?'–':(+v).toLocaleString('fr-FR',{maximumFractionDigits:1});
-
-/* Candidats déclarés au 24/11/2026 (Toute l'Europe, franceinfo), rangés de gauche à droite. poll = repère pour préremplir les % */
-const C=[
- {id:'arthaud',p:'Nathalie',n:'Arthaud',party:'Lutte ouvrière',col:'#8E1B1B',main:1,poll:1},
- {id:'kazib',p:'Anasse',n:'Kazib',party:'Révolution permanente',col:'#A8323A'},
- {id:'labib',p:'Selma',n:'Labib',party:'NPA-Révolutionnaires',col:'#B5452F'},
- {id:'melenchon',p:'Jean-Luc',n:'Mélenchon',party:'La France insoumise',col:'var(--c-jlm)',main:1,poll:17.8},
- {id:'roussel',p:'Fabien',n:'Roussel',party:'PCF',col:'#B0101C',main:1,poll:1},
- {id:'tondelier',p:'Marine',n:'Tondelier',party:'Les Écologistes',col:'#2E9E4F',main:1,poll:2.5,note:'Choix du parti le 13 déc.'},
- {id:'batho',p:'Delphine',n:'Batho',party:'Génération écologie',col:'#5E9A2E'},
- {id:'glucksmann',p:'Raphaël',n:'Glucksmann',party:'Place publique',col:'var(--c-rg)',main:1,poll:9.8},
- {id:'hollande',p:'François',n:'Hollande',party:'PS',col:'#C24F86',main:1,poll:7,und:1,note:'Non déclaré'},
- {id:'bouamrane',p:'Karim',n:'Bouamrane',party:'PS, hors primaire',col:'#C7608F'},
- {id:'cazeneuve',p:'Bernard',n:'Cazeneuve',party:'La Convention',col:'#A85C80'},
- {id:'attal',p:'Gabriel',n:'Attal',party:'Renaissance',col:'#C99700',main:1,poll:5},
- {id:'becht',p:'Olivier',n:'Becht',party:'« Extrême centre »',col:'#B8932A'},
- {id:'philippe',p:'Édouard',n:'Philippe',party:'Horizons',col:'var(--c-ep)',main:1,poll:9},
- {id:'riner',p:'Teddy',n:'Riner',party:'Sans étiquette',col:'#64748B',main:1,poll:3.5},
- {id:'villepin',p:'Dominique',n:'de Villepin',party:'La France humaniste',col:'#6C63B5',main:1,poll:1.5},
- {id:'retailleau',p:'Bruno',n:'Retailleau',party:'Les Républicains',col:'var(--c-br)',main:1,poll:6},
- {id:'lisnard',p:'David',n:'Lisnard',party:'Nouvelle Énergie',col:'var(--c-dl)',main:1,poll:10},
- {id:'nda',p:'Nicolas',n:'Dupont-Aignan',party:'Debout la France',col:'#34427E',main:1,poll:1},
- {id:'asselineau',p:'François',n:'Asselineau',party:'UPR',col:'#2C6E7F'},
- {id:'philippot',p:'Florian',n:'Philippot',party:'Les Patriotes',col:'#4B3F8F'},
- {id:'lepen',p:'Marine',n:'Le Pen',party:'Rassemblement national',col:'var(--c-lp)',main:1,poll:31.6},
- {id:'zemmour',p:'Éric',n:'Zemmour',party:'Reconquête',col:'#3A2E57',main:1,poll:3.5},
- {id:'polony',p:'Natacha',n:'Polony',party:'',col:'#7A7A85',off:1},
- {id:'branco',p:'Juan',n:'Branco',party:'',col:'#7A7A85',off:1},
- {id:'egger',p:'Clara',n:'Egger',party:'Solution démocratique',col:'#7A7A85',off:1},
- {id:'markovic',p:'Mira',n:'Markovic',party:'Parti animaliste',col:'#7A7A85',off:1},
- {id:'mikolajczak',p:'Antoine',n:'Mikolajczak',party:'Équinoxe',col:'#7A7A85',off:1},
- {id:'mathieu',p:'Benoît',n:'Mathieu',party:'Sans étiquette',col:'#7A7A85',off:1},
- {id:'lalanne',p:'Francis',n:'Lalanne',party:'',col:'#7A7A85',off:1}
-];
-const by=Object.fromEntries(C.map(c=>[c.id,c]));
-const ini=c=>(c.p[0]+c.n.replace(/^de /,'')[0]).toUpperCase();
-const av=(c,s=40)=>`<span class="av${c.und?' und':''}" style="--s:${s}px;--c:${c.col}" aria-hidden="true">${ini(c)}</span>`;
-
-const MEMBERS=['Antoine','Frédéric','Vincent','Pierre','Christophe','Loïc','Paul'];
-const MK='2026-11';
-const POSTES=['Intérieur','Économie et Finances','Affaires étrangères','Armées','Justice','Éducation nationale','Santé','Travail et Emploi','Transition écologique et Énergie','Agriculture'];
-const PEOPLE=['Xavier Bertrand','Gérald Darmanin','Élisabeth Borne','Bruno Le Maire','François Bayrou','Laurent Wauquiez','Valérie Pécresse','Carole Delga','François Ruffin','Olivier Faure','Sébastien Lecornu','Michel Barnier','Jean Castex','Ségolène Royal','Jordan Bardella','Yaël Braun-Pivet','Clémentine Autain','Boris Vallaud','Rachida Dati','Jean-Noël Barrot'];
-
-/* Exemples fictifs pour la maquette */
-const mk=(pres,top,win,team)=>({pres,top:top.map(([id,pct])=>({id,pct})),win,team:Object.assign({pm:'',min:{},jl:'',jn:''},team),at:Date.UTC(2026,10,20)});
-const DEMO={
- Antoine:mk('philippe',[['lepen',30],['philippe',19],['melenchon',16],['glucksmann',11],['lisnard',8]],53,{pm:'Xavier Bertrand',jl:"Ministère de l'Apéro",jn:'Loïc'}),
- 'Frédéric':mk('lepen',[['lepen',33],['melenchon',17],['glucksmann',12],['philippe',11],['lisnard',9]],55,{pm:'Jordan Bardella'}),
- Pierre:mk('glucksmann',[['lepen',29],['glucksmann',17],['melenchon',15],['philippe',13],['lisnard',9]],51,{pm:'Bernard Cazeneuve'}),
- Christophe:mk('lisnard',[['lepen',30],['lisnard',16],['melenchon',16],['philippe',12],['glucksmann',10]],52,{pm:'Laurent Wauquiez'}),
- Paul:mk('hollande',[['lepen',30],['hollande',18],['melenchon',16],['philippe',10],['lisnard',8]],52,{pm:'Carole Delga',jl:'Ministère du Barbecue',jn:'Christophe'})
-};
-
-const KEY='pdm-maquette-v1';
-let store={me:'Vincent',recs:{},draft:null};
-try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&MEMBERS.includes(s.me))store=s}catch(e){}
-const recs=()=>Object.assign({},DEMO,store.recs);
-const blank=()=>({pres:null,top:[],win:52,team:{pm:'',min:{},jl:'',jn:''}});
-const clone=o=>JSON.parse(JSON.stringify(o));
-let d=store.draft&&store.draft.top?store.draft:(store.recs[store.me]?clone(store.recs[store.me]):blank());
-const save=()=>{store.draft=d;try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
-
-const toastEl=$('#toast');let tt;
-const toast=m=>{toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('on'),2200)};
-
-/* Compte à rebours */
-const daysTo=(y,m,dd)=>{const n=new Date();n.setHours(0,0,0,0);return Math.round((new Date(y,m,dd)-n)/864e5)};
-$('#jx').textContent='J-'+Math.max(0,daysTo(2027,3,18));
-$('#minis').innerHTML=[[2027,2,12,'Fin des parrainages, 12 mars'],[2027,2,26,'Liste officielle, 26 mars'],[2027,4,2,'2nd tour, 2 mai']].map(([y,m,dd,t])=>`<div class="mini"><b>J-${Math.max(0,daysTo(y,m,dd))}</b><span>${t}</span></div>`).join('');
-
-/* Podium (Sondax, 23/11/2026) */
-const POD=[['lepen',31.6],['melenchon',17.8],['glucksmann',9.8]];
-$('#podium').innerHTML=[1,0,2].map(i=>{const[id,v]=POD[i],c=by[id];return `<div class="pcol p${i+1}">${av(c,i===0?62:50)}<b>${c.n}</b><div class="blk"><span class="rk">${i+1}</span><span class="pv">${fmt(v)} %</span></div></div>`}).join('');
-
-/* Ça bouge */
-const UP='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
-const DN='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
-const MOVES=[
- ['Ils montent',[['lisnard',1,'+2 pts chez Harris (19 nov.), +4 chez Elabe (13 nov.)'],['riner',1,'Candidat depuis le 9 nov., déjà jusqu’à 4,5 % chez Elabe']]],
- ['Ils descendent',[['lepen',0,'−2,5 pts en 3 mois dans la moyenne Sondax'],['philippe',0,'−3,6 pts sur 120 jours selon France-Vote']]]];
-$('#moves').innerHTML=MOVES.map(([h,l])=>`<div><h3>${h}</h3>${l.map(([id,u,t])=>`<div class="mv"><span class="ar ${u?'up':'dn'}">${u?UP:DN}</span>${av(by[id],40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
-
-/* Dernier sondage : Harris 18-19 nov. */
-const LAST=[['lepen',31],['melenchon',18],['glucksmann',11],['lisnard',11],['philippe',9],['attal',4],['riner',4]];
-$('#last').innerHTML=LAST.map(([id,v])=>`<div class="bar">${av(by[id],28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${v/35*100}%;--c:${by[id].col}"></i></div><span class="v">${v} %</span></div>`).join('');
-
-/* Accueil : CTA + statut du club */
-function renderHome(){
-  const r=store.recs[store.me];
-  $('#cta').innerHTML=r&&r.at
-    ?`<h2>Ton prono de novembre est validé</h2><p>Président : ${esc(by[r.pres].p+' '+by[r.pres].n)}. Tu peux le modifier jusqu'au 30 nov.</p><button class="big" data-go="prono">Voir mon prono</button>`
-    :`<h2>${esc(store.me)}, ton prono de novembre t'attend</h2><p>Clôture le 30 nov. à minuit. Deux minutes suffisent.</p><button class="big" data-go="prono">Faire mon prono</button>`;
-  const R=recs();
-  $('#clubStatus').innerHTML=MEMBERS.map(m=>`<div class="mem${R[m]&&R[m].at?' ok':''}"><span class="av" style="--s:44px">${esc(m.slice(0,2))}</span>${esc(m)}</div>`).join('');
-}
-document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)location.hash=g.dataset.go});
-
-/* ===== Mon prono ===== */
-let filt='main';
-const list=()=>filt==='main'?C.filter(c=>c.main):C;
-function renderCar(){
-  let h='',sep=false;
-  list().forEach(c=>{
-    if(c.off&&!sep){h+='<div class="sep">Hors axe gauche-droite</div>';sep=true}
-    h+=`<button class="cand${d.pres===c.id?' sel':''}" data-id="${c.id}" aria-pressed="${d.pres===c.id}">${av(c,56)}<b>${c.n}</b><small>${esc(c.party||'Sans parti précisé')}</small>${c.note?`<em>${c.note}</em>`:''}<span class="ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M5 12l5 5 9-10"/></svg></span></button>`;
-  });
-  $('#car').innerHTML=h;
-}
-const syncCar=()=>document.querySelectorAll('.cand').forEach(b=>{const s=b.dataset.id===d.pres;b.classList.toggle('sel',s);b.setAttribute('aria-pressed',s)});
-$('#car').addEventListener('click',e=>{const b=e.target.closest('.cand');if(!b)return;d.pres=d.pres===b.dataset.id?null:b.dataset.id;syncCar();renderDuel();save();if(d.pres)toast(by[d.pres].n+' est ton président')});
-const scr=dir=>{const c=$('#car');c.scrollBy({left:dir*Math.max(200,c.clientWidth*.8),behavior:'smooth'})};
-$('#prev').onclick=()=>scr(-1);$('#next').onclick=()=>scr(1);
-$('#car').addEventListener('keydown',e=>{if(e.key==='ArrowRight'){scr(1);e.preventDefault()}if(e.key==='ArrowLeft'){scr(-1);e.preventDefault()}});
-document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{filt=b.dataset.f;document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x===b));renderCar();renderPick()});
-
-function renderPick(){
-  const ids=new Set(list().map(c=>c.id));d.top.forEach(t=>ids.add(t.id));
-  $('#pick').innerHTML=C.filter(c=>ids.has(c.id)).map(c=>{const i=d.top.findIndex(t=>t.id===c.id);return `<button class="chip${i>=0?' on':''}" data-id="${c.id}" aria-pressed="${i>=0}">${av(c,32)}${c.n}${i>=0?`<span class="n">${i+1}</span>`:''}</button>`}).join('');
-}
-$('#pick').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const id=b.dataset.id,i=d.top.findIndex(t=>t.id===id);
-  if(i>=0)d.top.splice(i,1);else if(d.top.length<5)d.top.push({id,pct:Math.round((by[id].poll||2)*2)/2});else{toast('Top 5 complet : retire d’abord un nom');return}
-  renderPick();renderSlots();renderDuel();save()});
-function renderSlots(){
-  let h='';for(let i=0;i<5;i++){const t=d.top[i];
-    h+=t?`<li><span class="rkb">${i+1}</span>${av(by[t.id],34)}<span class="sn">${by[t.id].n}</span><span class="step"><button data-i="${i}" data-s="-0.5" aria-label="Moins">−</button><output>${fmt(t.pct)} %</output><button data-i="${i}" data-s="0.5" aria-label="Plus">+</button></span></li>`
-      :`<li class="empty"><span class="rkb">${i+1}</span><span></span><span>À choisir</span><span></span></li>`}
-  $('#slots').innerHTML=h;renderTotal();
-}
-$('#slots').addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(!b)return;const t=d.top[+b.dataset.i];t.pct=Math.min(60,Math.max(0,t.pct+ +b.dataset.s));renderSlots();save()});
-function renderTotal(){
-  const s=d.top.reduce((a,t)=>a+t.pct,0),over=s>100;
-  $('#total').className='total'+(over?' over':'');
-  $('#total').innerHTML=`<p>${over?`Ton top 5 fait ${fmt(s)} %, ça dépasse 100 %`:`Top 5 : ${fmt(s)} %, il reste ${fmt(100-s)} % pour les autres`}</p><div class="tr"><i style="width:${Math.min(100,s)}%;--c:${over?'var(--rouge)':'var(--bleuT)'}"></i></div>`;
-}
-function renderDuel(){
-  const el=$('#duel');
-  if(d.top.length<2){el.innerHTML='<p class="help">Ta finale se remplit toute seule avec tes deux premiers du 1er tour.</p>';return}
-  const [a,b]=[d.top[0].id,d.top[1].id],inF=d.pres===a||d.pres===b;
-  const fin=id=>`<button class="fin${d.pres===id?' win':''}" data-id="${id}">${av(by[id],56)}<b>${by[id].n}</b><span class="fine">${d.pres===id?'Mon président':'Le désigner'}</span></button>`;
-  const w=inF?d.pres:null,l=w===a?b:a;
-  el.innerHTML=`<div class="duel">${fin(a)}<span class="vs">contre</span>${fin(b)}</div>`+
-   (w?`<div class="range"><div class="score"><span>${by[w].n} ${fmt(d.win)} %</span><span>${by[l].n} ${fmt(100-d.win)} %</span></div><input type="range" id="win" min="50" max="80" step="0.5" value="${d.win}" aria-label="Score du vainqueur au 2nd tour"></div>`
-      :`<p class="warn">${d.pres?`Ton président (${by[d.pres].n}) n'est pas dans ta finale. Touche un finaliste ou revois ton top 2.`:'Touche le finaliste que tu vois gagner.'}</p>`);
-}
-$('#duel').addEventListener('click',e=>{const b=e.target.closest('.fin');if(!b)return;d.pres=b.dataset.id;syncCar();renderDuel();save()});
-$('#duel').addEventListener('input',e=>{if(e.target.id!=='win')return;d.win=+e.target.value;const w=d.pres,l=d.top[0].id===w?d.top[1].id:d.top[0].id;$('#duel .score').innerHTML=`<span>${by[w].n} ${fmt(d.win)} %</span><span>${by[l].n} ${fmt(100-d.win)} %</span>`;save()});
-
-function renderPState(){
-  const r=store.recs[store.me];
-  $('#pstate').innerHTML=r&&r.at?`<div class="okbar">Validé le ${new Date(r.at).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}. Tu peux encore le modifier jusqu'au 30 nov.</div>`:'';
-  $('#validate').textContent=r&&r.at?'Mettre à jour mon prono':'Valider mon prono de novembre';
-}
-$('#validate').onclick=()=>{
-  const er=[],s=d.top.reduce((a,t)=>a+t.pct,0);
-  if(!d.pres)er.push('Choisis ton président.');
-  if(d.top.length<5)er.push('Complète ton top 5 du 1er tour.');
-  if(s>100)er.push('Ton top 5 dépasse 100 %.');
-  if(d.top.some((t,i)=>i&&t.pct>d.top[i-1].pct))er.push('Les % doivent suivre l’ordre d’arrivée.');
-  if(d.pres&&d.top.length>=2&&d.top[0].id!==d.pres&&d.top[1].id!==d.pres)er.push('Ton président doit être dans ta finale.');
-  const E=$('#errs');
-  if(er.length){E.innerHTML=er.map(esc).join('<br>');E.classList.add('on');E.scrollIntoView({behavior:'smooth',block:'center'});return}
-  E.classList.remove('on');
-  const prev=store.recs[store.me]||{};
-  store.recs[store.me]=Object.assign(clone(d),{team:prev.team||d.team,at:Date.now()});save();
-  toast('Prono de novembre validé');renderAll();
-};
-$('#copy').onclick=async()=>{
-  const t=['Les pronos des membrés, novembre 2026 ('+store.me+')',
-    'Président : '+(d.pres?by[d.pres].p+' '+by[d.pres].n:'à choisir'),
-    '1er tour : '+(d.top.map((x,i)=>(i+1)+'. '+by[x.id].n+' '+fmt(x.pct)+' %').join(', ')||'à faire'),
-    d.top.length>1&&d.pres?'2nd tour : '+by[d.pres].n+' '+fmt(d.win)+' %':'',
-    d.team.pm?'Premier ministre : '+d.team.pm:''].filter(Boolean).join('\n');
-  try{await navigator.clipboard.writeText(t);toast('Copié, colle-le dans WhatsApp')}catch(e){toast('Copie impossible depuis cette fenêtre')}
-};
-
-/* ===== Ma team ===== */
-$('#people').innerHTML=[...new Set(C.map(c=>c.p+' '+c.n).concat(PEOPLE))].sort((a,b)=>a.localeCompare(b,'fr')).map(n=>`<option value="${esc(n)}">`).join('');
-$('#mins').innerHTML=POSTES.map((p,i)=>`<label class="minrow" for="m${i}"><span>${p}</span><input type="text" id="m${i}" data-k="${p}" list="people" placeholder="Nom" autocomplete="off"></label>`).join('');
-function renderTeam(){
-  $('#teamPres').textContent=d.pres?'Autour de '+by[d.pres].p+' '+by[d.pres].n:'Choisis d’abord ton président';
-  $('#t-pm').value=d.team.pm||'';$('#t-jl').value=d.team.jl||'';$('#t-jn').value=d.team.jn||'';
-  document.querySelectorAll('#mins input').forEach(i=>i.value=(d.team.min||{})[i.dataset.k]||'');
-}
-$('#v-team').addEventListener('input',e=>{const i=e.target;if(i.id==='t-pm')d.team.pm=i.value;else if(i.id==='t-jl')d.team.jl=i.value;else if(i.id==='t-jn')d.team.jn=i.value;else if(i.dataset.k){d.team.min=d.team.min||{};d.team.min[i.dataset.k]=i.value}save()});
-$('#teamSave').onclick=()=>{if(!d.team.pm.trim()){toast('Choisis au moins ton Premier ministre');$('#t-pm').focus();return}
-  const r=store.recs[store.me]||{};r.team=clone(d.team);r.teamAt=Date.now();store.recs[store.me]=r;save();toast('Team validée');renderClub()};
-
-/* ===== Sondages ===== */
-const SER=['lepen','melenchon','philippe','glucksmann','lisnard','retailleau'];
-const CV={lepen:'--c-lp',melenchon:'--c-jlm',philippe:'--c-ep',glucksmann:'--c-rg',lisnard:'--c-dl',retailleau:'--c-br'};
-/* [fin de terrain, institut, Le Pen, Mélenchon, Philippe, Glucksmann, Lisnard, Retailleau] 1re hypothèse */
-const P=[
- ['07-08','Harris',35,16,14,10,null,7],['07-08','Ifop',36,15,null,12,null,10],['07-09','OpinionWay',35,13,18,9,null,8],['07-10','Elabe',35,16,16.5,10.5,null,8],['07-10','Verian',37,15,17,11,null,7],['07-24','Cluster17',30,18,18,10,null,8],
- ['08-19','Harris',35,16,14,10,null,6],['08-25','Ifop',33,16,14.5,11,null,6],['08-28','Elabe',34,14,17,11.5,null,6.5],
- ['09-01','Cluster17',30,18,18,11.5,null,7.5],['09-02','Ipsos',34,15,14.5,11.5,null,6],['09-03','OpinionWay',35,17,null,13,null,11],['09-09','OpinionWay',34,15,15,9,null,8],['09-09','Ipsos',33,15.5,14,11.5,null,7],['09-10','OpinionWay',32,16,16,null,2,7],['09-10','Harris',33,16,14,9,null,7],['09-16','Cluster17',31,19,19,12,null,7.5],['09-21','YouGov',34,17,12,8,null,8],['09-24','Harris',35,17,13,10,null,7],['09-29','Ifop',32,15,16,11,null,7],
- ['10-07','Odoxa',37,18,17,9.5,null,6.5],['10-08','Harris',35,18,13,10,null,7],['10-14','Ifop',32,16,13,11.5,6,5],['10-14','OpinionWay',35,15,12,13,4,6],['10-15','YouGov',36,15,10,12,null,6],['10-15','Cluster17',31,18,17,11,7,7],['10-16','Elabe',32.5,15,16.5,15.5,null,7],
- ['11-05','Harris',36,18,11,11,null,7],['11-13','Elabe',null,null,null,null,9,null],['11-17','YouGov',32,17,7,9,9,6],['11-19','Harris',31,18,9,11,11,null]];
-const MO=['07','08','09','10','11'],ML=['juil.','août','sept.','oct.','nov.'];
-const AVG={};SER.forEach((id,k)=>AVG[id]=MO.map(m=>{const v=P.filter(p=>p[0].startsWith(m)&&p[k+2]!=null).map(p=>p[k+2]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null}));
-const on=new Set(SER);
-$('#lchips').innerHTML=SER.map(id=>`<button class="lchip" data-id="${id}" aria-pressed="true"><i style="--c:var(${CV[id]})"></i>${by[id].n}</button>`).join('');
-$('#lchips').addEventListener('click',e=>{const b=e.target.closest('.lchip');if(!b)return;const id=b.dataset.id;if(on.has(id)){if(on.size>1)on.delete(id)}else on.add(id);b.setAttribute('aria-pressed',on.has(id));draw()});
-const svg=$('#chart'),tip=$('#tip');let G=null;
-function draw(){
-  const W=svg.clientWidth,H=svg.clientHeight;if(!W)return;
-  const nar=W<420,m={l:30,r:nar?98:116,t:14,b:28},stepX=(W-m.l-m.r)/(MO.length-1);
-  const x=i=>m.l+i*stepX,y=v=>m.t+(1-v/40)*(H-m.t-m.b);
-  let g='';[0,10,20,30,40].forEach(t=>g+=`<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${y(t)}" y2="${y(t)}"/><text class="tick" x="${m.l-6}" y="${y(t)+4}" text-anchor="end">${t}</text>`);
-  ML.forEach((l,i)=>g+=`<text class="tick" x="${x(i)}" y="${H-8}" text-anchor="middle">${l}</text>`);
-  g+=`<line id="cross" class="cross" x1="-9" x2="-9" y1="${m.t}" y2="${H-m.b}"/>`;
-  const labs=[];
-  SER.filter(id=>on.has(id)).forEach(id=>{
-    const st=`stroke:var(${CV[id]})`,pts=AVG[id].map((v,i)=>v==null?null:[x(i),y(v)]);
-    let dd='',f=true;for(let i=0;i<4;i++){const p=pts[i];if(!p)continue;dd+=(f?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1);f=false}
-    if(dd)g+=`<path class="ln" d="${dd}" style="${st}"/>`;
-    const pv=[3,2,1,0].map(i=>pts[i]).find(Boolean);
-    if(pts[4]&&pv)g+=`<path class="ln dash" d="M${pv[0].toFixed(1)} ${pv[1].toFixed(1)}L${pts[4][0].toFixed(1)} ${pts[4][1].toFixed(1)}" style="${st}"/>`;
-    pts.forEach(p=>{if(p)g+=`<circle class="dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" style="fill:var(${CV[id]})"/>`});
-    labs.push({id,y:pts[4]?pts[4][1]:pv[1],v:AVG[id][4]});
-  });
-  labs.sort((a,b)=>a.y-b.y);for(let i=1;i<labs.length;i++)if(labs[i].y-labs[i-1].y<16)labs[i].y=labs[i-1].y+16;
-  const over=labs.length?labs[labs.length-1].y-(H-m.b):0;if(over>0)labs.forEach(L=>L.y-=over);
-  labs.forEach(L=>{const nm=nar?by[L.id].n.replace('Glucksmann','Glucks.').replace('Retailleau','Retail.').replace('Mélenchon','Mélench.'):by[L.id].n;g+=`<text class="lab" x="${W-m.r+10}" y="${(L.y+4).toFixed(1)}">${nm} ${fmt(L.v)}</text>`});
-  svg.innerHTML=g;G={x,stepX,m,W};
-}
-const ro=new ResizeObserver(draw);ro.observe($('#fig'));
-svg.addEventListener('pointermove',e=>{if(!G)return;const r=svg.getBoundingClientRect(),px=e.clientX-r.left;
-  const i=Math.max(0,Math.min(4,Math.round((px-G.m.l)/G.stepX))),cx=G.x(i),cr=$('#cross');cr.setAttribute('x1',cx);cr.setAttribute('x2',cx);
-  const rows=SER.filter(id=>on.has(id)&&AVG[id][i]!=null).sort((a,b)=>AVG[b][i]-AVG[a][i]);
-  tip.innerHTML=`<b>${['Juillet','Août','Septembre','Octobre','Novembre (provisoire)'][i]}</b>`+rows.map(id=>`<div><span>${by[id].n}</span><span>${fmt(AVG[id][i])} %</span></div>`).join('');
-  tip.hidden=false;const tw=tip.offsetWidth;tip.style.left=Math.min(G.W-tw-4,Math.max(4,cx+(cx>G.W/2?-tw-12:12)))+'px'});
-svg.addEventListener('pointerleave',()=>{tip.hidden=true;const cr=$('#cross');if(cr){cr.setAttribute('x1',-9);cr.setAttribute('x2',-9)}});
-$('#tbl').innerHTML='<tr><th>Candidat</th>'+ML.map(l=>`<th>${l}</th>`).join('')+'</tr>'+SER.map(id=>`<tr><td>${by[id].n}</td>${AVG[id].map(v=>`<td>${v==null?'–':fmt(Math.round(v*10)/10)}</td>`).join('')}</tr>`).join('')+`<tr><td>Nb de sondages</td>${MO.map(m=>`<td>${P.filter(p=>p[0].startsWith(m)).length}</td>`).join('')}</tr>`;
-const NOV=[
- ['Harris Interactive','terrain du 18 au 19 nov.','Le Pen 31, Mélenchon 18, Glucksmann 11, Lisnard 11, Philippe 9, Attal 4, Riner 4'],
- ['YouGov','terrain du 12 au 17 nov.','Le Pen 32, Mélenchon 17, Glucksmann 9, Lisnard 9, Philippe 7, Retailleau 6, Tondelier 5'],
- ['Elabe','terrain du 12 au 13 nov.','Lisnard 9, Riner 4,5 (scores partiels relevés)'],
- ['Cluster17','terrain du 9 au 10 nov.','Riner 2 (score partiel relevé)'],
- ['Harris Interactive','publié le 5 nov.','Le Pen 36, Mélenchon 18, Glucksmann 11, Philippe 11, Retailleau 7, Attal 6, Zemmour 4']];
-$('#novlist').innerHTML=NOV.map(([a,b,c])=>`<div class="poll"><b>${a}</b>, ${b}<p>${c} (en %)</p></div>`).join('');
-const DUELS=[['lepen',65,'melenchon','Harris, 19 nov.'],['lepen',54,'philippe','YouGov, 17 nov.'],['lepen',55,'attal','YouGov, 17 nov.'],['lepen',58,'glucksmann','YouGov, 17 nov.'],['philippe',61,'melenchon','YouGov, 17 nov.'],['lepen',59,'hollande','Ifop, 19 oct.'],['lepen',58,'retailleau','Ifop, 25 août']];
-$('#duels').innerHTML=DUELS.map(([a,v,b,s])=>`<div class="db"><div class="lbl"><span>${by[a].n} ${v} %</span><span>${by[b].n} ${100-v} %</span></div><div class="sp"><i style="width:${v}%;--c:${by[a].col}"></i><i style="width:${100-v}%;--c:${by[b].col}"></i></div><span class="fine">${s}</span></div>`).join('');
-
-/* ===== Le club ===== */
-$('#months').innerHTML=['Novembre','Décembre','Janvier','Février','Mars','Avril'].map((m,i)=>`<span class="${i?'':'on'}">${m}${i?', à venir':''}</span>`).join('');
-function renderClub(){
-  const R=recs(),V=MEMBERS.filter(m=>R[m]&&R[m].at);
-  const cnt={};V.forEach(m=>cnt[R[m].pres]=(cnt[R[m].pres]||0)+1);
-  const pairs={};V.forEach(m=>{const k=[R[m].top[0].id,R[m].top[1].id].sort().join('|');pairs[k]=(pairs[k]||0)+1});
-  const bp=Object.entries(pairs).sort((a,b)=>b[1]-a[1])[0];
-  const lp=V.map(m=>(R[m].top.find(t=>t.id==='lepen')||{}).pct).filter(v=>v!=null);
-  const topP=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
-  $('#cons').innerHTML=V.length?`<div class="stat"><b>${V.length}/7</b><p>membres ont validé leur prono de novembre</p></div>`+
-    (bp?`<div class="stat"><b>${bp[1]}/${V.length}</b><p>voient la finale ${bp[0].split('|').map(i=>by[i].n).join(' contre ')}</p></div>`:'')+
-    (lp.length?`<div class="stat"><b>${fmt(Math.round(lp.reduce((a,b)=>a+b,0)/lp.length*10)/10)} %</b><p>pour Le Pen au 1er tour en moyenne chez nous, contre 31,6 % dans les sondages</p></div>`:'')+
-    `<h3>Nos présidents</h3>`+topP.map(([id,n])=>`<div class="bar">${av(by[id],28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${n/V.length*100}%;--c:var(--vert)"></i></div><span class="v">${n}</span></div>`).join('')
-   :'<p class="help">Personne n’a encore validé ce mois-ci. Lance-toi !</p>';
-  $('#mx').innerHTML='<tr><th>Membre</th><th>Président</th><th>1er</th><th>2e</th><th>3e</th><th>4e</th><th>5e</th></tr>'+
-    MEMBERS.map(m=>{const r=R[m];if(!r||!r.at)return `<tr><td>${esc(m)}</td><td colspan="6"><span class="fine">pas encore validé</span></td></tr>`;
-      return `<tr><td>${esc(m)}${m===store.me?' (toi)':''}</td><td class="pres">${av(by[r.pres],30)}<small>${fmt(r.win)} %</small></td>${r.top.map(t=>`<td>${av(by[t.id],30)}<small>${fmt(t.pct)}</small></td>`).join('')}</tr>`}).join('');
-  $('#teams').innerHTML=MEMBERS.map(m=>{const t=(R[m]||{}).team;if(!t||!t.pm)return `<div class="tm"><b>${esc(m)}</b><p>Team pas encore composée</p></div>`;
-    const n=Object.values(t.min||{}).filter(v=>v&&v.trim()).length;
-    return `<div class="tm"><b>${esc(m)}</b><p>Matignon : ${esc(t.pm)}, ${n}/10 ministres${t.jl&&t.jn?`, joker : ${esc(t.jl)} pour ${esc(t.jn)}`:''}</p></div>`}).join('');
-}
-
-/* Membre courant */
-const sheet=$('#sheet');
-function renderMe(){$('#meBtn').textContent=store.me;$('#grid7').innerHTML=MEMBERS.map(m=>`<button class="${m===store.me?'on':''}" data-m="${esc(m)}">${esc(m)}</button>`).join('')}
-$('#meBtn').onclick=()=>{renderMe();sheet.classList.add('open');$('#grid7 button.on').focus()};
-sheet.addEventListener('click',e=>{if(e.target===sheet){sheet.classList.remove('open');return}const b=e.target.closest('[data-m]');if(!b)return;
-  store.me=b.dataset.m;d=store.recs[store.me]?clone(store.recs[store.me]):(DEMO[store.me]?clone(DEMO[store.me]):blank());if(DEMO[store.me]&&!store.recs[store.me])d.at=undefined;
-  save();sheet.classList.remove('open');renderAll();toast('Salut '+store.me)});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')sheet.classList.remove('open')});
-
-function renderAll(){renderMe();renderHome();renderCar();renderPick();renderSlots();renderDuel();renderPState();renderTeam();renderClub()}
-
-/* Onglets */
-const VIEWS=['accueil','prono','team','sondages','club'];
-function show(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
-  VIEWS.forEach(n=>$('#v-'+n).classList.toggle('on',n===v));
-  document.querySelectorAll('.tabs a').forEach(a=>{const o=a.dataset.t===v;a.classList.toggle('on',o);if(o)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  window.scrollTo(0,0);if(v==='sondages')requestAnimationFrame(draw)}
-window.addEventListener('hashchange',show);
-renderAll();show();
-}
-</script>
+<script type="module" src="js/app.js?v=2"></script>
 </body>
 </html>
