@@ -521,3 +521,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .team-comments li { padding: 10px 0; border-bottom: 1px solid var(--line); }
 .team-comments li p { white-space: pre-wrap; overflow-wrap: anywhere; margin-block: 4px; }
 [data-team-comments] textarea { display: block; width: 100%; font: inherit; margin-block: 6px; }
+
+.team-gauge { background: #121E36; color: #FFF8E5; text-align: center; }
+.team-gauge canvas { width: 100%; max-width: 480px; height: auto; display: block; margin-inline: auto; }
+.team-gauge p { margin: 4px 0 0; color: #FFF8E5; }

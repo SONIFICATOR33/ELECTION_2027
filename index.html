@@ -19,7 +19,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=15">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=27">
+<link rel="stylesheet" href="css/app.css?v=28">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -196,6 +196,11 @@
       <p class="pick-instruction">Choisis ton président, ton Premier ministre et tes ministres.</p>
       <p class="pick-instruction">Just for fun ! Ton gouvernement ne rapporte aucun point.</p>
     </article>
+    <article class="card team-gauge" id="team-gauge" hidden>
+      <h2>Le compteur de Matignon</h2>
+      <canvas id="team-gauge-canvas" width="640" height="208" aria-hidden="true"></canvas>
+      <p id="team-gauge-summary" aria-live="polite"></p>
+    </article>
     <article class="card pm">
       <h2>Président</h2>
       <div id="t-coeur"></div>
@@ -267,7 +272,7 @@
     <article class="card">
       <h2>Joueurs et Groupes</h2>
       <div id="group-view"></div>
-      <button class="ghost" id="install-app" data-install aria-controls="install-help" aria-expanded="false" hidden>Installer l’app</button>
+      <button class="ghost" id="install-app" data-install aria-controls="install-help" aria-expanded="false" hidden>Installer le jeu comme une app</button>
       <p id="install-help" hidden></p>
     </article>
     <details class="card rules">
@@ -333,7 +338,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=27"></script>
+<script type="module" src="js/app.js?v=28"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
