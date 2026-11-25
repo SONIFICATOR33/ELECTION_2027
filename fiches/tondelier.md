@@ -8,7 +8,7 @@ Photo [Huma2023MarineTondelier (cropped).jpg](https://commons.wikimedia.org/wiki
 
 ## Dans la course
 
-- **Statut** : Vote des militants des Écologistes le 13 décembre
+- **Statut** : Le 18 novembre 2026, Marine Tondelier se dit prête à travailler à une coalition autour de Jean-Luc Mélenchon. Les adhérents des Écologistes voteront sur leur stratégie du 10 au 13 décembre.
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui
@@ -30,5 +30,7 @@ Secrétaire nationale des Écologistes depuis 2022
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/Marine_Tondelier)
 - [LCP, 23 nov. 2026](https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932)
+- [Le Monde, 18 nov. 2026](https://www.lemonde.fr/politique/article/2026/11/18/presidentielle-2027-marine-tondelier-se-dit-prete-a-batir-une-coalition-autour-de-la-candidature-de-jean-luc-melenchon_6813209_823448.html)
+- [Le Monde, 25 nov. 2026](https://www.lemonde.fr/politique/article/2026/11/25/presidentielle-2027-lfi-force-d-attraction-a-gauche_6815035_823448.html)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 25 novembre 2026. Le repère sondages suit `js/data.js`.*

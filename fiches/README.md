@@ -1,13 +1,13 @@
 # Les fiches des candidats
 
-24 candidats, de gauche à droite puis hors axe, comme dans l’appli. À jour le 24 novembre 2026.
+24 candidats, de gauche à droite puis hors axe, comme dans l’appli. Dernière mise à jour le 25 novembre 2026.
 
 | Candidat | Parti | Âge au 1er tour | Statut |
 |---|---|---|---|
 | [Nathalie Arthaud](arthaud.md) | Lutte ouvrière | 57 ans | Candidate de Lutte ouvrière |
-| [Jean-Luc Mélenchon](melenchon.md) | La France insoumise | 75 ans | Candidat déclaré le 3 mai 2026 |
-| [Fabien Roussel](roussel.md) | PCF | 58 ans | Candidat du PCF |
-| [Marine Tondelier](tondelier.md) | Les Écologistes | 40 ans | Vote des militants des Écologistes le 13 décembre |
+| [Jean-Luc Mélenchon](melenchon.md) | La France insoumise | 75 ans | Candidat déclaré le 3 mai 2026. Génération·s lui apporte son soutien le 23 novembre 2026. |
+| [Fabien Roussel](roussel.md) | PCF | 58 ans | Désigné par les adhérents du PCF le 6 septembre 2026. Il maintient sa candidature au 25 novembre, malgré le soutien de plusieurs députés communistes à Jean-Luc Mélenchon. |
+| [Marine Tondelier](tondelier.md) | Les Écologistes | 40 ans | Le 18 novembre 2026, Marine Tondelier se dit prête à travailler à une coalition autour de Jean-Luc Mélenchon. Les adhérents des Écologistes voteront sur leur stratégie du 10 au 13 décembre. |
 | [Delphine Batho](batho.md) | Génération écologie | 54 ans | Candidature annoncée le 25 novembre 2025, investie par Génération écologie le 6 juin 2026 |
 | [François Hollande](hollande.md) | PS | 72 ans | Pas déclaré : sa décision, d’abord promise pour décembre, est repoussée à janvier |
 | [Karim Bouamrane](bouamrane.md) | PS, hors primaire | 54 ans | Candidature annoncée le 9 juin 2026, hors primaire du PS |

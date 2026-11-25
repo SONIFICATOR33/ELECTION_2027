@@ -1,6 +1,6 @@
 /* =====================================================================
    DONNÉES DU JEU — le seul fichier à mettre à jour chaque semaine
-   (candidats, sondages, résultats officiels). Dernière mise à jour : 24/11/2026
+   (candidats, sondages, résultats officiels). Dernière mise à jour : 25/11/2026
    ===================================================================== */
 
 /* Heure de Paris -> Date (CET jusqu'au 28 mars 2027 2h, CEST ensuite) */
@@ -35,7 +35,8 @@ export const MILESTONES = [
   { at: TOUR2, short: '2 mai', label: '2nd tour', kind: 'tour' }
 ];
 
-/* Interdiction de publier des sondages la veille et le jour de chaque tour (loi du 19 juillet 1977) */
+/* Article 11 de la loi du 19 juillet 1977 : aucune nouvelle publication
+   à partir du samedi à 0 h jusqu’à la fermeture du dernier bureau en métropole. */
 export const BLACKOUT = [[paris(2027, 4, 17), paris(2027, 4, 18, 20)], [paris(2027, 5, 1), paris(2027, 5, 2, 20)]];
 
 /* ---------- Candidats ----------
@@ -45,7 +46,7 @@ export const C = [
   { id: 'arthaud', p: 'Nathalie', n: 'Arthaud', party: 'Lutte ouvrière', col: '#8E1B1B', main: 1, poll: 1 },
   { id: 'melenchon', p: 'Jean-Luc', n: 'Mélenchon', party: 'La France insoumise', col: 'var(--c-jlm)', main: 1, poll: 17.8 },
   { id: 'roussel', p: 'Fabien', n: 'Roussel', party: 'PCF', col: '#B0101C', main: 1, poll: 1 },
-  { id: 'tondelier', p: 'Marine', n: 'Tondelier', party: 'Les Écologistes', col: '#2E9E4F', main: 1, poll: 2.5, note: 'Choix du parti le 13 déc.' },
+  { id: 'tondelier', p: 'Marine', n: 'Tondelier', party: 'Les Écologistes', col: '#2E9E4F', main: 1, poll: 2.5, note: 'Vote du parti du 10 au 13 déc.' },
   { id: 'batho', p: 'Delphine', n: 'Batho', party: 'Génération écologie', col: '#5E9A2E' },
   { id: 'hollande', p: 'François', n: 'Hollande', party: 'PS', col: '#C24F86', main: 1, poll: 7, und: 1, note: 'Décision en janvier' },
   { id: 'bouamrane', p: 'Karim', n: 'Bouamrane', party: 'PS, hors primaire', col: '#C7608F' },
@@ -93,7 +94,8 @@ export const PEOPLE_GROUPS = [
 export const POSTES = ['Intérieur', 'Économie et Finances', 'Affaires étrangères', 'Armées', 'Justice', 'Éducation nationale', 'Santé', 'Travail et Emploi', 'Écologie et Énergie', 'Agriculture'];
 
 /* ---------- Sondages (repris à la main chaque semaine) ---------- */
-export const LAST_POLL_DATE = new Date('2026-11-19T12:00:00Z');
+export const POLL_UPDATE_DATE = new Date('2026-11-25T12:00:00Z');
+export const LAST_POLL_DATE = new Date('2026-11-23T12:00:00Z'); // première publication
 export const PODIUM_DATE = new Date('2026-11-23T12:00:00Z');
 export const POLL_DATE = 'Moyenne Sondax · 14 sondages de 7 instituts';
 export const POD = [['lepen', 31.6], ['melenchon', 17.8], ['glucksmann', 9.8]];
@@ -101,8 +103,19 @@ export const MOVES = [
   ['Ils montent', [['lisnard', 1, '+2 pts chez Harris (19 nov.), +4 chez Elabe (13 nov.)'], ['riner', 1, 'Candidat depuis le 9 nov., déjà jusqu’à 4,5 % chez Elabe']]],
   ['Ils descendent', [['lepen', 0, '−2,5 pts en 3 mois dans la moyenne Sondax'], ['philippe', 0, '−3,6 pts sur 120 jours selon France-Vote']]]
 ];
-export const LAST_SRC = 'Harris Interactive, terrain du 18 au 19 nov. 2026, 1re hypothèse';
-export const LAST = [['lepen', 31], ['melenchon', 18], ['glucksmann', 11], ['lisnard', 11], ['philippe', 9], ['attal', 4], ['riner', 4]];
+const HARRIS_23 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10393-pres-iv-vague-10-toluna-harris-interactive-23-novembre.pdf';
+const IFOP_20 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10392-pres-iv-ifop-sud-radio-20-novembre.pdf';
+const YOUGOV_19 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10382-pres-iv-yougov-le-huffpost-19-novembre.pdf';
+const IFOP_18 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10384-pres-iv-ifop-18-novembre.pdf';
+const HARRIS_9 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10362-pres-iv-toluna-harris-interactive-9-novembre.pdf';
+
+export const LAST_SRC = 'Toluna Harris Interactive pour M6, RTL et L’Express · publié le 23 nov. 2026 · terrain du 18 au 19 nov. · scénario avec Gabriel Attal et Édouard Philippe · 1 460 intentions exprimées · marge d’erreur de ±1,4 à ±2,9 points';
+export const LAST_LINK = HARRIS_23 + '#page=38';
+export const LAST = [
+  ['lepen', 31], ['melenchon', 18], ['glucksmann', 11], ['lisnard', 11], ['philippe', 9],
+  ['attal', 4], ['retailleau', 4], ['riner', 4], ['zemmour', 3], ['arthaud', 1],
+  ['roussel', 1], ['tondelier', 1], ['villepin', 1], ['nda', 1]
+];
 
 export const SER = ['lepen', 'melenchon', 'philippe', 'glucksmann', 'lisnard', 'retailleau'];
 export const CV = { lepen: '--c-lp', melenchon: '--c-jlm', philippe: '--c-ep', glucksmann: '--c-rg', lisnard: '--c-dl', retailleau: '--c-br' };
@@ -112,17 +125,20 @@ export const P = [
   ['08-19', 'Harris', 35, 16, 14, 10, null, 6], ['08-25', 'Ifop', 33, 16, 14.5, 11, null, 6], ['08-28', 'Elabe', 34, 14, 17, 11.5, null, 6.5],
   ['09-01', 'Cluster17', 30, 18, 18, 11.5, null, 7.5], ['09-02', 'Ipsos', 34, 15, 14.5, 11.5, null, 6], ['09-03', 'OpinionWay', 35, 17, null, 13, null, 11], ['09-09', 'OpinionWay', 34, 15, 15, 9, null, 8], ['09-09', 'Ipsos', 33, 15.5, 14, 11.5, null, 7], ['09-10', 'OpinionWay', 32, 16, 16, null, 2, 7], ['09-10', 'Harris', 33, 16, 14, 9, null, 7], ['09-16', 'Cluster17', 31, 19, 19, 12, null, 7.5], ['09-21', 'YouGov', 34, 17, 12, 8, null, 8], ['09-24', 'Harris', 35, 17, 13, 10, null, 7], ['09-29', 'Ifop', 32, 15, 16, 11, null, 7],
   ['10-07', 'Odoxa', 37, 18, 17, 9.5, null, 6.5], ['10-08', 'Harris', 35, 18, 13, 10, null, 7], ['10-14', 'Ifop', 32, 16, 13, 11.5, 6, 5], ['10-14', 'OpinionWay', 35, 15, 12, 13, 4, 6], ['10-15', 'YouGov', 36, 15, 10, 12, null, 6], ['10-15', 'Cluster17', 31, 18, 17, 11, 7, 7], ['10-16', 'Elabe', 32.5, 15, 16.5, 15.5, null, 7],
-  ['11-05', 'Harris', 36, 18, 11, 11, null, 7], ['11-13', 'Elabe', null, null, null, null, 9, null], ['11-17', 'YouGov', 32, 17, 7, 9, 9, 6], ['11-19', 'Harris', 31, 18, 9, 11, 11, null]
+  ['11-05', 'Harris', 36, 18, 11, 11, null, 7], ['11-13', 'Elabe', null, null, null, null, 9, null],
+  ['11-16', 'Ifop', 32, 17, 10, 8, 8, 4], ['11-17', 'YouGov', 32, 19, 8, 9, 9, 6], ['11-19', 'Harris', 31, 18, 9, 11, 11, 4]
 ];
 export const MO = ['07', '08', '09', '10', '11'], ML = ['juil.', 'août', 'sept.', 'oct.', 'nov.'];
 export const NOV = [
-  ['Harris Interactive', 'terrain du 18 au 19 nov.', 'Le Pen 31, Mélenchon 18, Glucksmann 11, Lisnard 11, Philippe 9, Attal 4, Riner 4'],
-  ['YouGov', 'terrain du 12 au 17 nov.', 'Le Pen 32, Mélenchon 17, Glucksmann 9, Lisnard 9, Philippe 7, Retailleau 6, Tondelier 5'],
+  ['Toluna Harris Interactive pour M6, RTL et L’Express', 'publié le 23 nov., terrain du 18 au 19 nov.', 'Scénario Attal et Philippe : Le Pen 31, Mélenchon 18, Glucksmann et Lisnard 11, Philippe 9, Attal, Retailleau et Riner 4', LAST_LINK],
+  ['Ifop-Fiducial pour Sud Radio', 'publié le 20 nov., terrain du 2 au 4 nov.', 'Scénario Philippe seul à droite et au centre : Le Pen 37, Philippe 19, Mélenchon 18, Glucksmann 13', IFOP_20 + '#page=8'],
+  ['YouGov pour Le HuffPost', 'publié le 19 nov., terrain du 12 au 17 nov.', 'Hypothèse 1 : Le Pen 32, Mélenchon 19, Glucksmann et Lisnard 9, Philippe 8, Retailleau 6, Tondelier 4', YOUGOV_19 + '#page=20'],
+  ['Ifop-Fiducial pour TF1-LCI, Le Figaro et Sud Radio', 'publié le 18 nov., terrain du 13 au 16 nov.', 'Scénario élargi avec Riner : Le Pen 32, Mélenchon 17, Philippe 10, Glucksmann et Lisnard 8, Retailleau et Riner 4', IFOP_18 + '#page=9'],
   ['Elabe', 'terrain du 12 au 13 nov.', 'Lisnard 9, Riner 4,5 (scores partiels relevés)'],
   ['Cluster17', 'terrain du 9 au 10 nov.', 'Riner 2 (score partiel relevé)'],
-  ['Harris Interactive', 'publié le 5 nov.', 'Le Pen 36, Mélenchon 18, Glucksmann 11, Philippe 11, Retailleau 7, Attal 6, Zemmour 4']
+  ['Toluna Harris Interactive pour M6 et RTL', 'publié le 9 nov., terrain du 3 au 5 nov.', 'Le Pen 36, Mélenchon 18, Glucksmann 11, Philippe 11, Retailleau 7, Attal 6, Zemmour 4', HARRIS_9]
 ];
-export const DUELS = [['lepen', 65, 'melenchon', 'Harris, 19 nov.'], ['lepen', 54, 'philippe', 'YouGov, 17 nov.'], ['lepen', 55, 'attal', 'YouGov, 17 nov.'], ['lepen', 58, 'glucksmann', 'YouGov, 17 nov.'], ['philippe', 61, 'melenchon', 'YouGov, 17 nov.'], ['lepen', 59, 'hollande', 'Ifop, 19 oct.'], ['lepen', 58, 'retailleau', 'Ifop, 25 août']];
+export const DUELS = [['lepen', 65, 'melenchon', 'Toluna Harris Interactive pour M6, RTL et L’Express, publié le 23 nov.', HARRIS_23 + '#page=50'], ['lepen', 54, 'philippe', 'YouGov, 17 nov.'], ['lepen', 55, 'attal', 'YouGov, 17 nov.'], ['lepen', 58, 'glucksmann', 'YouGov, 17 nov.'], ['philippe', 61, 'melenchon', 'YouGov, 17 nov.'], ['lepen', 59, 'hollande', 'Ifop, 19 oct.'], ['lepen', 58, 'retailleau', 'Ifop, 25 août']];
 
 /* ---------- Résultats officiels (null tant qu'ils ne sont pas connus) ----------
    etape1 : ids des candidats encore déclarés le 31 décembre (source : Toute l'Europe)

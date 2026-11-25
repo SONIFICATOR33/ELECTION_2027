@@ -8,7 +8,7 @@ Photo [Portrait officiel JLM 20-01-2026.jpg](https://commons.wikimedia.org/wiki/
 
 ## Dans la course
 
-- **Statut** : Candidat déclaré le 3 mai 2026
+- **Statut** : Candidat déclaré le 3 mai 2026. Génération·s lui apporte son soutien le 23 novembre 2026.
 - **Présidentielles passées** : 2012 : 11,10 % · 2017 : 19,58 % · 2022 : 21,95 %
 
 ## Aujourd’hui
@@ -31,5 +31,6 @@ Fondateur de La France insoumise (2016), sans mandat électif depuis 2022
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/Jean-Luc_M%C3%A9lenchon)
 - [Public Sénat, 9 nov. 2026](https://www.publicsenat.fr/actualites/politique/presidentielle-2027-le-judoka-teddy-riner-se-lance-dans-la-course-a-lelysee-au-milieu-dune-multitude-de-candidats)
+- [Génération·s, 23 nov. 2026](https://www.generation-s.fr/generation%C2%B7s-sengage-dans-la-campagne-de-jean-luc-melenchon-au-service-de-la-victoire-de-la-gauche-et-de-lecologie/)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 25 novembre 2026. Le repère sondages suit `js/data.js`.*

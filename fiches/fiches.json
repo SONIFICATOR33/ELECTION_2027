@@ -62,7 +62,7 @@
     },
     "melenchon": {
       "naissance": "1951-08-19",
-      "statut": "Candidat déclaré le 3 mai 2026",
+      "statut": "Candidat déclaré le 3 mai 2026. Génération·s lui apporte son soutien le 23 novembre 2026.",
       "aujourdhui": "Fondateur de La France insoumise (2016), sans mandat électif depuis 2022",
       "parcours": [
         [
@@ -110,6 +110,10 @@
         [
           "Public Sénat, 9 nov. 2026",
           "https://www.publicsenat.fr/actualites/politique/presidentielle-2027-le-judoka-teddy-riner-se-lance-dans-la-course-a-lelysee-au-milieu-dune-multitude-de-candidats"
+        ],
+        [
+          "Génération·s, 23 nov. 2026",
+          "https://www.generation-s.fr/generation%C2%B7s-sengage-dans-la-campagne-de-jean-luc-melenchon-au-service-de-la-victoire-de-la-gauche-et-de-lecologie/"
         ]
       ],
       "portrait": {
@@ -125,11 +129,12 @@
         "label": "Programme",
         "detail": "L’Avenir en commun · édition 2027",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "maj": "2026-11-25"
     },
     "roussel": {
       "naissance": "1969-04-16",
-      "statut": "Candidat du PCF",
+      "statut": "Désigné par les adhérents du PCF le 6 septembre 2026. Il maintient sa candidature au 25 novembre, malgré le soutien de plusieurs députés communistes à Jean-Luc Mélenchon.",
       "aujourdhui": "Secrétaire national du PCF depuis 2018, maire de Saint-Amand-les-Eaux depuis 2025",
       "parcours": [
         [
@@ -169,6 +174,14 @@
         [
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ],
+        [
+          "Conseil national du PCF, 7 nov. 2026",
+          "https://www.pcf.fr/presidentielle_2027_lexigence_de_respect_de_nos_choix_democratiques_declaration_du_conseil_national_du_pcf"
+        ],
+        [
+          "Le Monde, 25 nov. 2026",
+          "https://www.lemonde.fr/politique/article/2026/11/25/presidentielle-2027-lfi-force-d-attraction-a-gauche_6815035_823448.html"
         ]
       ],
       "portrait": {
@@ -184,12 +197,13 @@
         "label": "Orientations",
         "detail": "Vivre ! · orientations de campagne",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "maj": "2026-11-25"
     },
     "tondelier": {
       "f": true,
       "naissance": "1986-08-23",
-      "statut": "Vote des militants des Écologistes le 13 décembre",
+      "statut": "Le 18 novembre 2026, Marine Tondelier se dit prête à travailler à une coalition autour de Jean-Luc Mélenchon. Les adhérents des Écologistes voteront sur leur stratégie du 10 au 13 décembre.",
       "aujourdhui": "Secrétaire nationale des Écologistes depuis 2022",
       "parcours": [
         [
@@ -219,6 +233,14 @@
         [
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ],
+        [
+          "Le Monde, 18 nov. 2026",
+          "https://www.lemonde.fr/politique/article/2026/11/18/presidentielle-2027-marine-tondelier-se-dit-prete-a-batir-une-coalition-autour-de-la-candidature-de-jean-luc-melenchon_6813209_823448.html"
+        ],
+        [
+          "Le Monde, 25 nov. 2026",
+          "https://www.lemonde.fr/politique/article/2026/11/25/presidentielle-2027-lfi-force-d-attraction-a-gauche_6815035_823448.html"
         ]
       ],
       "portrait": {
@@ -234,7 +256,8 @@
         "label": "Programme",
         "detail": "Projet 2027 des Écologistes",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "maj": "2026-11-25"
     },
     "batho": {
       "f": true,

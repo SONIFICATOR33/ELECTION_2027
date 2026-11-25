@@ -45,14 +45,15 @@ for (const c of D.C) {
   L.push(`- **Formation** : ${f.formation}`, `- **Métier** : ${f.metier}`, '');
   L.push('## Sources', '');
   f.sources.forEach(([n, u]) => L.push(`- [${n}](${u})`));
-  L.push('', `*À jour le ${dateLongue(F.maj)}. Le repère sondages suit \`js/data.js\`.*`, '');
+  L.push('', `*À jour le ${dateLongue(f.maj || F.maj)}. Le repère sondages suit \`js/data.js\`.*`, '');
   writeFileSync(join(here, c.id + '.md'), L.join('\n'));
   rows.push(`| [${c.p} ${c.n}](${c.id}.md) | ${c.party} | ${age} ans | ${f.statut} |`);
 }
 
+const lastUpdate = [F.maj, ...Object.values(F.candidats).map(f => f.maj).filter(Boolean)].sort().at(-1);
 const R = [
   '# Les fiches des candidats', '',
-  `${rows.length} candidats, de gauche à droite puis hors axe, comme dans l’appli. À jour le ${dateLongue(F.maj)}.`, '',
+  `${rows.length} candidats, de gauche à droite puis hors axe, comme dans l’appli. Dernière mise à jour le ${dateLongue(lastUpdate)}.`, '',
   '| Candidat | Parti | Âge au 1er tour | Statut |', '|---|---|---|---|', ...rows, '',
   '## Comment c’est fait', '',
   '- `fiches.json` : la source. L’appli la lit directement pour afficher la fiche quand on touche un candidat.',
