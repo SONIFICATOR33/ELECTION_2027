@@ -742,11 +742,18 @@ function showSplash() {
 function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; }
 const entrySound = new Audio(new URL('../audio/bouchon2.wav', import.meta.url));
 entrySound.preload = 'auto';
+function playEntrySound() {
+  if (!snd.isOn()) return;
+  entrySound.currentTime = 0;
+  entrySound.play().catch(() => {});
+}
+$$('.tabs a').forEach(tab => {
+  tab.addEventListener('click', event => {
+    if (!event.defaultPrevented && tab.getAttribute('aria-current') !== 'page') playEntrySound();
+  });
+});
 $('#splashGo').onclick = () => {
-  if (snd.isOn()) {
-    entrySound.currentTime = 0;
-    entrySound.play().catch(() => {});
-  }
+  playEntrySound();
   hideSplash();
   const next = [1, 2, 3].find(i => isOpen(SBK[i]) && !done(SBK[i]));
   if (next) { SB[next] = true; renderSB(); }
