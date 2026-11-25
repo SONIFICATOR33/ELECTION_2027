@@ -40,7 +40,27 @@ dans Joueurs et Groupes ou le menu du navigateur.
    vainqueur de ta finale. Un prono enregistré continue de compter après le
    lundi suivant. Les semaines avant ton premier prono valent zéro et le
    coefficient descend de ×2 à ×1.
-4. **Mon gouvernement.** Président, Premier ministre et ministres, sans points.
+4. **Mon gouvernement.** Président, Premier ministre et ministres : chaque vote reçu rapporte un point au classement des gouvernements, distinct du classement des pronostics.
+
+### Votes des gouvernements
+
+Dans **Joueurs et Groupes**, la liste s’affiche directement, avec deux classements :
+Gouvernements et Pronos. Sur une fiche gouvernement, **J’aime** ajoute un vote ;
+un second appui le retire. Aucun vote pour soi, un seul soutien par joueur et par
+gouvernement, commun à tous les groupes et appareils. On peut soutenir plusieurs
+gouvernements, même sans en composer un soi-même.
+
+Les votes portent sur une composition précise. Une composition différente ne
+bénéficie pas des anciens soutiens ; retrouver exactement la composition soutenue
+retrouve ses votes. Effacer son gouvernement le retire du classement des votes.
+Les égalités positives partagent le même rang ; aucun vainqueur n’est désigné à zéro.
+
+**Activation :** publier la version de `firestore.rules` contenant `/teamVotes` dans
+la console Firebase. Avant cette publication, la liste reste disponible et annonce
+que les votes arrivent bientôt. Les bulletins sont stockés sous un identifiant
+unique `gouvernement~votant` ; les règles vérifient l’auteur et la composition.
+Le client n’écrit aucun compteur de points. Ces votes mesurent les préférences des
+comptes inscrits ; le jeu n’impose pas de vérification d’identité humaine unique.
 
 ## Repères politiques
 

@@ -2,8 +2,9 @@ import { showTeamComments } from './team-comments.js';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES, visibleGameData } from './groups.js?v=52';
-import { hasTeam } from './team-state.js';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES, visibleGameData } from './groups.js?v=53';
+import { hasTeam, sameTeam } from './team-state.js';
+import { teamVoteScores } from './team-votes.js?v=53';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -13,14 +14,18 @@ const fmt = n => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 1 })
 
 export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam, notify }) {
   let selected = COMMON_GROUP, generation = 0, display;
-  let stopTeams, stopPronos;
+  let stopTeams, stopPronos, stopVotes;
+  let votes = [], votesReady = false, voteError = '', ranking = 'team', openTeam, voting = false;
   function pause() {
     generation++;
     stopTeams?.();
     stopPronos?.();
+    stopVotes?.();
+    stopVotes = null;
     stopPronos = null;
     stopTeams = null;
     root.removeAttribute('aria-busy');
+    if (dialog.open) dialog.close();
   }
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
@@ -29,6 +34,7 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
   dialog.addEventListener('close', () => {
     if (imageUrl) URL.revokeObjectURL(imageUrl);
     imageUrl = null;
+    openTeam = null;
     details.replaceChildren();
   });
   const requested = new URL(location.href).searchParams.get('groupe') || '';
@@ -42,16 +48,67 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
 
   function roster(data, pid) {
     const rows = classement(data.players, data.pronos, RESULTS, U1, U2);
-    return rows.length ? '<ul class="player-list">' + rows.map(row => {
+    const scores = teamVoteScores(data.teams, votes, pid);
+    if (ranking === 'team') rows.sort((a, b) =>
+      (scores[b.pid]?.points || 0) - (scores[a.pid]?.points || 0)
+      || Number(hasTeam(data.teams[b.pid])) - Number(hasTeam(data.teams[a.pid]))
+      || a.pseudo.localeCompare(b.pseudo, 'fr'));
+    let rank = 0, previous = -1;
+    return rows.length ? '<ul class="player-list">' + rows.map((row, index) => {
       const available = hasTeam(data.teams[row.pid]);
-      return `<li><strong>${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
-        <span class="player-points">${fmt(row.total)} pts</span>
+      const points = scores[row.pid]?.points || 0;
+      if (points !== previous) rank = index + 1;
+      previous = points;
+      return `<li><strong>${ranking === 'team' && votesReady && points > 0 ? '<span class="player-rank">' + rank + '.</span> ' : ''}${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
+        <span class="player-points">${ranking === 'team'
+          ? available ? '<span class="government-points" aria-label="' + (votesReady ? points + ' points gouvernement' : 'Votes indisponibles') + '">♥ ' + (votesReady ? points + ' pts' : '—') + '</span>' : 'À composer'
+          : fmt(row.total) + ' pts pronos'}</span>
         <div class="group-actions">
           <button class="player-action" data-player="${escape(row.pid)}" data-detail="pronos">Pronos</button>
-          <button class="player-action" data-player="${escape(row.pid)}" data-detail="team" ${available ? '' : 'disabled aria-label="Gouvernement à venir"'}>${available ? 'Gouvernement' : 'Gouv. à venir'}</button>
+          <button class="player-action" data-player="${escape(row.pid)}" data-detail="team" ${available ? '' : 'disabled aria-label="Aucun gouvernement renseigné"'}>Gouvernement</button>
         </div></li>`;
     }).join('') + '</ul>' : '<p>Aucun joueur dans ce groupe.</p>';
   }
+
+  function refreshRoster() {
+    const target = root.querySelector('[data-player-roster]');
+    if (target && display) target.innerHTML = roster(display, getStore().me().pid);
+    const status = root.querySelector('[data-vote-status]');
+    if (status) status.textContent = votesReady ? '1 vote = 1 point gouvernement. Ouvre une composition pour voter.' : voteError || 'Chargement des votes…';
+    refreshVotePanel();
+  }
+
+  function refreshVotePanel() {
+    const panel = details.querySelector('[data-team-vote]');
+    if (!panel || !openTeam || !display) return;
+    const score = teamVoteScores(display.teams, votes, getStore().me().pid)[openTeam.id];
+    const points = score?.points || 0;
+    const changed = !sameTeam(openTeam.composition, display.teams[openTeam.id]);
+    panel.innerHTML = '<p class="vote-score">' + (votesReady ? points + ' vote' + (points === 1 ? '' : 's') + ' · ' + points + ' point' + (points === 1 ? '' : 's') : voteError || 'Chargement des votes…') + '</p>' +
+      (openTeam.id === getStore().me().pid ? '<p class="fine">C’est ton gouvernement : à toi de convaincre les autres !</p>' :
+        '<button class="team-vote-button" data-vote aria-pressed="' + Boolean(score?.supported) + '"' +
+        (!votesReady || changed || voting ? ' disabled' : '') + '>' + (voting ? 'Enregistrement…' : score?.supported ? '♥ J’aime · Retirer mon vote' : '♡ J’aime ce gouvernement') + '</button>') +
+      (changed ? '<p role="status">Ce gouvernement a changé. Ferme puis rouvre sa fiche pour le découvrir.</p>' : '') +
+      '<p class="fine">Un vote par joueur et par gouvernement. Tu peux soutenir plusieurs compositions et retirer ton vote. Les votes comptent uniquement pour la composition soutenue.</p>';
+  }
+
+  details.addEventListener('click', async event => {
+    if (!event.target.closest('[data-vote]') || voting || !votesReady || !openTeam) return;
+    const target = openTeam;
+    const store = getStore(), request = generation;
+    const supported = teamVoteScores(display.teams, votes, store.me().pid)[target.id]?.supported;
+    voting = true;
+    refreshVotePanel();
+    try {
+      await store.groups.setTeamVote(target.id, target.composition, !supported);
+      if (request === generation) notify(supported ? 'Vote retiré.' : 'Vote enregistré : +1 point !');
+    } catch (error) {
+      if (request === generation) notify(error.code === 'permission-denied' ? 'Le vote n’est pas encore disponible. Réessaie plus tard.' : error.message || 'Vote non enregistré. Vérifie ta connexion.');
+    } finally {
+      voting = false;
+      if (request === generation) refreshVotePanel();
+    }
+  });
 
   function playerPronos(id, { players, pronos }) {
     const row = classement(players, pronos, RESULTS, U1, U2).find(r => r.pid === id);
@@ -82,6 +139,9 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
   async function render() {
     pause();
     const request = ++generation;
+    votes = [];
+    votesReady = false;
+    voteError = '';
     const store = getStore();
     if (!store?.groups || !store.me()) {
       root.removeAttribute('aria-busy');
@@ -90,9 +150,11 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
       return;
     }
     root.setAttribute('aria-busy', 'true');
+    if (!root.querySelector('[data-player-roster]')) {
+      root.innerHTML = '<p role="status">Chargement des joueurs…</p>';
+    }
     try {
       await store.groups.ensureCommonGroup().catch(console.warn);
-      const synced = await syncExistingTeam();
       const groups = await store.groups.list();
       if (request !== generation) return;
       if (invitation && groups.some(g => g.code === invitation)) {
@@ -108,25 +170,28 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
       if (request !== generation) return;
       data.players = Object.assign(Object.create(null), registered, data.players);
       display = visibleGameData(data);
-      root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Accepter l’invitation au groupe</button></p>' : '') +
-        (groups.length ? '<label class="group-filter">Afficher les joueurs de <select id="active-group">' + groups.map(g =>
+      root.innerHTML = '<div class="players-toolbar"><h2>Joueurs</h2>' +
+        (groups.length ? '<label class="group-filter"><span class="visually-hidden">Afficher les joueurs de</span><select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
-          '</select></label>' : '') +
-        (!synced ? '<p class="help" role="status">Ton gouvernement attend une connexion pour être partagé. <button class="ghost" data-group-action="retry">Réessayer</button></p>' : '') +
-        '<p>Tous les pronos et gouvernements enregistrés sont visibles par tous. Participe aux rubriques qui te plaisent.</p>' +
+          '</select></label>' : '') + '</div>' +
+        '<div class="ranking-switch" role="group" aria-label="Classer les joueurs"><button data-ranking="team" aria-pressed="' + (ranking === 'team') + '">Gouvernements</button><button data-ranking="pronos" aria-pressed="' + (ranking === 'pronos') + '">Pronos</button></div>' +
+        '<p class="fine" role="status" data-vote-status>Chargement des votes…</p>' +
         '<div data-player-roster>' + roster(display, store.me().pid) + '</div>' +
-        '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
+        '<p class="fine">Tous les pronos et gouvernements enregistrés sont visibles par tous. Participe aux rubriques qui te plaisent.</p>' +
+        '<p class="help" role="status" data-team-sync hidden>Ton gouvernement attend une connexion pour être partagé. <button class="ghost" data-group-action="retry">Réessayer</button></p>' +
+        '<details class="player-groups"' + (invitation ? ' open' : '') + '><summary>Mes groupes</summary>' +
+        (invitation ? '<p><button class="big" data-group-action="join">Accepter l’invitation au groupe</button></p>' : '') +
         (store.me().pid === GROUP_ADMIN ? '<p>Crée un groupe et envoie son lien aux amis que tu veux inviter.</p>' +
         '<details><summary>Créer un groupe</summary>' +
         '<form id="create-group" class="group-actions"><label>Nom du groupe <input name="name" required minlength="2" maxlength="48"></label>' +
         '<button class="big">Créer et ouvrir le groupe</button></form></details>' : '<p>Rejoins un groupe à partir du lien envoyé par Vincent.</p>') +
         (group && group.code !== COMMON_GROUP ? '<button class="ghost group-invite" data-group-action="invite">Inviter des amis dans ' + escape(group.name) + '</button>' : '') +
-        '</section>';
+        '</details>';
       if (group) stopTeams = store.groups.watchTeams(group.code, teams => {
         if (request !== generation) return;
         data.teams = teams;
         display = visibleGameData(data);
-        root.querySelector('[data-player-roster]').innerHTML = roster(display, store.me().pid);
+        refreshRoster();
       }, () => {
         if (request === generation) notify('Actualisation des gouvernements interrompue. Rouvre cet onglet pour réessayer.');
       });
@@ -134,9 +199,27 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
         if (request !== generation) return;
         data.canonical = pronos;
         display = visibleGameData(data);
-        root.querySelector('[data-player-roster]').innerHTML = roster(display, store.me().pid);
+        refreshRoster();
       }, () => {
         if (request === generation) notify('Actualisation interrompue. Rouvre cet onglet pour réessayer.');
+      });
+      stopVotes = store.groups.watchVotes(values => {
+        if (request !== generation) return;
+        votes = values;
+        votesReady = true;
+        voteError = '';
+        refreshRoster();
+      }, error => {
+        if (request !== generation) return;
+        votesReady = false;
+        voteError = error.code === 'permission-denied' ? 'Le vote des gouvernements arrive bientôt.' : 'Votes indisponibles. Rouvre cet onglet pour réessayer.';
+        refreshRoster();
+      });
+      // La lecture de la liste ne dépend pas de l'enregistrement du gouvernement.
+      syncExistingTeam().then(synced => {
+        if (request === generation) root.querySelector('[data-team-sync]').hidden = synced;
+      }).catch(() => {
+        if (request === generation) root.querySelector('[data-team-sync]').hidden = false;
       });
     } catch {
       if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
@@ -152,7 +235,11 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
     heading.textContent = (kind === 'team' ? 'Gouvernement de ' : 'Pronos de ') + player.pseudo;
     heading.classList.toggle('visually-hidden', kind === 'team');
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
-    else details.innerHTML = '<div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
+    else {
+      openTeam = { id, composition: structuredClone(display.teams[id]) };
+      details.innerHTML = '<section class="team-vote-panel" data-team-vote></section><div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
+      refreshVotePanel();
+    }
     dialog.showModal();
     if (kind !== 'team') return;
     const closeOnLoad = new AbortController();
@@ -201,6 +288,12 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
   root.addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b) return;
+    if (b.dataset.ranking) {
+      ranking = b.dataset.ranking;
+      root.querySelectorAll('[data-ranking]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.ranking === ranking)));
+      refreshRoster();
+      return;
+    }
     if (b.dataset.player) { showPlayer(b.dataset.player, b.dataset.detail); return; }
     const action = b.dataset.groupAction;
     if (action === 'identify') { withUser(render); return; }

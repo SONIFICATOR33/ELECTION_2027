@@ -453,13 +453,13 @@ h2{font-weight:600;letter-spacing:-.2px}
 .candidate-choice { display: inline-flex; align-items: stretch; gap: 3px; }
 .candidate-choice .chip, .candidate-help { min-height: 44px; }
 .candidate-choice .candidate-help { min-width: 44px; padding: 0; }
-.player-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-.player-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 8px; border: 1px solid var(--line); border-radius: 12px; padding: 6px 10px; }
-.player-list strong { grid-column: 1 / -1; grid-row: 1; font-size: var(--text-ui); line-height: 1.3; overflow-wrap: anywhere; }
+.player-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.player-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 8px; border-bottom: 1px solid var(--line); padding: 6px 0; }
+.player-list strong { grid-column: 1; grid-row: 1; font-size: var(--text-body); line-height: 1.3; overflow-wrap: anywhere; }
 .player-list small { font-size: var(--text-body); }
-.player-points { grid-column: 2; grid-row: 2; font-weight: 800; white-space: nowrap; }
-.player-list .group-actions { grid-column: 1; grid-row: 2; gap: 4px; }
-.player-list .group-actions button { padding-inline: 8px; font-size: var(--text-body); }
+.player-points { grid-column: 1; grid-row: 2; font-size: var(--text-body); line-height: 1.3; color: var(--mut); }
+.player-list .group-actions { grid-column: 2; grid-row: 1 / 3; gap: 6px; }
+.player-list .group-actions button { padding: 3px 4px; font-size: var(--text-body); }
 .player-list button:disabled { opacity: .5; }
 .player-groups > summary { cursor: pointer; }
 .player-groups > form, .player-groups > label, .player-groups > .group-actions { margin-top: 12px; }
@@ -507,11 +507,26 @@ h2{font-weight:600;letter-spacing:-.2px}
 #pick .prono-pct { grid-column: 3; margin: 0; }
 #pick .prono-pct input { width: 3.7rem; }
 .final-scores { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; }
-.player-list .group-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.player-list .player-action { width: 100%; min-height: 44px; border-radius: 8px; border: 1px solid var(--vert); background: var(--vertbg); color: var(--vert); font-weight: 700; }
+.player-list .group-actions { display: flex; flex-wrap: nowrap; }
+.player-list .player-action { width: auto; min-height: 30px; border-radius: 5px; border: 1px solid var(--vert); background: var(--vertbg); color: var(--vert); font-weight: 600; line-height: 1.2; }
 .player-list .player-action:disabled { opacity: 1; border-color: var(--rouge); background: var(--rougebg); color: var(--rouge); }
 .player-list .player-action[data-detail="team"]:disabled { border-color: var(--line); background: var(--card); color: var(--mut); }
 .group-filter select { width: 100%; }
+.players-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.players-toolbar h2 { margin: 0; font-size: var(--text-ui); }
+#group-view .group-filter select { width: auto; max-width: 210px; min-height: 32px; font-size: var(--text-body); }
+.players-panel { padding: 0; }
+.ranking-switch { display: flex; gap: 6px; }
+.ranking-switch button { min-height: 34px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--mut); font-size: var(--text-body); }
+.ranking-switch button[aria-pressed="true"] { border-color: var(--or); color: var(--or); background: rgba(193,160,82,.09); }
+.government-points, .player-rank { color: var(--or); }
+.team-vote-panel { padding: 0 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.vote-score { font-size: var(--text-ui); font-weight: 700; margin: 0 0 8px; }
+.team-vote-button { min-height: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--or); background: transparent; color: var(--or); font: inherit; cursor: pointer; }
+.team-vote-button[aria-pressed="true"] { background: var(--or); color: #0a0a0a; }
+.team-vote-button:disabled { opacity: .5; cursor: default; }
+#v-classement .rules { border: 0; padding: 0; }
+#v-classement .rules h2 { font-size: var(--text-body); }
 .player-groups { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
 .player-groups details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-top: 8px; }
 .player-groups summary { cursor: pointer; font-weight: 700; }
@@ -564,4 +579,4 @@ h2{font-weight:600;letter-spacing:-.2px}
 
 /* Hiérarchie commune aux pages, formulaires et fenêtres. */
 .jx,.punch,.splash .jbig b{line-height:1.25;letter-spacing:0}
-.bt b,.pick-instruction,.player-list strong,.player-list .group-actions button,.tile b,.chip,.seg button,.candidate-actions .ghost,.programme-link{font-size:var(--text-ui)}
+.bt b,.pick-instruction,.tile b,.chip,.seg button,.candidate-actions .ghost,.programme-link{font-size:var(--text-ui)}
