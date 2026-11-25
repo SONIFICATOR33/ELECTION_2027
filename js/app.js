@@ -637,10 +637,10 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont visibles par tous les joueurs. Ton gouvernement est partagé automatiquement dans les groupes que tu rejoins. Tu choisis s’il est visible aussi par tous les joueurs.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Se connecter ou créer un compte</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Tu as déjà joué ? Entre le même pseudo et le même code à 4 chiffres pour retrouver tes pronos et tes groupes, même dans l’app installée. Première partie ? Choisis un pseudo et un code à 4 chiffres. Tes pronos sont visibles par tous les joueurs. Ton gouvernement est partagé automatiquement dans les groupes que tu rejoins. Tu choisis s’il est visible aussi par tous les joueurs.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
-      <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
+      <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">Continuer</button></form>`;
   }
   sheet.classList.add('open');
   setTimeout(() => { const f = $('#jp') || $('#close'); if (f) f.focus(); }, 50);
@@ -714,6 +714,8 @@ function show() {
   VIEWS.forEach(n => $('#v-' + n).classList.toggle('on', n === v));
   $$('.tabs a').forEach(a => { const o = a.dataset.t === v; a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
+  if (v === 'accueil' && !groupUI.hasInvite()) showSplash();
+  else hideSplash();
   if (v === 'sondages') requestAnimationFrame(draw);
   if (v === 'classement') groupUI.render();
 }
@@ -734,11 +736,10 @@ function renderAll() {
 const splash = $('#splash');
 function showSplash() {
   $('#splashJ').textContent = `J-${Math.max(0, daysTo(D.TOUR1))}`;
-  $('#splashGo').textContent = 'Faire mes pronos';
   splash.hidden = false; document.body.style.overflow = 'hidden';
   requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.3, alpha: 0.16, scale: 1.1 }));
 }
-function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; try { sessionStorage.setItem('pdm-splash', '1'); } catch (e) { } }
+function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; }
 $('#splashGo').onclick = () => {
   snd.logo();
   hideSplash();
@@ -760,7 +761,5 @@ $('#brandBtn').onclick = () => showSplash();
   syncExistingTeam();
   initPolls();
   renderAll(); show();
-  let seen = false; try { seen = !!sessionStorage.getItem('pdm-splash'); } catch (e) { }
   if (groupUI.hasInvite()) { location.hash = 'classement'; }
-  else if (!seen && !location.hash) showSplash();
 })();
