@@ -2,7 +2,7 @@ import { showTeamComments } from './team-comments.js';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=44';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES, visibleGameData } from './groups.js?v=52';
 import { hasTeam } from './team-state.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -10,16 +10,15 @@ const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
 })[ch]);
 const name = id => by[id] ? by[id].p + ' ' + by[id].n : id;
 const fmt = n => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
-const clock = new Intl.DateTimeFormat('fr-FR', {
-  day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris'
-});
 
 export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam, notify }) {
   let selected = COMMON_GROUP, generation = 0, display;
-  let stopTeams;
+  let stopTeams, stopPronos;
   function pause() {
     generation++;
     stopTeams?.();
+    stopPronos?.();
+    stopPronos = null;
     stopTeams = null;
     root.removeAttribute('aria-busy');
   }
@@ -44,12 +43,11 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
   function roster(data, pid) {
     const rows = classement(data.players, data.pronos, RESULTS, U1, U2);
     return rows.length ? '<ul class="player-list">' + rows.map(row => {
-      const player = data.players[row.pid];
       const available = hasTeam(data.teams[row.pid]);
       return `<li><strong>${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
         <span class="player-points">${fmt(row.total)} pts</span>
         <div class="group-actions">
-          <button class="player-action" data-player="${escape(row.pid)}" data-detail="pronos" ${player.shared ? '' : 'disabled'}>Pronos</button>
+          <button class="player-action" data-player="${escape(row.pid)}" data-detail="pronos">Pronos</button>
           <button class="player-action" data-player="${escape(row.pid)}" data-detail="team" ${available ? '' : 'disabled aria-label="Gouvernement à venir"'}>${available ? 'Gouvernement' : 'Gouv. à venir'}</button>
         </div></li>`;
     }).join('') + '</ul>' : '<p>Aucun joueur dans ce groupe.</p>';
@@ -57,15 +55,15 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
 
   function playerPronos(id, { players, pronos }) {
     const row = classement(players, pronos, RESULTS, U1, U2).find(r => r.pid === id);
-    const live = STAGES.map(([key, label, lock]) => {
+    const live = STAGES.map(([key, label]) => {
       const value = pronos[id]?.[key];
       const g = key === 'weeks' && value ? current({ weeks: value }) : null;
-      let text = 'Pas encore de prono partagé.';
+      let text = 'Aucun prono enregistré pour cette étape.';
       if (g) text = g.top.map(t => escape(name(t.id)) + ' ' + fmt(t.pct) + ' %').join(' · ') +
         '<br>Finale : ' + escape(name(g.pres)) + ' gagne avec ' + fmt(g.win) + ' %.';
       else if (Array.isArray(value)) text = value.map(candidate => escape(name(candidate))).join(', ');
-      else if (players[id]?.submitted?.includes(key) && Date.now() < +lock) {
-        text = 'Prono enregistré. Avec les anciennes règles, révélation le ' + clock.format(lock) + ' (Paris).';
+      else if (players[id]?.submitted?.includes(key) || display.unavailable?.includes(key)) {
+        text = 'Prono temporairement indisponible.';
       }
       const points = key === 'weeks' ? (row?.t1 || 0) + (row?.fin || 0) : (key === 'l1' ? row?.e1 : row?.e2) || 0;
       return `<section class="group-stage"><h3>${label} · ${fmt(points)} pts</h3><p>${text}</p></section>`;
@@ -88,7 +86,7 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
     if (!store?.groups || !store.me()) {
       root.removeAttribute('aria-busy');
       root.innerHTML = !store?.groups ? '<p>La liste des joueurs nécessite une connexion.</p>' :
-        '<p>Connecte-toi pour retrouver les joueurs et voir ce qu’ils partagent.</p><button class="big" data-group-action="identify">Choisir mon pseudo</button>';
+        '<p>Connecte-toi pour voir les pronos et les gouvernements de tous les joueurs.</p><button class="big" data-group-action="identify">Choisir mon pseudo</button>';
       return;
     }
     root.setAttribute('aria-busy', 'true');
@@ -109,13 +107,14 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
       ]);
       if (request !== generation) return;
       data.players = Object.assign(Object.create(null), registered, data.players);
-      display = data;
+      display = visibleGameData(data);
       root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Accepter l’invitation au groupe</button></p>' : '') +
         (groups.length ? '<label class="group-filter">Afficher les joueurs de <select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
           '</select></label>' : '') +
         (!synced ? '<p class="help" role="status">Ton gouvernement attend une connexion pour être partagé. <button class="ghost" data-group-action="retry">Réessayer</button></p>' : '') +
-        '<div data-player-roster>' + roster(data, store.me().pid) + '</div>' +
+        '<p>Tous les pronos et gouvernements enregistrés sont visibles par tous. Participe aux rubriques qui te plaisent.</p>' +
+        '<div data-player-roster>' + roster(display, store.me().pid) + '</div>' +
         '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
         (store.me().pid === GROUP_ADMIN ? '<p>Crée un groupe et envoie son lien aux amis que tu veux inviter.</p>' +
         '<details><summary>Créer un groupe</summary>' +
@@ -125,10 +124,19 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
         '</section>';
       if (group) stopTeams = store.groups.watchTeams(group.code, teams => {
         if (request !== generation) return;
-        display.teams = teams;
+        data.teams = teams;
+        display = visibleGameData(data);
         root.querySelector('[data-player-roster]').innerHTML = roster(display, store.me().pid);
       }, () => {
         if (request === generation) notify('Actualisation des gouvernements interrompue. Rouvre cet onglet pour réessayer.');
+      });
+      if (data.canonical) stopPronos = store.groups.watchPronos(pronos => {
+        if (request !== generation) return;
+        data.canonical = pronos;
+        display = visibleGameData(data);
+        root.querySelector('[data-player-roster]').innerHTML = roster(display, store.me().pid);
+      }, () => {
+        if (request === generation) notify('Actualisation interrompue. Rouvre cet onglet pour réessayer.');
       });
     } catch {
       if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';

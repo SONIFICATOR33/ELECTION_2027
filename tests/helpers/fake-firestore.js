@@ -1,5 +1,5 @@
 // In-memory transport for regression tests; not a Firestore rules emulator.
-export function fakeFirestore(seed = {}) {
+export function fakeFirestore(seed = {}, { publicGames = false } = {}) {
   const data = new Map(Object.entries(structuredClone(seed)));
   const listeners = new Set();
   let offline = false;
@@ -10,7 +10,9 @@ export function fakeFirestore(seed = {}) {
     function allowed(path, write = false) {
       if (offline) throw new Error('offline');
       const p = path.split('/');
-      if ((p[0] === 'pronos' || (p[0] === 'players' && p[2] === 'settings')) && p[1] !== player) throw new Error('permission-denied');
+      const denied = () => { throw Object.assign(new Error('permission-denied'), { code: 'permission-denied' }); };
+      if (p[0] === 'pronos' && (write || !publicGames) && p[1] !== player) denied();
+      if (p[0] === 'players' && p[2] === 'settings' && p[1] !== player) denied();
       if (p[0] === 'groups' && p.length > 2) {
         if (!data.has(`groups/${p[1]}/members/${player}`)) throw new Error('permission-denied');
         if (write && p[3] !== player) throw new Error('permission-denied');

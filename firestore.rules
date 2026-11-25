@@ -1,7 +1,7 @@
 rules_version = '2';
 // Règles d'accès de la base « Les pronos des membrés ».
 // À coller dans la console Firebase : Firestore > Règles > Publier.
-// Les pronos personnels sont privés. Les copies partagées sont visibles par les membres du groupe.
+// Les pronos et gouvernements enregistrés sont visibles par tous les joueurs connectés.
 service cloud.firestore {
   match /databases/{db}/documents {
 
@@ -44,6 +44,7 @@ service cloud.firestore {
     }
 
     function dev() { return /databases/$(db)/documents/devices/$(request.auth.uid); }
+    function registered() { return request.auth != null && exists(dev()); }
     function owner(pid) {
       return request.auth != null && exists(dev()) && get(dev()).data.pid == pid;
     }
@@ -112,7 +113,7 @@ service cloud.firestore {
           && (!ch.hasAny(['l1']) || validList(request.resource.data.l1))
           && (!ch.hasAny(['l2']) || validList(request.resource.data.l2));
       }
-      allow get: if owner(pid);
+      allow read: if registered();
       allow create: if ownerAfter(pid)
         && request.resource.data.keys().hasOnly(['weeks', 'updatedAt'])
         && request.resource.data.weeks.size() == 0
@@ -153,7 +154,7 @@ service cloud.firestore {
             && v.submitted.hasOnly(['l1', 'l2', 'weeks'])
             && (v.shared || v.submitted.size() == 0);
         }
-        allow read: if inside(code);
+        allow read: if registered();
         allow create: if owner(pid) && validCode(code) && existsAfter(groupDoc(code))
           && validMember() && !request.resource.data.shared
           && request.resource.data.pseudo == get(/databases/$(db)/documents/players/$(pid)).data.pseudo;
@@ -162,13 +163,15 @@ service cloud.firestore {
 
       match /teams/{team}/comments/{comment} {
         function canSeeTeam() {
-          return inside(code) && exists(/databases/$(db)/documents/groups/$(code)/teams/$(team));
+          return registered() && (exists(/databases/$(db)/documents/groups/$(code)/teams/$(team))
+            || (exists(/databases/$(db)/documents/pronos/$(team))
+              && validTeam(get(/databases/$(db)/documents/pronos/$(team)).data.get('team', null))));
         }
         function validComment() {
           let v = request.resource.data;
           return v.keys().hasOnly(['author', 'pseudo', 'text', 'createdAt'])
             && v.author is string && owner(v.author)
-            && v.pseudo == get(/databases/$(db)/documents/groups/$(code)/members/$(v.author)).data.pseudo
+            && v.pseudo == get(/databases/$(db)/documents/players/$(v.author)).data.pseudo
             && v.text is string && v.text.size() <= 500 && v.text.matches('(?s).*[^\\s].*')
             && v.createdAt == request.time;
         }
@@ -188,7 +191,7 @@ service cloud.firestore {
             && (!copy.keys().hasAny(['history']) || copy.history == canonical.get('history', {}).get(stage, null))
             && (!copy.keys().hasAny(['at']) || copy.at == canonical.get(stage + 'at', null));
         }
-        allow read: if inside(code) && (stage == 'teams' || isProno());
+        allow read: if registered() && (stage == 'teams' || isProno());
         allow create, update: if owner(pid) && inside(code)
           && ((isProno() && matchingProno()) || (stage == 'teams'
               && request.resource.data.keys().hasOnly(['value']) && validTeam(request.resource.data.value)));

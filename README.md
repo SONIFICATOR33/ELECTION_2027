@@ -8,9 +8,9 @@ Jeu de pronostics sans argent sur la présidentielle 2027.
 Le pseudo et le PIN à quatre chiffres permettent de retrouver le compte sur un
 autre appareil. Vincent crée les groupes dans **Joueurs et Groupes**, puis
 envoie le lien d’invitation. Les invités peuvent s’inscrire en ouvrant le lien.
-Chaque joueur peut consulter les gouvernements, même partiels, dans
+Chaque joueur peut consulter les pronos et les gouvernements, même partiels, dans
 **Joueurs et Groupes → Tous les joueurs**. Le bonus de rareté et le classement sont
-calculés par groupe.
+calculés par groupe. Chacun participe aux rubriques de son choix, le gouvernement est facultatif.
 
 Une **photo mensuelle** dans la fiche de chaque joueur reprend le dernier
 prono enregistré pour chaque étape à la fin du mois, ou le prono précédent
@@ -71,18 +71,21 @@ et le [parcours d’Élisabeth Borne](https://www.lemonde.fr/politique/article/2
 
 ## Déploiement
 
-Le front est servi par GitHub Pages. Le projet Firebase utilise
-l’authentification anonyme de Firebase et le lien pseudo/PIN enregistré dans
-Firestore. Pour activer cette version sociale, publier le front et le fichier
-`firestore.rules` ensemble. Les nouveaux chargements du front lisent seulement
-le prono du compte connecté et les données des groupes qu’il a rejoints.
-L’ancienne version du front s’attend à pouvoir lire les collections globales.
-Après la mise à jour, rouvrir le site si un ancien onglet était resté ouvert.
+Le front est servi par GitHub Pages. La base du projet Firebase
+« pronoselection2027 » utilise les règles de `firestore.rules`.
 
-Les pronos déjà enregistrés conservent les choix et les réglages de partage.
-Firestore autorise la lecture des copies partagées aux seuls membres du
-groupe. Les nouvelles règles doivent être publiées avant le déploiement du
-front pour activer l’écriture des photos mensuelles.
+Pour activer la lecture des anciennes sauvegardes par tous les joueurs,
+publier `firestore.rules` dans la console Firebase du projet, sous
+Firestore Database puis Règles. Les pronos enregistrés sont consultables
+directement et les anciens réglages de partage ne déterminent plus leur visibilité.
+Chaque joueur conserve l’écriture de ses propres données et les échéances du jeu
+continuent de s’appliquer. Les codes de connexion et les paramètres des comptes
+gardent leurs protections.
+
+Tant que ces règles ne sont pas publiées, le front affiche les copies déjà
+disponibles dans les groupes. Il publie automatiquement les sauvegardes à la
+connexion de leur auteur. Les anciennes sauvegardes sans copie publique
+deviennent consultables dès la publication des règles.
 
 - `js/data.js` contient les échéances, les candidats, les sondages et les résultats.
   En cas de changement de date, mettre aussi à jour les échéances de

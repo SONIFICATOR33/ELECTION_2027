@@ -1,4 +1,4 @@
-import { LOCK1, LOCK2, LOCKGP } from './data.js?v=22';
+import { LOCK1, LOCK2, LOCKGP } from './data.js?v=50';
 import { monthKey } from './history.js';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 
@@ -53,8 +53,7 @@ export function groupsStore(store) {
       commonEnrollment ||= join(COMMON_GROUP, 'Tous les joueurs', true)
         .then(async () => {
           const groups = await this.list();
-          await Promise.all(groups.filter(group => !group.shared || group.code === COMMON_GROUP)
-            .map(group => this.setSharing(group.code, true)));
+          await Promise.all(groups.map(group => this.publishPronos(group.code)));
         })
         .catch(error => { commonEnrollment = null; throw error; });
       return commonEnrollment;
@@ -66,12 +65,12 @@ export function groupsStore(store) {
       if (title.length < 2 || title.length > 48) throw new Error('Choisis un nom de 2 à 48 caractères.');
       const code = crypto.randomUUID().replaceAll('-', '');
       await join(code, title);
-      await this.setSharing(code, true);
+      await this.publishPronos(code);
       return code;
     },
     async join(code) {
       await join(code);
-      await this.setSharing(code, true);
+      await this.publishPronos(code);
       return code;
     },
     async list() {
@@ -81,21 +80,18 @@ export function groupsStore(store) {
         return { code, name: g.data()?.name || 'Groupe', shared };
       }));
     },
-    async setSharing(code, shared) {
+    async publishPronos(code) {
       await F.runTransaction(db, async tx => {
         const [s, p] = await Promise.all([tx.get(settings()), tx.get(doc('pronos', pid()))]);
         const list = s.data()?.groups || {};
         if (!Object.hasOwn(list, code)) throw new Error('Rejoins d’abord ce groupe.');
         const values = p.data() || {};
-        if (shared) {
-          for (const [stage] of STAGES) {
-            if (hasStage(values, stage)) tx.set(entry(code, stage), sharedStage(values, stage));
-          }
-        } else {
-          for (const [stage] of STAGES) tx.delete(entry(code, stage));
+        for (const [stage] of STAGES) {
+          if (hasStage(values, stage)) tx.set(entry(code, stage), sharedStage(values, stage));
         }
-        tx.update(member(code), { shared, submitted: shared ? submitted(values) : [] });
-        tx.set(settings(), { groups: { ...list, [code]: shared } });
+        // Ces champs restent présents pour les anciennes versions du jeu.
+        tx.update(member(code), { shared: true, submitted: submitted(values) });
+        tx.set(settings(), { groups: { ...list, [code]: true } });
       });
     },
     async syncSharedTeam(team, onlyMissing) {
@@ -131,6 +127,11 @@ export function groupsStore(store) {
         if (!snapshot.metadata.fromCache) update(Object.fromEntries(snapshot.docs.map(d => [d.id, d.data().value])));
       }, fail);
     },
+    watchPronos(update, fail) {
+      return F.onSnapshot(F.collection(db, 'pronos'), { includeMetadataChanges: true }, snapshot => {
+        if (!snapshot.metadata.fromCache) update(Object.fromEntries(snapshot.docs.map(d => [d.id, d.data()])));
+      }, fail);
+    },
     watchTeamComments(code, team, update, fail) {
       const recent = F.query(comments(code, team), F.orderBy('createdAt', 'desc'), F.limit(50));
       return F.onSnapshot(recent, { includeMetadataChanges: true }, snapshot => {
@@ -147,15 +148,22 @@ export function groupsStore(store) {
     async deleteTeamComment(code, team, id) {
       await F.deleteDoc(F.doc(comments(code, team), id));
     },
-    async load(code, time = Date.now()) {
-      // Old rules may remain in place during the rollout.
-      const readStage = ([stage, , lock]) => F.getDocs(F.collection(db, 'groups', code, stage)).catch(err => {
-        if (err.code === 'permission-denied' && time < +lock) return null;
+    async load(code) {
+      const unavailable = [];
+      const readStage = ([stage]) => F.getDocs(F.collection(db, 'groups', code, stage)).catch(err => {
+        if (err.code !== 'permission-denied') throw err;
+        unavailable.push(stage);
+        return null;
+      });
+      // La lecture directe inclut les anciens comptes sans copie publique.
+      const readPronos = F.getDocs(F.collection(db, 'pronos')).catch(err => {
+        if (err.code === 'permission-denied') return null;
         throw err;
       });
-      const [m, teams, ...entries] = await Promise.all([
+      const [m, teams, canonical, ...entries] = await Promise.all([
         F.getDocs(members(code)),
         F.getDocs(F.collection(db, 'groups', code, 'teams')),
+        readPronos,
         ...STAGES.map(readStage)
       ]);
       const players = Object.fromEntries(m.docs.map(d => [d.id, d.data()]));
@@ -172,7 +180,11 @@ export function groupsStore(store) {
           if (entry.at) pronos[d.id][stage + 'at'] = entry.at;
         }
       });
-      return { players, pronos, teams: Object.fromEntries(teams.docs.map(d => [d.id, d.data().value])) };
+      return {
+        players, pronos, teams: Object.fromEntries(teams.docs.map(d => [d.id, d.data().value])),
+        canonical: canonical ? Object.fromEntries(canonical.docs.map(d => [d.id, d.data()])) : null,
+        unavailable
+      };
     },
     async writeProno(ref, patch, gp, week, month = monthKey(Date.now())) {
       await F.runTransaction(db, async tx => {
@@ -185,10 +197,9 @@ export function groupsStore(store) {
         change.history = { ...data.history, [stage]: { ...data.history?.[stage], [month]: gp || value } };
         tx.update(ref, change);
         const next = { ...data, ...change, [stage]: value };
-        for (const [code, shared] of Object.entries(s.data()?.groups || {})) {
-          if (!shared) continue;
+        for (const code of Object.keys(s.data()?.groups || {})) {
           tx.set(entry(code, stage), sharedStage(next, stage));
-          tx.update(member(code), { submitted: submitted(next) });
+          tx.update(member(code), { shared: true, submitted: submitted(next) });
         }
       });
     }
@@ -205,4 +216,17 @@ function sharedStage(prono, stage) {
   if (prono.history?.[stage]) result.history = prono.history[stage];
   if (prono[stage + 'at']) result.at = prono[stage + 'at'];
   return result;
+}
+
+// La sauvegarde du compte prévaut aussi lorsqu'un gouvernement a été effacé.
+export function visibleGameData(data, canonical = data.canonical) {
+  const teams = { ...data.teams };
+  for (const [pid, value] of Object.entries(canonical || {})) {
+    if (!Object.hasOwn(value, 'team')) continue;
+    if (hasTeam(value.team)) teams[pid] = normalizeTeam(value.team);
+    else delete teams[pid];
+  }
+  const pronos = Object.fromEntries(Object.entries({ ...data.pronos, ...canonical })
+    .filter(([pid]) => Object.hasOwn(data.players, pid)));
+  return { ...data, pronos, teams };
 }
