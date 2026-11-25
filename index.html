@@ -19,7 +19,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=15">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=28">
+<link rel="stylesheet" href="css/app.css?v=29">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -197,7 +197,7 @@
       <p class="pick-instruction">Just for fun ! Ton gouvernement ne rapporte aucun point.</p>
     </article>
     <article class="card team-gauge" id="team-gauge" hidden>
-      <h2>Le compteur de Matignon</h2>
+      <h2>La polarité de ton Gouve</h2>
       <canvas id="team-gauge-canvas" width="640" height="208" aria-hidden="true"></canvas>
       <p id="team-gauge-summary" aria-live="polite"></p>
     </article>
@@ -224,7 +224,6 @@
     </article>
     <p class="help" id="pubHelp"></p>
     <button class="big" id="teamShare" disabled>Faire une image de mon gouvernement</button>
-    <button class="ghost" id="teamSave">Enregistrer sur mon téléphone</button>
   </div>
 </section>
 
@@ -330,6 +329,15 @@
   <h2 id="player-title"></h2>
   <div id="player-detail"></div>
 </dialog>
+<dialog id="team-image-dialog" aria-labelledby="team-image-title">
+  <form method="dialog"><button class="ghost">Fermer</button></form>
+  <h2 id="team-image-title">Ton affiche</h2>
+  <img id="team-image-preview" alt="Affiche de ton gouvernement avec sa polarité">
+  <div class="team-image-actions">
+    <button class="ghost" id="team-image-share" hidden>Partager l’image</button>
+    <a class="ghost" id="team-image-download" download="mon-gouvernement.png">Télécharger l’image</a>
+  </div>
+</dialog>
 <dialog id="recap-dialog" aria-labelledby="recap-title">
   <form method="dialog"><button class="ghost">Fermer</button></form>
   <h2 id="recap-title">Mes pronos</h2>
@@ -338,7 +346,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=28"></script>
+<script type="module" src="js/app.js?v=29"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
