@@ -502,6 +502,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .player-list .group-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .player-list .player-action { width: 100%; min-height: 44px; border-radius: 8px; border: 1px solid var(--vert); background: var(--vertbg); color: var(--vert); font-weight: 700; }
 .player-list .player-action:disabled { opacity: 1; border-color: var(--rouge); background: var(--rougebg); color: var(--rouge); }
+.player-list .player-action.awaiting-team { border-color: var(--mut); background: var(--card); color: var(--ink); }
 .group-filter select { width: 100%; }
 .player-groups { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
 .player-groups details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-top: 8px; }

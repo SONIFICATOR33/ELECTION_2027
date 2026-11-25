@@ -8,16 +8,23 @@ Jeu de pronostics sans argent sur la présidentielle 2027.
 Le pseudo et le PIN à quatre chiffres permettent de retrouver le compte sur un
 autre appareil. Vincent crée les groupes dans **Joueurs et Groupes**, puis
 envoie le lien d’invitation. Les invités peuvent s’inscrire en ouvrant le lien.
-Les pronos sont visibles dès leur enregistrement dans les groupes où tu les
-partages. Le partage est activé par défaut à l’arrivée dans un groupe et peut
-être désactivé. Le bonus de rareté et le classement sont calculés par groupe.
+Les pronos et les gouvernements sont partagés automatiquement entre les
+membres d’un même groupe privé. Le bonus de rareté et le classement sont
+calculés par groupe.
 
 Une **photo mensuelle** dans la fiche de chaque joueur reprend le dernier
 prono enregistré pour chaque étape à la fin du mois, ou le prono précédent
 s’il est inchangé. Les photos mensuelles restent consultables après l’élection.
 Pour les pronos antérieurs à cette version, seul l’historique conservé peut
-être affiché. Le gouvernement est privé par défaut. Tu peux choisir de le
-rendre visible depuis **Mon gouvernement**.
+être affiché. Dans **Tous les joueurs**, le partage du gouvernement reste
+facultatif : la case se trouve dans **Joueurs et Groupes**.
+
+Le gouvernement est sauvegardé avec le compte et retrouvé sur les autres
+appareils. Les modifications hors connexion restent sur l’appareil jusqu’à
+la prochaine synchronisation. Pour les anciennes compositions restées
+uniquement sur un téléphone, leur auteur doit rouvrir le jeu une fois sur ce
+téléphone. Les gouvernements disponibles apparaissent automatiquement dans
+la liste des membres, sans recharger la page.
 
 Sur iPhone, ouvre le site dans Safari et utilise **Partager → Sur l’écran
 d’accueil → Ouvrir comme app web**. Sur Android, utilise **Installer l’app**

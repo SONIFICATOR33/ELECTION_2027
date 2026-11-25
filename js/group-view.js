@@ -2,7 +2,8 @@ import { showTeamComments } from './team-comments.js';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=30';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=39';
+import { hasTeam } from './team-state.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -15,6 +16,13 @@ const clock = new Intl.DateTimeFormat('fr-FR', {
 
 export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGroup, syncExistingTeam, notify }) {
   let selected = COMMON_GROUP, generation = 0, display;
+  let stopTeams;
+  function pause() {
+    generation++;
+    stopTeams?.();
+    stopTeams = null;
+    root.removeAttribute('aria-busy');
+  }
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
   const details = document.querySelector('#player-detail');
@@ -37,11 +45,13 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
     const rows = classement(data.players, data.pronos, RESULTS, U1, U2);
     return rows.length ? '<ul class="player-list">' + rows.map(row => {
       const player = data.players[row.pid];
+      const available = hasTeam(data.teams[row.pid]);
+      const waiting = !available && selected !== COMMON_GROUP;
       return `<li><strong>${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
         <span class="player-points">${fmt(row.total)} pts</span>
         <div class="group-actions">
           <button class="player-action" data-player="${escape(row.pid)}" data-detail="pronos" ${player.shared ? '' : 'disabled'}>Pronos</button>
-          <button class="player-action" data-player="${escape(row.pid)}" data-detail="team" ${Object.hasOwn(data.teams, row.pid) ? '' : 'disabled'}>Gouvernement</button>
+          <button class="player-action${waiting ? ' awaiting-team' : ''}" data-player="${escape(row.pid)}" data-detail="team" ${available || waiting ? '' : 'disabled'}${waiting ? ' aria-label="Gouvernement pas encore disponible : en savoir plus"' : ''}>Gouvernement</button>
         </div></li>`;
     }).join('') + '</ul>' : '<p>Aucun joueur dans ce groupe.</p>';
   }
@@ -73,6 +83,7 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
   }
 
   async function render() {
+    pause();
     const request = ++generation;
     const store = getStore();
     if (!store?.groups || !store.me()) {
@@ -84,7 +95,7 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
     root.setAttribute('aria-busy', 'true');
     try {
       await store.groups.ensureCommonGroup().catch(console.warn);
-      await syncExistingTeam();
+      const synced = await syncExistingTeam();
       const groups = await store.groups.list();
       if (request !== generation) return;
       if (invitation && groups.some(g => g.code === invitation)) {
@@ -108,7 +119,8 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
           <legend>Visibilité de mon gouvernement</legend>
           <label class="choice-control"><input type="checkbox" data-share-team ${Object.hasOwn(data.teams, store.me().pid) ? 'checked' : ''}> Partager mon gouvernement avec tous les joueurs</label>
         </fieldset>` : group ? '<p class="help">Les pronos et les gouvernements sont partagés automatiquement dans ce groupe.</p>' : '') +
-        roster(data, store.me().pid) +
+        (!synced ? '<p class="help" role="status">Ton gouvernement attend une connexion pour être partagé. <button class="ghost" data-group-action="retry">Réessayer</button></p>' : '') +
+        '<div data-player-roster>' + roster(data, store.me().pid) + '</div>' +
         '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
         (store.me().pid === GROUP_ADMIN ? '<p>Crée un groupe et envoie son lien aux amis que tu veux inviter.</p>' +
         '<details><summary>Créer un groupe</summary>' +
@@ -116,6 +128,15 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
         '<button class="big">Créer et ouvrir le groupe</button></form></details>' : '<p>Rejoins un groupe à partir du lien envoyé par Vincent.</p>') +
         (group && group.code !== COMMON_GROUP ? '<button class="ghost group-invite" data-group-action="invite">Inviter des amis dans ' + escape(group.name) + '</button>' : '') +
         '</section>';
+      if (group) stopTeams = store.groups.watchTeams(group.code, teams => {
+        if (request !== generation) return;
+        display.teams = teams;
+        root.querySelector('[data-player-roster]').innerHTML = roster(display, store.me().pid);
+        const checkbox = root.querySelector('[data-share-team]');
+        if (checkbox && !checkbox.closest('fieldset').disabled) checkbox.checked = hasTeam(teams[store.me().pid]);
+      }, () => {
+        if (request === generation) notify('Actualisation des gouvernements interrompue. Rouvre cet onglet pour réessayer.');
+      });
     } catch {
       if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
     } finally {
@@ -127,6 +148,12 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
     const player = display?.players[id];
     if (!player || root.hasAttribute('aria-busy')) return;
     heading.textContent = (kind === 'team' ? 'Gouvernement de ' : 'Pronos de ') + player.pseudo;
+    if (kind === 'team' && !hasTeam(display.teams[id])) {
+      details.innerHTML = '<p>Ce gouvernement n’est pas encore disponible.</p><p>Si ' + escape(player.pseudo) +
+        ' l’a déjà composé, il suffit de rouvrir le jeu sur le même appareil pour le partager avec le groupe. Sinon, il apparaîtra dès sa composition.</p>';
+      dialog.showModal();
+      return;
+    }
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
     else details.innerHTML = '<div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
     dialog.showModal();
@@ -217,5 +244,5 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
       }
     });
   });
-  return { render, hasInvite: () => !!invitation };
+  return { render, pause, hasInvite: () => !!invitation };
 }

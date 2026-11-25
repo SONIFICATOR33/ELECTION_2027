@@ -1,12 +1,13 @@
 import { drawTeamGauge, teamPosition } from './team-gauge.js?v=33';
-import { groupView } from './group-view.js?v=30';
+import { groupView } from './group-view.js?v=39';
+import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=25';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=30';
+import { openStore } from './store.js?v=39';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=38';
@@ -35,6 +36,12 @@ let store, ME = null, ALL = { players: {}, pronos: {} };
 const blankTeam = () => ({ coeur: '', pm: '', min: {}, jl: '', jn: '' });
 const teamKey = () => 'pdm-team-' + (ME ? ME.pid : 'anon');
 const readTeam = () => { try { return JSON.parse(localStorage.getItem(teamKey())) || {}; } catch (e) { return {}; } };
+const pendingTeamSync = new Set();
+const teamNeedsSync = () => {
+  if (pendingTeamSync.has(teamKey())) return true;
+  try { return localStorage.getItem(teamKey() + '-pending') === '1'; } catch { return false; }
+};
+let teamRevision = 0;
 let draft = { l1: [], l2: [], gp: { pres: null, top: [], win: 52 }, team: blankTeam() };
 const dirty = { l1: false, l2: false, gp: false, team: false };
 let pending = null;
@@ -47,7 +54,8 @@ function loadDraft() {
   const p = mine();
   draft.l1 = (p.l1 || []).slice(); draft.l2 = (p.l2 || []).slice();
   const cur = S.current(p); draft.gp = cur ? clone(cur) : { pres: null, top: [], win: 52 };
-  draft.team = Object.assign(blankTeam(), readTeam());
+  draft.team = normalizeTeam(!teamNeedsSync() && Object.hasOwn(p, 'team') ? p.team : readTeam());
+  teamRevision++;
   for (const k in dirty) dirty[k] = false;
 }
 
@@ -386,34 +394,38 @@ function renderTeam() {
   $('#t-jl').value = draft.team.jl || '';
   renderPublish();
 }
-const hasTeam = team => Boolean(team.coeur || team.pm || Object.values(team.min || {}).some(Boolean)
-  || (team.jl && team.jn));
 let teamSync = Promise.resolve();
-const pendingTeamSync = new Set();
 
 function queueTeamSync(onlyMissing) {
   if (!ME || !store.groups) return Promise.resolve();
-  const player = ME.pid;
+  const player = ME.pid, revision = teamRevision, key = teamKey();
   const team = hasTeam(draft.team) ? clone(draft.team) : null;
   teamSync = teamSync.catch(() => {}).then(async () => {
-    if (ME?.pid !== player) return;
-    const fillMissing = onlyMissing && !pendingTeamSync.has(player);
-    try {
-      await store.groups.syncSharedTeam(team, fillMissing);
-      pendingTeamSync.delete(player);
-    } catch (error) {
-      if (!fillMissing) pendingTeamSync.add(player);
-      throw error;
+    if (ME?.pid !== player || revision !== teamRevision) return;
+    await store.groups.ensureCommonGroup();
+    if (ME?.pid !== player || revision !== teamRevision) return;
+    const value = await store.groups.syncSharedTeam(team, onlyMissing && !teamNeedsSync());
+    // Une sauvegarde terminée ne doit pas effacer une modification plus récente.
+    if (ME?.pid === player && revision === teamRevision) {
+      draft.team = normalizeTeam(value);
+      (ALL.pronos[player] ||= {}).team = value;
+      try {
+        localStorage.setItem(key, JSON.stringify(draft.team));
+        localStorage.removeItem(key + '-pending');
+      } catch {}
+      pendingTeamSync.delete(key);
+      renderTeam();
     }
   });
   return teamSync;
 }
 
 function syncExistingTeam() {
-  return queueTeamSync(true).catch(console.warn);
+  return queueTeamSync(true).then(() => true).catch(error => { console.warn(error); return false; });
 }
 
 async function shareTeamWithGroup(code) {
+  await queueTeamSync(true);
   if (!hasTeam(draft.team)) {
     throw new Error('Compose ton gouvernement avant de le partager avec tous les joueurs.');
   }
@@ -459,8 +471,11 @@ function syncEditedTeam() {
   queueTeamSync(false).catch(() => toast('Le gouvernement n’a pas pu être partagé. Vérifie ta connexion.'));
 }
 function saveTeam() {
+  teamRevision++;
+  pendingTeamSync.add(teamKey());
   try {
     localStorage.setItem(teamKey(), JSON.stringify(draft.team));
+    localStorage.setItem(teamKey() + '-pending', '1');
     dirty.team = false;
   } catch {}
 }
@@ -726,6 +741,7 @@ function show() {
   hideSplash();
   if (v === 'sondages') requestAnimationFrame(draw);
   if (v === 'classement') groupUI.render();
+  else groupUI.pause();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
