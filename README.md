@@ -86,7 +86,8 @@ front pour activer l’écriture des photos mensuelles.
   [Manrope](https://github.com/googlefonts/manrope) est hébergée dans le dépôt sous licence SIL OFL 1.1.
 
 Le thème sombre utilise un fond `#0a0a0a`, un texte principal blanc à 87 %,
-et Manrope variable en graisse 400, 14,4 px, interligne 1,55 et espacement nul.
-Les titres et contrôles conservent leur hiérarchie typographique.
+et Manrope variable en graisse 400, interligne 1,55 et espacement nul.
+La typographie utilise trois tailles, 14 px pour le texte courant, 16 px pour
+les sous-titres et commandes, 20 px pour les titres.
 La police est distribuée localement dans `fonts/manrope-variable.woff2`,
 avec sa licence dans `fonts/OFL-Manrope.txt`.
