@@ -717,14 +717,13 @@ document.addEventListener('click', e => {
   if (a && /^st[123]$/.test(a)) { SB[+a[2]] = true; renderSB(); }
   if (a) setTimeout(() => { const t = document.getElementById(a); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
 });
-const VIEWS = ['accueil', 'candidats', 'paris', 'team', 'sondages', 'classement'];
+const VIEWS = ['accueil', 'paris', 'team', 'sondages', 'classement'];
 function show() {
   const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'accueil';
   VIEWS.forEach(n => $('#v-' + n).classList.toggle('on', n === v));
-  $$('.tabs a').forEach(a => { const o = a.dataset.t === (v === 'candidats' ? 'accueil' : v); a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  $$('.tabs a').forEach(a => { const o = a.dataset.t === v; a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
-  if (v === 'accueil' && !groupUI.hasInvite()) showSplash();
-  else hideSplash();
+  hideSplash();
   if (v === 'sondages') requestAnimationFrame(draw);
   if (v === 'classement') groupUI.render();
 }
@@ -764,9 +763,8 @@ $$('.tabs a').forEach(tab => {
 $('#splashGo').onclick = () => {
   playEntrySound();
   hideSplash();
-  const next = [1, 2, 3].find(i => isOpen(SBK[i]) && !done(SBK[i]));
-  if (next) { SB[next] = true; renderSB(); }
-  location.hash = 'paris';
+  location.hash = 'accueil';
+  show();
 };
 $('#brandBtn').onclick = () => showSplash();
 
@@ -782,5 +780,6 @@ $('#brandBtn').onclick = () => showSplash();
   syncExistingTeam();
   initPolls();
   renderAll(); show();
+  if (!location.hash && !groupUI.hasInvite()) showSplash();
   if (groupUI.hasInvite()) { location.hash = 'classement'; }
 })();

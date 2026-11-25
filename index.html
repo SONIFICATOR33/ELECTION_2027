@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=34">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=36">
+<link rel="stylesheet" href="css/app.css?v=37">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -37,14 +37,13 @@
   <p class="tag2">Prone ton President</p>
   <p class="jbig"><b id="splashJ">J-145</b>avant le premier tour</p>
   <button class="big go" id="splashGo">Entrer</button>
-  <button class="ghost splash-candidates" data-go="candidats">Fiches et programmes</button>
   <button class="splash-install" data-install aria-controls="splash-install-help" aria-expanded="false" hidden>Ajouter à l’écran d’accueil</button>
   <p id="splash-install-help" hidden></p>
 </section>
 
 <header class="top">
   <div class="wrap toprow">
-    <button class="brand" id="brandBtn" aria-label="Revoir l’affiche du jeu">
+    <button class="brand" id="brandBtn" aria-label="Revoir la page d’ouverture">
       <svg class="flag" viewBox="0 0 36 24" aria-hidden="true"><use href="#flagS"/></svg>
       <span class="bt"><b>Prone ton President</b></span>
     </button>
@@ -58,6 +57,20 @@
 <main>
 <!-- ===================== ACCUEIL ===================== -->
 <section class="view" id="v-accueil">
+  <div class="wrap stack">
+    <article class="card" id="candsCard">
+      <h2>Fiches et programmes</h2>
+      <p class="help">Découvre les candidats et leurs propositions sur leurs sites officiels.</p>
+      <p class="fine">Le type de document est indiqué sous chaque lien.</p>
+      <label class="candidate-search" for="candidateSearch">Chercher un candidat
+        <input id="candidateSearch" type="search" placeholder="Nom ou parti" autocomplete="off" aria-controls="candidateDirectory">
+      </label>
+      <p class="fine" id="programmeStatus" role="status">Chargement des liens…</p>
+      <button class="linkbtn" id="programmeRetry" hidden>Réessayer</button>
+      <ul class="candidate-directory" id="candidateDirectory" aria-label="Fiches et programmes des candidats"></ul>
+      <p class="help" id="candidateEmpty" hidden>Aucun candidat ne correspond à ta recherche.</p>
+    </article>
+  </div>
   <div class="hero">
     <canvas class="gcv" id="gHero" aria-hidden="true"></canvas>
     <div class="wrap herogrid">
@@ -91,25 +104,6 @@
         <li><b>Sinon, 2nd tour le 2 mai</b> entre les deux candidats arrivés en tête.</li>
       </ol>
     </details>
-  </div>
-</section>
-
-<!-- ===================== FICHES ET PROGRAMMES ===================== -->
-<section class="view" id="v-candidats">
-  <div class="wrap stack">
-    <article class="card" id="candsCard">
-      <button class="linkbtn" data-go="accueil">← Accueil</button>
-      <h2>Fiches et programmes</h2>
-      <p class="help">Découvre les candidats et leurs propositions sur leurs sites officiels.</p>
-      <p class="fine">Le type de document est indiqué sous chaque lien.</p>
-      <label class="candidate-search" for="candidateSearch">Chercher un candidat
-        <input id="candidateSearch" type="search" placeholder="Nom ou parti" autocomplete="off" aria-controls="candidateDirectory">
-      </label>
-      <p class="fine" id="programmeStatus" role="status">Chargement des liens…</p>
-      <button class="linkbtn" id="programmeRetry" hidden>Réessayer</button>
-      <ul class="candidate-directory" id="candidateDirectory" aria-label="Fiches et programmes des candidats"></ul>
-      <p class="help" id="candidateEmpty" hidden>Aucun candidat ne correspond à ta recherche.</p>
-    </article>
   </div>
 </section>
 
@@ -359,7 +353,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=36"></script>
+<script type="module" src="js/app.js?v=37"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
