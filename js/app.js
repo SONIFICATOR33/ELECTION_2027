@@ -1,13 +1,12 @@
 import { drawTeamGauge, teamPosition } from './team-gauge.js';
-import { groupView } from './group-view.js?v=27';
-import { COMMON_GROUP } from './groups.js?v=27';
+import { groupView } from './group-view.js?v=30';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=25';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=27';
+import { openStore } from './store.js?v=30';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=16';
@@ -110,57 +109,6 @@ function renderPollsHome() {
 }
 
 /* ===================== MES PARIS ===================== */
-const sharePronos = $('#share-pronos');
-const sharePronosStatus = $('#share-pronos-status');
-const sharePronosAction = $('#share-pronos-action');
-let shareRequest = 0;
-async function renderPronoSharing() {
-  const request = ++shareRequest;
-  sharePronos.disabled = true;
-  sharePronos.checked = false;
-  sharePronosAction.hidden = true;
-  if (!store?.groups || !ME) {
-    sharePronosStatus.textContent = 'Connecte-toi pour choisir qui voit tes pronos.';
-    sharePronosAction.hidden = !!ME;
-    sharePronosAction.textContent = 'Me connecter';
-    sharePronosAction.onclick = () => openJoin();
-    return;
-  }
-  sharePronosStatus.textContent = 'Vérification du partage…';
-  try {
-    await store.groups.ensureCommonGroup();
-    const common = (await store.groups.list()).find(g => g.code === COMMON_GROUP);
-    if (request !== shareRequest) return;
-    if (!common) throw new Error();
-    sharePronos.checked = common.shared;
-    sharePronos.disabled = false;
-    sharePronosStatus.textContent = common.shared
-      ? 'Partagés dans le groupe commun, visibles dès leur enregistrement.'
-      : 'Masqués dans le groupe commun.';
-  } catch {
-    if (request !== shareRequest) return;
-    sharePronosStatus.textContent = 'Impossible de vérifier le partage.';
-    sharePronosAction.hidden = false;
-    sharePronosAction.textContent = 'Réessayer';
-    sharePronosAction.onclick = renderPronoSharing;
-  }
-}
-sharePronos.addEventListener('change', async () => {
-  if (sharePronos.disabled || !ME) return;
-  const shared = sharePronos.checked, request = ++shareRequest;
-  sharePronos.disabled = true;
-  sharePronosStatus.textContent = 'Enregistrement du choix…';
-  try {
-    await store.groups.setSharing(COMMON_GROUP, shared);
-    if (request === shareRequest) await renderPronoSharing();
-  } catch {
-    if (request !== shareRequest) return;
-    sharePronos.checked = !shared;
-    sharePronos.disabled = false;
-    sharePronosStatus.textContent = 'Choix non enregistré. Réessaie.';
-  }
-});
-
 function renderParisSummary() {
   const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
@@ -438,12 +386,38 @@ function renderTeam() {
   $('#t-jl').value = draft.team.jl || '';
   renderPublish();
 }
+const hasTeam = team => Boolean(team.coeur || team.pm || Object.values(team.min || {}).some(Boolean)
+  || (team.jl && team.jn));
+let teamSync = Promise.resolve();
+const pendingTeamSync = new Set();
+
+function queueTeamSync(onlyMissing) {
+  if (!ME || !store.groups) return Promise.resolve();
+  const player = ME.pid;
+  const team = hasTeam(draft.team) ? clone(draft.team) : null;
+  teamSync = teamSync.catch(() => {}).then(async () => {
+    if (ME?.pid !== player) return;
+    const fillMissing = onlyMissing && !pendingTeamSync.has(player);
+    try {
+      await store.groups.syncSharedTeam(team, fillMissing);
+      pendingTeamSync.delete(player);
+    } catch (error) {
+      if (!fillMissing) pendingTeamSync.add(player);
+      throw error;
+    }
+  });
+  return teamSync;
+}
+
+function syncExistingTeam() {
+  return queueTeamSync(true).catch(console.warn);
+}
+
 async function shareTeamWithGroup(code) {
-  if (!draft.team.coeur && !draft.team.pm) {
-    throw new Error('Choisis au moins ton président ou ton Premier ministre dans Mon gouvernement.');
+  if (!hasTeam(draft.team)) {
+    throw new Error('Compose ton gouvernement avant de le partager avec tous les joueurs.');
   }
   await store.groups.publishTeam(code, clone(draft.team));
-  saveTeam();
 }
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
 function renderTeamGauge() {
@@ -470,12 +444,19 @@ $('#v-team').addEventListener('change', e => {
   const v = e.target.value;
   if (v === '__autre') { d.classList.add('other'); const i = d.querySelector('input'); setT(d.dataset.k, i.value.trim()); i.focus(); }
   else { d.classList.remove('other'); setT(d.dataset.k, v); if (v) snd.pick(v in byName ? AXIS(byName[v]) : null); }
-  const was = !$('#teamShare').disabled; saveTeam(); renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux faire une image.'); }
+  const was = !$('#teamShare').disabled; saveTeam(); syncEditedTeam(); renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux faire une image.'); }
 });
 $('#v-team').addEventListener('input', e => {
   if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; saveTeam(); return; }
   const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); saveTeam(); renderPublish(); }
 });
+$('#v-team').addEventListener('change', e => {
+  if (e.target.matches('#t-jl, .sel input')) syncEditedTeam();
+});
+window.addEventListener('online', syncExistingTeam);
+function syncEditedTeam() {
+  queueTeamSync(false).catch(() => toast('Le gouvernement n’a pas pu être partagé. Vérifie ta connexion.'));
+}
 function saveTeam() {
   try {
     localStorage.setItem(teamKey(), JSON.stringify(draft.team));
@@ -656,7 +637,7 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont partagés dans le groupe commun par défaut et visibles dès leur enregistrement. Ton gouvernement reste privé jusqu’à ce que tu le partages.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Bienvenue au club</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Pas d'email ni de nom : juste un pseudo et un code à 4 chiffres. Note bien ce code : il te sert à te retrouver sur un autre téléphone. Tes pronos sont visibles par tous les joueurs. Ton gouvernement est partagé automatiquement dans les groupes que tu rejoins. Tu choisis s’il est visible aussi par tous les joueurs.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
       <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">C'est parti</button></form>`;
@@ -705,6 +686,7 @@ sheet.addEventListener('submit', async e => {
   loadDraft();
   for (const k in kd) if (kd[k]) { draft[k] = keep[k]; dirty[k] = true; }
   initSB();
+  syncExistingTeam();
   renderAll();
   if (action) await action();
 });
@@ -734,19 +716,17 @@ function show() {
   window.scrollTo(0, 0);
   if (v === 'sondages') requestAnimationFrame(draw);
   if (v === 'classement') groupUI.render();
-  if (v === 'paris') renderPronoSharing();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
 
 const groupUI = groupView($('#group-view'), {
-  getStore: () => store, withUser: withMe, drawTeam, shareTeamWithGroup, notify: toast
+  getStore: () => store, withUser: withMe, drawTeam, shareTeamWithGroup, syncExistingTeam, notify: toast
 });
 function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderPollsHome();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
   renderTeam();
-  if (location.hash === '#paris') renderPronoSharing();
   if (location.hash === '#classement') groupUI.render();
 }
 
@@ -777,6 +757,7 @@ $('#brandBtn').onclick = () => showSplash();
   if (ME) store.groups?.ensureCommonGroup().catch(console.warn);
   await refresh(true);
   loadDraft(); initSB();
+  syncExistingTeam();
   initPolls();
   renderAll(); show();
   let seen = false; try { seen = !!sessionStorage.getItem('pdm-splash'); } catch (e) { }

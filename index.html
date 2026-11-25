@@ -123,11 +123,7 @@
   <div class="wrap stack">
     <article class="card">
       <h2>Mes pronos</h2>
-      <div id="prono-sharing" class="prono-sharing">
-        <label class="choice-control"><input type="checkbox" id="share-pronos" disabled> Partager mes pronos avec tous les joueurs</label>
-        <p class="help" id="share-pronos-status" role="status"></p>
-        <button class="ghost" id="share-pronos-action" hidden></button>
-      </div>
+      <p class="help">Tes pronos sont visibles par tous les joueurs.</p>
       <div class="mini-steps" id="parisSummary"></div>
       <button class="ghost" id="prono-recap">Voir le récap de mes pronos</button>
     </article>
@@ -219,8 +215,9 @@
       <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off" maxlength="60"><div id="t-jn"></div></div>
     </article>
     <article class="card">
-      <h2>Partager dans un groupe</h2>
-      <a href="#classement">Choisir qui voit mon gouvernement dans Joueurs et Groupes</a>
+      <h2>Partage de mon gouvernement</h2>
+      <p class="help">Ton gouvernement est partagé automatiquement dans tes groupes.</p>
+      <a href="#classement">Choisir si tous les joueurs peuvent le voir</a>
     </article>
     <p class="help" id="pubHelp"></p>
     <button class="big" id="teamShare" disabled>Faire une image de mon gouvernement</button>
@@ -346,7 +343,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=29"></script>
+<script type="module" src="js/app.js?v=30"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
