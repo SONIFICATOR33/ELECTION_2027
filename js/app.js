@@ -1,10 +1,10 @@
-import { drawTeamGauge, teamPosition } from './team-gauge.js?v=33';
+import { drawTeamGauge, teamPosition } from './team-gauge.js?v=45';
 import { groupView } from './group-view.js?v=44';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=25';
+import * as D from './data.js?v=45';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
 import { openStore } from './store.js?v=44';
