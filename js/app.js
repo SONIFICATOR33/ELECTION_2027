@@ -1,12 +1,12 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=51';
-import { groupView } from './group-view.js?v=44';
+import { groupView } from './group-view.js?v=52';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=50';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=44';
+import { openStore } from './store.js?v=52';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=50';
@@ -670,7 +670,7 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Se connecter ou créer un compte</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Tu as déjà joué ? Entre le même pseudo et le même code à 4 chiffres pour retrouver tes pronos et tes groupes, même dans l’app installée. Première partie ? Choisis un pseudo et un code à 4 chiffres. Tes pronos et ton gouvernement sont visibles par tous les joueurs.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Se connecter ou créer un compte</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Tu as déjà joué ? Entre le même pseudo et le même code à 4 chiffres pour retrouver tes pronos et tes groupes, même dans l’app installée. Première partie ? Choisis un pseudo et un code à 4 chiffres. Tous tes pronos et ton gouvernement sont visibles par les autres joueurs. Tu peux simplement faire tes pronos, le gouvernement est facultatif.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
       <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">Continuer</button></form>`;

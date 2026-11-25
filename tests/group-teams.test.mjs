@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { groupsStore, COMMON_GROUP } from '../js/groups.js';
+import { groupsStore, COMMON_GROUP, visibleGameData } from '../js/groups.js';
 import { normalizeTeam, hasTeam } from '../js/team-state.js';
 import { fakeFirestore } from './helpers/fake-firestore.js';
 
 const PRIVATE = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const OTHER = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
 const team = normalizeTeam({ coeur: 'Président test', pm: 'Premier ministre test', min: { Justice: 'Ministre test' } });
-function setup(saved = {}) {
+function setup(saved = {}, publicGames = false) {
   const seed = {};
   for (const code of [PRIVATE, COMMON_GROUP]) {
     seed[`groups/${code}`] = { name: code === PRIVATE ? 'Amis' : 'Tous les joueurs', creator: 'vince' };
@@ -17,7 +17,7 @@ function setup(saved = {}) {
     seed[`players/${pid}/settings/groups`] = { groups: { [PRIVATE]: true, [COMMON_GROUP]: true } };
     seed[`pronos/${pid}`] = { weeks: {}, ...saved };
   }
-  const fake = fakeFirestore(seed);
+  const fake = fakeFirestore(seed, { publicGames });
   const client = pid => groupsStore({ F: fake.client(pid), db: {}, me: () => ({ pid, pseudo: pid }) });
   return { ...fake, client, groups: client('antoine') };
 }
@@ -132,4 +132,72 @@ test('partial joker input and partial legacy government keep their text', async 
   assert.equal(hasTeam({ jl: 'Culture' }), true);
   await groups.syncSharedTeam({ jl: 'Culture' }, false);
   assert.deepEqual(data.get(own).team, normalizeTeam({ jl: 'Culture' }));
+});
+
+
+test('les anciens pronos privés sont lisibles sans retour de leur auteur', async () => {
+  const { groups, data } = setup({}, true);
+  data.set('pronos/ancien', { weeks: {}, l1: ['lepen'], history: { l1: { '2026-10': ['glucksmann'] } }, team });
+  const loaded = await groups.load(COMMON_GROUP);
+  loaded.players.ancien = { pseudo: 'Ancien' };
+  const visible = visibleGameData(loaded);
+  assert.deepEqual(visible.pronos.ancien.l1, ['lepen']);
+  assert.deepEqual(visible.pronos.ancien.history.l1['2026-10'], ['glucksmann']);
+  assert.deepEqual(visible.teams.ancien, team);
+});
+
+test('un ancien réglage fermé n’empêche plus la publication du prochain prono', async () => {
+  const { groups, data } = setup();
+  data.get('players/antoine/settings/groups').groups[PRIVATE] = false;
+  await groups.writeProno(own, { l1: ['lepen'] }, null, null, '2026-11');
+  assert.deepEqual(data.get('groups/' + PRIVATE + '/l1/antoine').value, ['lepen']);
+  assert.equal(data.get('groups/' + PRIVATE + '/members/antoine').shared, true);
+  assert.equal(Object.hasOwn(data.get(own), 'team'), false);
+});
+
+test('le classement d’un groupe utilise uniquement les pronos de ses membres', async () => {
+  const { groups, data } = setup({ l1: ['lepen'] }, true);
+  data.set('pronos/exterieur', { l1: ['glucksmann'] });
+  const visible = visibleGameData(await groups.load(PRIVATE));
+  assert.deepEqual(Object.keys(visible.pronos).sort(), ['antoine', 'vince']);
+});
+
+test('la connexion republie toutes les étapes et leurs photos mensuelles', async () => {
+  const saved = { l1: ['lepen'], l2: ['glucksmann'], history: { l1: { '2026-10': ['lepen'] } } };
+  const { groups, data } = setup(saved);
+  data.get('players/antoine/settings/groups').groups[PRIVATE] = false;
+  await groups.ensureCommonGroup();
+  for (const code of [PRIVATE, COMMON_GROUP]) {
+    assert.deepEqual(data.get('groups/' + code + '/l1/antoine').history, saved.history.l1);
+    assert.deepEqual(data.get('groups/' + code + '/l2/antoine').value, saved.l2);
+  }
+});
+
+test('les copies disponibles fonctionnent avant la publication des règles', async () => {
+  const { groups, data } = setup();
+  data.set('groups/' + COMMON_GROUP + '/l1/antoine', { value: ['lepen'] });
+  const loaded = await groups.load(COMMON_GROUP);
+  assert.equal(loaded.canonical, null);
+  assert.deepEqual(visibleGameData(loaded).pronos.antoine.l1, ['lepen']);
+});
+
+test('le compte prévaut sur une copie ancienne, y compris après effacement', async () => {
+  const { groups, data } = setup({ team: null, l1: ['glucksmann'] }, true);
+  data.set(copy(COMMON_GROUP), { value: team });
+  data.set('groups/' + COMMON_GROUP + '/l1/antoine', { value: ['lepen'] });
+  const visible = visibleGameData(await groups.load(COMMON_GROUP));
+  assert.equal(visible.teams.antoine, undefined);
+  assert.deepEqual(visible.pronos.antoine.l1, ['glucksmann']);
+});
+
+test('les lecteurs voient les mises à jour sans pouvoir modifier le compte d’un autre', async () => {
+  const { groups, client, data } = setup({}, true);
+  const seen = [];
+  const stop = client('vince').watchPronos(pronos => seen.push(pronos));
+  await groups.writeProno(own, { l1: ['lepen'] }, null, null, '2026-11');
+  await new Promise(resolve => queueMicrotask(resolve));
+  assert.deepEqual(seen.at(-1).antoine.l1, ['lepen']);
+  await assert.rejects(client('vince').writeProno(own, { l1: ['glucksmann'] }, null, null, '2026-11'), /permission-denied/);
+  assert.deepEqual(data.get(own).l1, ['lepen']);
+  stop();
 });
