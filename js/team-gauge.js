@@ -1,4 +1,4 @@
-import { PEOPLE_GROUPS, POSTES } from './data.js?v=46';
+import { PEOPLE_GROUPS, POSTES } from './data.js?v=47';
 
 const bands = [
   ['Extrême gauche', '#EF7272'], ['Gauche', '#FFAD83'], ['Centre gauche', '#F4BF91'],
