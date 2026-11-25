@@ -1,6 +1,7 @@
 import { LOCK1, LOCK2, LOCKGP } from './data.js?v=50';
 import { monthKey } from './history.js';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
+import { teamVotesStore } from './team-votes.js?v=53';
 
 export const GROUP_CODE = /^[a-f0-9]{32}$/;
 export const GROUP_ADMIN = 'vince';
@@ -49,6 +50,7 @@ export function groupsStore(store) {
 
   let commonEnrollment;
   return {
+    ...teamVotesStore({ F, db, me: () => store.me() }),
     ensureCommonGroup() {
       commonEnrollment ||= join(COMMON_GROUP, 'Tous les joueurs', true)
         .then(async () => {

@@ -131,6 +131,32 @@ service cloud.firestore {
         && exists(/databases/$(db)/documents/groups/$(code)/members/$(get(dev()).data.pid));
     }
     function groupDoc(code) { return /databases/$(db)/documents/groups/$(code); }
+
+    // Le document unique empêche les votes multiples, même depuis deux appareils.
+    // Aucun compteur n'est modifiable : les points se calculent à partir des bulletins.
+    match /teamVotes/{ballot} {
+      function currentTeam(team) {
+        let saved = /databases/$(db)/documents/pronos/$(team);
+        let legacy = /databases/$(db)/documents/groups/e1ec7100202700000000000000000001/teams/$(team);
+        return exists(saved) && get(saved).data.keys().hasAny(['team'])
+          ? get(saved).data.team : (exists(legacy) ? get(legacy).data.value : null);
+      }
+      function validVote() {
+        let v = request.resource.data;
+        return v.keys().hasOnly(['team', 'voter', 'composition', 'createdAt'])
+          && v.team is string && validPid(v.team) && v.voter is string && owner(v.voter)
+          && v.team != v.voter && ballot == v.team + '~' + v.voter
+          && exists(/databases/$(db)/documents/players/$(v.team))
+          && validTeam(v.composition) && v.composition == currentTeam(v.team)
+          && (v.composition.coeur != '' || v.composition.pm != '' || v.composition.min.size() > 0
+            || v.composition.jl != '' || v.composition.jn != '')
+          && v.createdAt == request.time;
+      }
+      allow read: if registered();
+      allow create, update: if validVote();
+      allow delete: if owner(resource.data.voter);
+    }
+
     match /players/{pid}/settings/groups {
       allow get: if owner(pid);
       allow create, update: if owner(pid)
