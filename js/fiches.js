@@ -37,17 +37,6 @@ function programmeLink(c, p) {
   if (!p || !/^https:\/\//.test(p.url)) return '';
   return `<a class="programme-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(p.label + ' de ' + c.p + ' ' + c.n)} — site officiel, nouvel onglet">${esc(p.label)} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></a>`;
 }
-const searchKey = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr').trim();
-function filterDirectory() {
-  const q = searchKey($('#candidateSearch').value);
-  let count = 0;
-  for (const row of document.querySelectorAll('.candidate-entry')) {
-    const c = by[row.dataset.candidate];
-    row.hidden = !searchKey(`${c.p} ${c.n} ${c.party || ''}`).includes(q);
-    if (!row.hidden) count++;
-  }
-  $('#candidateEmpty').hidden = count > 0;
-}
 function renderDirectory(state = 'ready') {
   $('#candidateDirectory').innerHTML = C.map(c => {
     const p = DATA?.candidats[c.id]?.programme;
@@ -60,15 +49,16 @@ function renderDirectory(state = 'ready') {
       <p class="programme-note">${esc(note)}</p>
     </li>`;
   }).join('');
-  filterDirectory();
 }
 async function loadDirectory() {
   $('#programmeRetry').hidden = true;
+  $('#programmeStatus').hidden = false;
   $('#programmeStatus').textContent = 'Chargement des liens…';
   try {
     await load();
     renderDirectory();
-    $('#programmeStatus').textContent = DATA.programmesCheckedAt ? `Liens officiels vérifiés le ${dateLabel(DATA.programmesCheckedAt)} · ouverture dans un nouvel onglet.` : 'Liens vers les sites officiels · ouverture dans un nouvel onglet.';
+    $('#programmeStatus').textContent = '';
+    $('#programmeStatus').hidden = true;
   } catch {
     renderDirectory('error');
     $('#programmeStatus').textContent = 'Les liens n’ont pas pu être chargés. Réessaie dans un instant.';
@@ -166,7 +156,6 @@ export function initFiches() {
   }, true);
   if ($('#candidateDirectory')) {
     renderDirectory('loading');
-    $('#candidateSearch').addEventListener('input', filterDirectory);
     $('#programmeRetry').addEventListener('click', loadDirectory);
     loadDirectory();
   }
