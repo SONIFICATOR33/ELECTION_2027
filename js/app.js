@@ -1,12 +1,12 @@
-import { groupView } from './group-view.js?v=26';
-import { COMMON_GROUP } from './groups.js?v=22';
+import { groupView } from './group-view.js?v=27';
+import { COMMON_GROUP } from './groups.js?v=27';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=25';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=22';
+import { openStore } from './store.js?v=27';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=16';

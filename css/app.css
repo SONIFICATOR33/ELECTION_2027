@@ -516,3 +516,8 @@ h2{font-weight:600;letter-spacing:-.2px}
 .visibility-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
 .visibility-choices .choice-control { min-width: 78px; padding-inline: 10px; border: 1px solid var(--line); border-radius: 8px; }
 .visibility-choices .choice-control:has(:checked) { border-color: #28754c; background: #dff4e6; color: #174829; }
+
+.team-comments { list-style: none; padding: 0; }
+.team-comments li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.team-comments li p { white-space: pre-wrap; overflow-wrap: anywhere; margin-block: 4px; }
+[data-team-comments] textarea { display: block; width: 100%; font: inherit; margin-block: 6px; }

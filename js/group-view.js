@@ -1,7 +1,8 @@
+import { showTeamComments } from './team-comments.js';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=22';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=27';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -124,14 +125,19 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
 
   async function showPlayer(id, kind) {
     const player = display?.players[id];
-    if (!player) return;
+    if (!player || root.hasAttribute('aria-busy')) return;
     heading.textContent = (kind === 'team' ? 'Gouvernement de ' : 'Pronos de ') + player.pseudo;
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
-    else details.textContent = 'Chargement de l’image…';
+    else details.innerHTML = '<div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
     dialog.showModal();
     if (kind !== 'team') return;
     const closeOnLoad = new AbortController();
     dialog.addEventListener('close', () => closeOnLoad.abort(), { once: true });
+    const store = getStore();
+    const image = details.querySelector('[data-team-image]');
+    showTeamComments(details.querySelector('[data-team-comments]'), {
+      groups: store.groups, code: selected, team: id, player: store.me().pid, signal: closeOnLoad.signal
+    });
     try {
       const blob = await drawTeam(display.teams[id], player.pseudo);
       if (closeOnLoad.signal.aborted || !dialog.open) return;
@@ -140,9 +146,9 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
       const img = document.createElement('img');
       img.src = imageUrl;
       img.alt = 'Composition du gouvernement de ' + player.pseudo;
-      details.replaceChildren(img);
+      image.replaceChildren(img);
     } catch {
-      if (!closeOnLoad.signal.aborted && dialog.open) details.textContent = 'Image indisponible.';
+      if (!closeOnLoad.signal.aborted && dialog.open) image.textContent = 'Image indisponible.';
     }
   }
 

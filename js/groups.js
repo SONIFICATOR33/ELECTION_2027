@@ -22,6 +22,7 @@ export function groupsStore(store) {
   const member = code => doc('groups', code, 'members', pid());
   const settings = () => doc('players', pid(), 'settings', 'groups');
   const entry = (code, stage) => doc('groups', code, stage, pid());
+  const comments = (code, team) => F.collection(db, 'groups', code, 'teams', team, 'comments');
 
   async function join(code, name, common = false) {
     if (!GROUP_CODE.test(code)) throw new Error('Ce lien d’invitation est invalide.');
@@ -102,6 +103,22 @@ export function groupsStore(store) {
     },
     async unpublishTeam(code) {
       await F.deleteDoc(entry(code, 'teams'));
+    },
+    watchTeamComments(code, team, update, fail) {
+      const recent = F.query(comments(code, team), F.orderBy('createdAt', 'desc'), F.limit(50));
+      return F.onSnapshot(recent, { includeMetadataChanges: true }, snapshot => {
+        if (!snapshot.metadata.fromCache) {
+          update(snapshot.docs.map(item => ({ ...item.data(), id: item.id })).reverse());
+        }
+      }, fail);
+    },
+    async addTeamComment(code, team, text) {
+      await F.addDoc(comments(code, team), {
+        author: pid(), pseudo: store.me().pseudo, text, createdAt: F.serverTimestamp()
+      });
+    },
+    async deleteTeamComment(code, team, id) {
+      await F.deleteDoc(F.doc(comments(code, team), id));
     },
     async load(code, time = Date.now()) {
       // Old rules may remain in place during the rollout.
