@@ -98,18 +98,6 @@ export function groupsStore(store) {
         tx.set(settings(), { groups: { ...list, [code]: shared } });
       });
     },
-    async teamVisibility() {
-      const groups = await this.list();
-      return Promise.all(groups.map(async g => ({
-        ...g, visible: (await F.getDoc(entry(g.code, 'teams'))).exists()
-      })));
-    },
-    async publishTeam(code, team) {
-      await F.setDoc(entry(code, 'teams'), { value: team });
-    },
-    async unpublishTeam(code) {
-      await F.deleteDoc(entry(code, 'teams'));
-    },
     async syncSharedTeam(team, onlyMissing) {
       const player = pid();
       const prefs = doc('players', player, 'settings', 'groups');
@@ -130,13 +118,10 @@ export function groupsStore(store) {
         if (saved.exists() && ((!hasSaved && value) || (!onlyMissing && (!hasSaved || !sameTeam(saved.data().team, value))))) {
           tx.update(canonical, { team: value, updatedAt: F.serverTimestamp() });
         }
-        groups.forEach((code, index) => {
-          const exists = snapshots[index].exists();
-          // Le partage public reste un choix explicite ; les groupes privés
-          // reçoivent automatiquement la même composition que le compte.
-          if (code === COMMON_GROUP && !exists) return;
-          if (value && (!exists || !sameTeam(snapshots[index].data().value, value))) tx.set(refs[index], { value });
-          else if (!value && exists) tx.delete(refs[index]);
+        refs.forEach((ref, index) => {
+          const snapshot = snapshots[index];
+          if (value && (!snapshot.exists() || !sameTeam(snapshot.data().value, value))) tx.set(ref, { value });
+          else if (!value && snapshot.exists()) tx.delete(ref);
         });
         return value;
       });

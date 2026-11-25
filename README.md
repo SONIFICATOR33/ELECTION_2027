@@ -8,20 +8,20 @@ Jeu de pronostics sans argent sur la présidentielle 2027.
 Le pseudo et le PIN à quatre chiffres permettent de retrouver le compte sur un
 autre appareil. Vincent crée les groupes dans **Joueurs et Groupes**, puis
 envoie le lien d’invitation. Les invités peuvent s’inscrire en ouvrant le lien.
-Les pronos et les gouvernements sont partagés automatiquement entre les
-membres d’un même groupe privé. Le bonus de rareté et le classement sont
+Chaque joueur peut consulter les gouvernements, même partiels, dans
+**Joueurs et Groupes → Tous les joueurs**. Le bonus de rareté et le classement sont
 calculés par groupe.
 
 Une **photo mensuelle** dans la fiche de chaque joueur reprend le dernier
 prono enregistré pour chaque étape à la fin du mois, ou le prono précédent
 s’il est inchangé. Les photos mensuelles restent consultables après l’élection.
 Pour les pronos antérieurs à cette version, seul l’historique conservé peut
-être affiché. Dans **Tous les joueurs**, le partage du gouvernement reste
-facultatif : la case se trouve dans **Joueurs et Groupes**.
+être affiché.
 
 Le gouvernement est sauvegardé avec le compte et retrouvé sur les autres
 appareils. Les modifications hors connexion restent sur l’appareil jusqu’à
-la prochaine synchronisation. Pour les anciennes compositions restées
+la prochaine synchronisation. Une ancienne composition est partagée avec tous
+quand son auteur rouvre le jeu en ligne. Pour les compositions restées
 uniquement sur un téléphone, leur auteur doit rouvrir le jeu une fois sur ce
 téléphone. Les gouvernements disponibles apparaissent automatiquement dans
 la liste des membres, sans recharger la page.

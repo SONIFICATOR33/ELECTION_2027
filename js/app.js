@@ -1,5 +1,5 @@
 import { drawTeamGauge, teamPosition } from './team-gauge.js?v=33';
-import { groupView } from './group-view.js?v=43';
+import { groupView } from './group-view.js?v=44';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
@@ -7,7 +7,7 @@ import { normalizeTeam, hasTeam } from './team-state.js';
 import * as D from './data.js?v=25';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=39';
+import { openStore } from './store.js?v=44';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=40';
@@ -424,13 +424,6 @@ function syncExistingTeam() {
   return queueTeamSync(true).then(() => true).catch(error => { console.warn(error); return false; });
 }
 
-async function shareTeamWithGroup(code) {
-  await queueTeamSync(true);
-  if (!hasTeam(draft.team)) {
-    throw new Error('Compose ton gouvernement avant de le partager avec tous les joueurs.');
-  }
-  await store.groups.publishTeam(code, clone(draft.team));
-}
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
 function renderTeamGauge() {
   const position = teamPosition(draft.team);
@@ -666,7 +659,7 @@ function openJoin(msg) {
   if (ME) {
     $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
   } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Se connecter ou créer un compte</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Tu as déjà joué ? Entre le même pseudo et le même code à 4 chiffres pour retrouver tes pronos et tes groupes, même dans l’app installée. Première partie ? Choisis un pseudo et un code à 4 chiffres. Tes pronos sont visibles par tous les joueurs. Ton gouvernement est partagé automatiquement dans les groupes que tu rejoins. Tu choisis s’il est visible aussi par tous les joueurs.</p>
+    $('#sheetIn').innerHTML = `<h2 id="sheetT">Se connecter ou créer un compte</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Tu as déjà joué ? Entre le même pseudo et le même code à 4 chiffres pour retrouver tes pronos et tes groupes, même dans l’app installée. Première partie ? Choisis un pseudo et un code à 4 chiffres. Tes pronos et ton gouvernement sont visibles par tous les joueurs.</p>
       <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
       <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
       <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">Continuer</button></form>`;
@@ -752,7 +745,7 @@ window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
 
 const groupUI = groupView($('#group-view'), {
-  getStore: () => store, withUser: withMe, drawTeam, shareTeamWithGroup, syncExistingTeam, notify: toast
+  getStore: () => store, withUser: withMe, drawTeam, syncExistingTeam, notify: toast
 });
 function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderPollsOverview();
