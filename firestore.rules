@@ -160,6 +160,24 @@ service cloud.firestore {
         allow update: if owner(pid) && validMember() && request.resource.data.pseudo == resource.data.pseudo;
       }
 
+      match /teams/{team}/comments/{comment} {
+        function canSeeTeam() {
+          return inside(code) && exists(/databases/$(db)/documents/groups/$(code)/teams/$(team));
+        }
+        function validComment() {
+          let v = request.resource.data;
+          return v.keys().hasOnly(['author', 'pseudo', 'text', 'createdAt'])
+            && v.author is string && owner(v.author)
+            && v.pseudo == get(/databases/$(db)/documents/groups/$(code)/members/$(v.author)).data.pseudo
+            && v.text is string && v.text.size() <= 500 && v.text.matches('(?s).*[^\\s].*')
+            && v.createdAt == request.time;
+        }
+        allow get: if canSeeTeam();
+        allow list: if canSeeTeam() && request.query.limit <= 50;
+        allow create: if canSeeTeam() && validComment();
+        allow delete: if canSeeTeam() && owner(resource.data.author);
+      }
+
       match /{stage}/{pid} {
         function isProno() { return stage in ['l1', 'l2', 'weeks']; }
         function matchingProno() {
