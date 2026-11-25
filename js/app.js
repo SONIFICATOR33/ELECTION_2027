@@ -740,8 +740,13 @@ function showSplash() {
   requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.3, alpha: 0.16, scale: 1.1 }));
 }
 function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; }
+const entrySound = new Audio(new URL('../audio/bouchon2.wav', import.meta.url));
+entrySound.preload = 'auto';
 $('#splashGo').onclick = () => {
-  snd.logo();
+  if (snd.isOn()) {
+    entrySound.currentTime = 0;
+    entrySound.play().catch(() => {});
+  }
   hideSplash();
   const next = [1, 2, 3].find(i => isOpen(SBK[i]) && !done(SBK[i]));
   if (next) { SB[next] = true; renderSB(); }
