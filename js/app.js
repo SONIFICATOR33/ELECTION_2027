@@ -484,6 +484,10 @@ const teamImageDialog = $('#team-image-dialog');
 const teamImagePreview = $('#team-image-preview');
 const teamImageShare = $('#team-image-share');
 const teamImageDownload = $('#team-image-download');
+const castingTitle = pseudo => {
+  const author = pseudo?.trim();
+  return author ? 'Le casting ' + (/^[aeiouyàâäéèêëîïôöùûü]/i.test(author) ? 'd’' : 'de ') + author : 'Mon casting';
+};
 let teamImageUrl, teamImageFile;
 
 teamImageDialog.addEventListener('close', () => {
@@ -517,6 +521,8 @@ $('#teamShare').onclick = async event => {
     teamImageFile = new File([blob], 'mon-gouvernement.png', { type: 'image/png' });
     teamImageUrl = URL.createObjectURL(blob);
     teamImagePreview.src = teamImageUrl;
+    teamImagePreview.alt = castingTitle(ME?.pseudo) + ' · gouvernement et polarité';
+    teamImageDialog.setAttribute('aria-label', castingTitle(ME?.pseudo));
     teamImageDownload.href = teamImageUrl;
     teamImageShare.hidden = !(navigator.share && navigator.canShare?.({ files: [teamImageFile] }));
     teamImageDialog.showModal();
@@ -526,7 +532,7 @@ $('#teamShare').onclick = async event => {
     renderPublish();
   }
 };
-async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
+async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
   try { await Promise.all([document.fonts.load('600 60px "Manrope"'), document.fonts.load('700 36px "Manrope"'), document.fonts.load('500 26px "Manrope"')]); } catch {}
   const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = 1460;
   const x = cv.getContext('2d');
@@ -535,8 +541,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   const black = '#0a0a0a';
   const margin = 54, gap = 16, cardWidth = (W - 2 * margin - gap) / 2;
   const colors = ['#F4D078', '#F5AE96', '#C9D9FF', '#9ED8D2', '#D9BBFF'];
-  const author = pseudo.trim() || 'moi';
-  const title = 'Le gouvernement ' + (/^[aeiouyàâäéèêëîïôöùûü]/i.test(author) ? 'd’' : 'de ') + author;
+  const title = castingTitle(pseudo);
 
   function card(label, name, left, top, width, height, accent, primary = false) {
     x.fillStyle = black;
@@ -565,8 +570,8 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
     x.fillRect(margin + index * 35, 43, 25, 6);
   });
   x.fillStyle = cream;
-  x.font = '600 82px ' + font;
-  const titleSize = Math.min(82, Math.floor(82 * (W - 2 * margin) / x.measureText(title).width));
+  x.font = '600 60px ' + font;
+  const titleSize = Math.min(60, Math.floor(60 * (W - 2 * margin) / x.measureText(title).width));
   x.font = '600 ' + titleSize + 'px ' + font;
   x.fillText(title, margin, 140);
   card('Président', t.coeur, margin, 188, cardWidth, 120, colors[0], true);
