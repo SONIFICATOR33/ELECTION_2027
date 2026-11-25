@@ -10,7 +10,7 @@ import * as S from './scoring.js';
 import { openStore } from './store.js?v=39';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
-import { initFiches, portraitThumb } from './fiches.js?v=38';
+import { initFiches, portraitThumb } from './fiches.js?v=40';
 
 /* place de chaque candidat sur l'axe gauche-droite (-1 à 1), null = hors axe : sert au son */
 const AXIS = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
