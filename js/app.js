@@ -3,7 +3,7 @@ import { COMMON_GROUP } from './groups.js?v=22';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=22';
+import * as D from './data.js?v=25';
 import { C, by } from './data.js';
 import * as S from './scoring.js';
 import { openStore } from './store.js?v=22';

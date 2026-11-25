@@ -4,7 +4,7 @@
 
 <img src="img/glucksmann.webp" alt="" width="240">
 
-Photo [Raphaël Glucksmann, espiègle, place Vendôme, le 7 septembre 2026.jpg](https://commons.wikimedia.org/wiki/File:Rapha%C3%ABl_Glucksmann,_espi%C3%A8gle,_place_Vend%C3%B4me,_le_7_septembre_2026.jpg) · Xsolba · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) · redimensionnée.
+Photo [Portrait officiel de Raphaël Glucksmann, juillet 2024](https://commons.wikimedia.org/wiki/File:1720448398743_20240708_GLUCKSMANN_Raphael_FR_006.jpg) · © Union européenne 2024, Parlement européen · [Conditions de réutilisation du Parlement européen](https://www.europarl.europa.eu/legal-notice/true) · redimensionnée.
 
 ## Dans la course
 
