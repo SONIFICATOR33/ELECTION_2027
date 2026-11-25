@@ -1,5 +1,6 @@
 import { LOCK1, LOCK2, LOCKGP } from './data.js?v=22';
 import { monthKey } from './history.js';
+import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 
 export const GROUP_CODE = /^[a-f0-9]{32}$/;
 export const GROUP_ADMIN = 'vince';
@@ -111,20 +112,39 @@ export function groupsStore(store) {
     },
     async syncSharedTeam(team, onlyMissing) {
       const player = pid();
-      const prefs = settings();
-      await F.runTransaction(db, async tx => {
-        const groups = Object.keys((await tx.get(prefs)).data()?.groups || {});
+      const prefs = doc('players', player, 'settings', 'groups');
+      const canonical = doc('pronos', player);
+      return F.runTransaction(db, async tx => {
+        const [settingsSnapshot, saved] = await Promise.all([tx.get(prefs), tx.get(canonical)]);
+        const groups = Object.keys(settingsSnapshot.data()?.groups || {});
         const refs = groups.map(code => doc('groups', code, 'teams', player));
         const snapshots = await Promise.all(refs.map(ref => tx.get(ref)));
-        const value = team || (onlyMissing ? snapshots.find(snapshot => snapshot.exists())?.data()?.value : null);
+        const hasSaved = Object.hasOwn(saved.data() || {}, 'team');
+        // Au chargement, le compte fait foi. Les anciennes copies et le brouillon
+        // local servent à migrer un compte qui n'a pas encore de sauvegarde.
+        const source = onlyMissing
+          ? hasSaved ? saved.data().team : hasTeam(team) ? team
+            : snapshots.find(snapshot => hasTeam(snapshot.data()?.value))?.data()?.value
+          : team;
+        const value = hasTeam(source) ? normalizeTeam(source) : null;
+        if (saved.exists() && ((!hasSaved && value) || (!onlyMissing && (!hasSaved || !sameTeam(saved.data().team, value))))) {
+          tx.update(canonical, { team: value, updatedAt: F.serverTimestamp() });
+        }
         groups.forEach((code, index) => {
           const exists = snapshots[index].exists();
-          if (onlyMissing && (exists || code === COMMON_GROUP)) return;
+          // Le partage public reste un choix explicite ; les groupes privés
+          // reçoivent automatiquement la même composition que le compte.
           if (code === COMMON_GROUP && !exists) return;
-          if (value) tx.set(refs[index], { value });
-          else if (exists) tx.delete(refs[index]);
+          if (value && (!exists || !sameTeam(snapshots[index].data().value, value))) tx.set(refs[index], { value });
+          else if (!value && exists) tx.delete(refs[index]);
         });
+        return value;
       });
+    },
+    watchTeams(code, update, fail) {
+      return F.onSnapshot(F.collection(db, 'groups', code, 'teams'), { includeMetadataChanges: true }, snapshot => {
+        if (!snapshot.metadata.fromCache) update(Object.fromEntries(snapshot.docs.map(d => [d.id, d.data().value])));
+      }, fail);
     },
     watchTeamComments(code, team, update, fail) {
       const recent = F.query(comments(code, team), F.orderBy('createdAt', 'desc'), F.limit(50));
