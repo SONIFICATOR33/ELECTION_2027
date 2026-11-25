@@ -443,7 +443,7 @@ async function shareTeamWithGroup(code) {
     throw new Error('Choisis au moins ton président ou ton Premier ministre dans Mon gouvernement.');
   }
   await store.groups.publishTeam(code, clone(draft.team));
-  await saveTeam();
+  saveTeam();
 }
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
 function renderTeamGauge() {
@@ -470,25 +470,63 @@ $('#v-team').addEventListener('change', e => {
   const v = e.target.value;
   if (v === '__autre') { d.classList.add('other'); const i = d.querySelector('input'); setT(d.dataset.k, i.value.trim()); i.focus(); }
   else { d.classList.remove('other'); setT(d.dataset.k, v); if (v) snd.pick(v in byName ? AXIS(byName[v]) : null); }
-  const was = !$('#teamShare').disabled; renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux faire une image.'); }
+  const was = !$('#teamShare').disabled; saveTeam(); renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux faire une image.'); }
 });
 $('#v-team').addEventListener('input', e => {
-  if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; return; }
-  const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); renderPublish(); }
+  if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; saveTeam(); return; }
+  const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); saveTeam(); renderPublish(); }
 });
-async function saveTeam() { try { localStorage.setItem(teamKey(), JSON.stringify(draft.team)); } catch (e) { } dirty.team = false; }
-$('#teamSave').onclick = async () => { if (!draft.team.pm && !draft.team.coeur) { toast('Choisis au moins ton président ou ton Premier ministre'); return; } await saveTeam(); snd.vote(); toast('Team enregistrée sur ton téléphone'); };
-$('#teamShare').onclick = async () => {
+function saveTeam() {
+  try {
+    localStorage.setItem(teamKey(), JSON.stringify(draft.team));
+    dirty.team = false;
+  } catch {}
+}
+
+const teamImageDialog = $('#team-image-dialog');
+const teamImagePreview = $('#team-image-preview');
+const teamImageShare = $('#team-image-share');
+const teamImageDownload = $('#team-image-download');
+let teamImageUrl, teamImageFile;
+
+teamImageDialog.addEventListener('close', () => {
+  URL.revokeObjectURL(teamImageUrl);
+  teamImagePreview.removeAttribute('src');
+  teamImageDownload.removeAttribute('href');
+  teamImageFile = null;
+});
+
+teamImageShare.onclick = async () => {
+  if (!teamImageFile) return;
+  try {
+    await navigator.share({
+      files: [teamImageFile], title: 'Mon gouvernement',
+      text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname
+    });
+  } catch (error) {
+    if (error.name !== 'AbortError') toast('Partage impossible. Tu peux télécharger l’image.');
+  }
+};
+
+$('#teamShare').onclick = async event => {
   if (teamCount() < 12) { snd.error(); toast('Complète d’abord ton gouvernement'); return; }
-  if (dirty.team) await saveTeam();
-  snd.logo();
-  const blob = await drawTeam();
-  const file = new File([blob], 'mon-gouvernement.png', { type: 'image/png' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file], title: 'Mon gouvernement', text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname }); } catch (e) { }
-  } else {
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
-    toast('Image téléchargée : envoie-la à tes amis');
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    if (dirty.team) saveTeam();
+    snd.logo();
+    const blob = await drawTeam();
+    if (!blob) throw new Error('Image indisponible');
+    teamImageFile = new File([blob], 'mon-gouvernement.png', { type: 'image/png' });
+    teamImageUrl = URL.createObjectURL(blob);
+    teamImagePreview.src = teamImageUrl;
+    teamImageDownload.href = teamImageUrl;
+    teamImageShare.hidden = !(navigator.share && navigator.canShare?.({ files: [teamImageFile] }));
+    teamImageDialog.showModal();
+  } catch {
+    toast('Impossible de créer l’image. Réessaie.');
+  } finally {
+    renderPublish();
   }
 };
 async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
@@ -553,7 +591,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   x.textAlign = 'center';
   x.fillStyle = cream;
   x.font = '600 42px ' + serif;
-  x.fillText('Le compteur de Matignon', W / 2, 995);
+  x.fillText('La polarité de ton Gouve', W / 2, 995);
   drawTeamGauge(x, margin + 30, 1002, W - 2 * (margin + 30), position.average);
   x.fillStyle = cream;
   x.font = '600 26px ' + sans;
