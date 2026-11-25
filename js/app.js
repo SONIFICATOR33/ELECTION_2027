@@ -1,3 +1,4 @@
+import { drawTeamGauge, teamPosition } from './team-gauge.js';
 import { groupView } from './group-view.js?v=27';
 import { COMMON_GROUP } from './groups.js?v=27';
 /* =====================================================================
@@ -445,7 +446,20 @@ async function shareTeamWithGroup(code) {
   await saveTeam();
 }
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
+function renderTeamGauge() {
+  const position = teamPosition(draft.team);
+  const card = $('#team-gauge');
+  card.hidden = position.average === null;
+  if (card.hidden) return;
+  const canvas = $('#team-gauge-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawTeamGauge(ctx, 0, 0, canvas.width, position.average);
+  $('#team-gauge-summary').textContent = position.label + ' · ' + position.coverage
+    + (position.mixed ? ' · Équipe très contrastée' : '');
+}
 function renderPublish() {
+  renderTeamGauge();
   const n = teamCount(), ok = n === 12, b = $('#teamShare');
   b.disabled = !ok; b.classList.toggle('off', !ok);
   b.textContent = 'Faire une image de mon gouvernement';
@@ -479,39 +493,76 @@ $('#teamShare').onclick = async () => {
 };
 async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   try { await Promise.all([document.fonts.load('600 60px "Bodoni Moda"'), document.fonts.load('500 60px "Bodoni Moda"'), document.fonts.load('500 26px "Hanken Grotesk"')]); } catch (e) { }
-  const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = 1350;
+  const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = 1460;
   const x = cv.getContext('2d');
-  const SERIF = '"Bodoni Moda", Didot, Georgia, serif', SANS = '"Hanken Grotesk", system-ui, sans-serif';
-  x.fillStyle = '#FFFCF6'; x.fillRect(0, 0, W, H);
-  x.fillStyle = '#0E0E0E'; x.fillRect(0, 0, W, 250);
-  [['#1F3A93', 0], ['#FBF9F4', 1], ['#C8102E', 2]].forEach(([c, i]) => { x.fillStyle = c; x.fillRect(64 + i * 30, 64, 30, 56); });
-  x.strokeStyle = '#C6A15B'; x.lineWidth = 2; x.strokeRect(64, 64, 90, 56);
-  x.fillStyle = '#FBF9F4'; x.font = '500 66px ' + SERIF; x.fillText('Mon gouvernement', 184, 116);
-  x.fillStyle = '#E9D7A8'; x.font = '500 34px ' + SANS; x.fillText('Le gouvernement de ' + pseudo, 64, 196);
-  x.fillStyle = '#C6A15B'; x.fillRect(0, 250, W, 4);
-  let y0 = 325;
-  if (t.coeur) {
-    x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Président', 64, y0);
-    x.fillStyle = '#1A1A1A'; x.font = '600 62px ' + SERIF; x.fillText(fit(x, t.coeur, W - 128), 64, y0 + 66);
-    y0 += 125;
+  const serif = '"Bodoni Moda", Georgia, serif';
+  const sans = '"Hanken Grotesk", system-ui, sans-serif';
+  const cream = '#FFF8E5';
+  const navy = '#121E36';
+  const margin = 54, gap = 16, cardWidth = (W - 2 * margin - gap) / 2;
+  const colors = ['#F4D078', '#F5AE96', '#C9D9FF', '#9ED8D2', '#D9BBFF'];
+  const author = pseudo.trim() || 'moi';
+  const title = 'Le gouvernement ' + (/^[aeiouyàâäéèêëîïôöùûü]/i.test(author) ? 'd’' : 'de ') + author;
+
+  function card(label, name, left, top, width, height, accent, primary = false) {
+    x.fillStyle = primary ? accent : '#26354E';
+    x.beginPath();
+    x.roundRect(left, top, width, height, 15);
+    x.fill();
+    if (!primary) {
+      x.fillStyle = accent;
+      x.fillRect(left + 13, top + 15, 4, height - 30);
+    }
+    x.fillStyle = primary ? navy : accent;
+    x.font = '700 ' + (primary ? 26 : 24) + 'px ' + sans;
+    x.fillText(fit(x, label, width - 58), left + 28, top + 36);
+    x.fillStyle = primary ? navy : cream;
+    x.font = '700 ' + (primary ? 43 : 36) + 'px ' + sans;
+    x.fillText(fit(x, name || 'Poste libre', width - 58), left + 28, top + (primary ? 90 : 78));
   }
-  x.fillStyle = '#A8843F'; x.font = '600 26px ' + SANS; x.fillText('Premier ministre', 64, y0);
-  x.fillStyle = '#1A1A1A'; x.font = '600 ' + (t.coeur ? 56 : 72) + 'px ' + SERIF; x.fillText(fit(x, t.pm || '—', W - 128), 64, y0 + (t.coeur ? 62 : 75));
-  let y = y0 + (t.coeur ? 135 : 155);
-  const step = t.coeur ? 56 : 64;
-  x.strokeStyle = '#E8DDCB'; x.lineWidth = 1.5;
-  for (const p of D.POSTES) {
-    x.fillStyle = '#5D6377'; x.font = '500 26px ' + SANS; x.fillText(fit(x, p, 410), 64, y);
-    x.fillStyle = '#1A1A1A'; x.font = '600 36px ' + SERIF; x.fillText(fit(x, (t.min || {})[p] || '—', W - 560), 500, y);
-    x.beginPath(); x.moveTo(64, y + 20); x.lineTo(W - 64, y + 20); x.stroke(); y += step;
-  }
+
+  x.fillStyle = navy;
+  x.fillRect(0, 0, W, H);
+  colors.forEach((color, index) => {
+    x.fillStyle = color;
+    x.fillRect(margin + index * 35, 43, 25, 6);
+  });
+  x.fillStyle = cream;
+  x.font = '600 82px ' + serif;
+  const titleSize = Math.min(82, Math.floor(82 * (W - 2 * margin) / x.measureText(title).width));
+  x.font = '600 ' + titleSize + 'px ' + serif;
+  x.fillText(title, margin, 140);
+  card('Président', t.coeur, margin, 188, cardWidth, 120, colors[0], true);
+  card('Premier ministre', t.pm, margin + cardWidth + gap, 188, cardWidth, 120, colors[3], true);
+  D.POSTES.forEach((post, index) => {
+    const left = margin + (index % 2) * (cardWidth + gap);
+    const top = 329 + Math.floor(index / 2) * 107;
+    card(post, t.min?.[post], left, top, cardWidth, 95, colors[index % colors.length]);
+  });
   if (t.jl && t.jn) {
-    x.fillStyle = '#C8102E'; x.font = '600 26px ' + SANS; x.fillText(fit(x, 'Joker : ' + t.jl, W - 128), 64, y + 20);
-    x.fillStyle = '#1A1A1A'; x.font = '500 42px ' + SERIF; x.fillText(fit(x, t.jn, W - 128), 64, y + 70);
+    x.fillStyle = colors[0];
+    x.font = '700 30px ' + sans;
+    x.fillText(fit(x, 'Joker · ' + t.jl + ' · ' + t.jn, W - 2 * margin), margin, 903);
   }
-  x.fillStyle = '#0E0E0E'; x.fillRect(0, H - 90, W, 90); x.fillStyle = '#C6A15B'; x.fillRect(0, H - 90, W, 3);
-  x.fillStyle = '#FBF9F4'; x.font = '500 30px ' + SERIF; x.fillText('Les pronos des vieux boucs', 64, H - 34);
-  x.fillStyle = '#E9D7A8'; x.font = '500 22px ' + SANS; const u = (location.host + location.pathname).replace(/index\.html$/, '').replace(/\/$/, ''); x.fillText(u, W - 64 - x.measureText(u).width, H - 36);
+
+  const position = teamPosition(t);
+  x.fillStyle = '#1B2942';
+  x.beginPath();
+  x.roundRect(margin, 934, W - 2 * margin, 420, 24);
+  x.fill();
+  x.textAlign = 'center';
+  x.fillStyle = cream;
+  x.font = '600 42px ' + serif;
+  x.fillText('Le compteur de Matignon', W / 2, 995);
+  drawTeamGauge(x, margin + 30, 1002, W - 2 * (margin + 30), position.average);
+  x.fillStyle = cream;
+  x.font = '600 26px ' + sans;
+  const summary = position.average === null ? 'Aucune position renseignée'
+    : position.label + ' · ' + position.coverage + (position.mixed ? ' · Équipe très contrastée' : '');
+  x.fillText(fit(x, summary, W - 2 * margin - 48), W / 2, 1317);
+  x.fillStyle = colors[0];
+  x.font = '600 26px ' + sans;
+  x.fillText('Prône ton Président · Just for fun', W / 2, 1410);
   return new Promise(r => cv.toBlob(r, 'image/png'));
 }
 function fit(x, s, w) { s = String(s); if (x.measureText(s).width <= w) return s; while (s.length > 1 && x.measureText(s + '…').width > w) s = s.slice(0, -1); return s + '…'; }
