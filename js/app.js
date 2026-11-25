@@ -320,6 +320,8 @@ $('#recap-share').onclick = async () => {
 };
 
 async function drawPronoRecap() {
+  try { await Promise.all([document.fonts.load('600 64px "Inter"'), document.fonts.load('500 32px "Inter"')]); } catch {}
+  const font = '"Inter", system-ui, sans-serif';
   const saved = mine(), g = S.current(saved);
   const candidate = id => by[id] ? by[id].p + ' ' + by[id].n : id;
   const sections = [
@@ -336,18 +338,18 @@ async function drawPronoRecap() {
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#F3E6C8';
-  ctx.font = '64px Georgia';
+  ctx.font = '600 64px ' + font;
   ctx.fillText('Mes pronos', 64, 96);
-  ctx.font = '32px sans-serif';
+  ctx.font = '500 32px ' + font;
   ctx.fillText(ME ? `Prone ton President · ${ME.pseudo}` : 'Prone ton President', 64, 151, 952);
   let y = 237;
   for (const [title, lines] of sections) {
     ctx.fillStyle = '#E6D3A3';
-    ctx.font = 'bold 36px sans-serif';
+    ctx.font = '700 36px ' + font;
     ctx.fillText(title, 64, y, 952);
     y += 52;
     ctx.fillStyle = '#F3EEE4';
-    ctx.font = '32px sans-serif';
+    ctx.font = '500 32px ' + font;
     for (const line of lines.length ? lines : ['Prono non enregistré']) {
       ctx.fillText(line, 64, y, 952);
       y += 43;
@@ -510,11 +512,10 @@ $('#teamShare').onclick = async event => {
   }
 };
 async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
-  try { await Promise.all([document.fonts.load('600 60px "Bodoni Moda"'), document.fonts.load('500 60px "Bodoni Moda"'), document.fonts.load('500 26px "Hanken Grotesk"')]); } catch (e) { }
+  try { await Promise.all([document.fonts.load('600 60px "Inter"'), document.fonts.load('700 36px "Inter"'), document.fonts.load('500 26px "Inter"')]); } catch {}
   const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = 1460;
   const x = cv.getContext('2d');
-  const serif = '"Bodoni Moda", Georgia, serif';
-  const sans = '"Hanken Grotesk", system-ui, sans-serif';
+  const font = '"Inter", system-ui, sans-serif';
   const cream = '#FFF8E5';
   const black = '#000000';
   const margin = 54, gap = 16, cardWidth = (W - 2 * margin - gap) / 2;
@@ -535,10 +536,10 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
       x.fillRect(left + 13, top + 15, 4, height - 30);
     }
     x.fillStyle = accent;
-    x.font = '700 ' + (primary ? 26 : 24) + 'px ' + sans;
+    x.font = '700 ' + (primary ? 26 : 24) + 'px ' + font;
     x.fillText(fit(x, label, width - 58), left + 28, top + 36);
     x.fillStyle = cream;
-    x.font = '700 ' + (primary ? 43 : 36) + 'px ' + sans;
+    x.font = '700 ' + (primary ? 43 : 36) + 'px ' + font;
     x.fillText(fit(x, name || 'Poste libre', width - 58), left + 28, top + (primary ? 90 : 78));
   }
 
@@ -549,9 +550,9 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
     x.fillRect(margin + index * 35, 43, 25, 6);
   });
   x.fillStyle = cream;
-  x.font = '600 82px ' + serif;
+  x.font = '600 82px ' + font;
   const titleSize = Math.min(82, Math.floor(82 * (W - 2 * margin) / x.measureText(title).width));
-  x.font = '600 ' + titleSize + 'px ' + serif;
+  x.font = '600 ' + titleSize + 'px ' + font;
   x.fillText(title, margin, 140);
   card('Président', t.coeur, margin, 188, cardWidth, 120, colors[0], true);
   card('Premier ministre', t.pm, margin + cardWidth + gap, 188, cardWidth, 120, colors[3], true);
@@ -562,7 +563,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   });
   if (t.jl && t.jn) {
     x.fillStyle = colors[0];
-    x.font = '700 30px ' + sans;
+    x.font = '700 30px ' + font;
     x.fillText(fit(x, 'Joker · ' + t.jl + ' · ' + t.jn, W - 2 * margin), margin, 903);
   }
 
@@ -576,19 +577,19 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   x.stroke();
   x.textAlign = 'center';
   x.fillStyle = cream;
-  x.font = '600 42px ' + serif;
+  x.font = '600 42px ' + font;
   x.fillText('La polarité de ton Gouve', W / 2, 995);
   drawTeamGauge(x, margin + 30, 1002, W - 2 * (margin + 30), position.needle);
   x.fillStyle = cream;
-  x.font = '700 30px ' + sans;
+  x.font = '700 30px ' + font;
   const summary = position.label + (position.mixed ? ' · Équipe très contrastée' : '');
   x.fillText(fit(x, summary, W - 2 * margin - 48), W / 2, 1292);
-  x.font = '600 24px ' + sans;
+  x.font = '600 24px ' + font;
   x.fillText(position.counts, W / 2, 1320);
-  x.font = '500 21px ' + sans;
+  x.font = '500 21px ' + font;
   x.fillText(position.coverage, W / 2, 1344);
   x.fillStyle = colors[0];
-  x.font = '600 26px ' + sans;
+  x.font = '600 26px ' + font;
   x.fillText('Prône ton Président · Just for fun', W / 2, 1410);
   return new Promise(r => cv.toBlob(r, 'image/png'));
 }

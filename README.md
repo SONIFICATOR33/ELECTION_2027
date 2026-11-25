@@ -75,5 +75,5 @@ front pour activer l’écriture des photos mensuelles.
 - `manifest.webmanifest` et `icons/` définissent l’installation mobile.
 - `fiches/fiches.json` contient les biographies, sources et crédits photo. Voir
   [les fiches](fiches/README.md).
-- Le visuel d’accueil `img/habit.jpg` est une image générée pour le jeu. Bodoni
-  Moda et Hanken Grotesk sont hébergées dans le dépôt sous licence SIL OFL 1.1.
+- Le visuel d’accueil `img/habit.jpg` est une image générée pour le jeu. La police
+  [Inter](https://rsms.me/inter/) est hébergée dans le dépôt sous licence SIL OFL 1.1.
