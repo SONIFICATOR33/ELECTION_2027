@@ -12,7 +12,7 @@ const clock = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris'
 });
 
-export function groupView(root, { getStore, withUser, drawTeam, notify }) {
+export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGroup, notify }) {
   let selected = COMMON_GROUP, generation = 0, display;
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
@@ -102,6 +102,11 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
         (groups.length ? '<label class="group-filter">Afficher les joueurs de <select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
           '</select></label>' : '') +
+        (group ? `<fieldset class="player-groups">
+          <legend>Partage dans « ${escape(group.name)} »</legend>
+          <label class="choice-control"><input type="checkbox" data-share="pronos" ${group.shared ? 'checked' : ''}> Partager mes pronos</label>
+          <label class="choice-control"><input type="checkbox" data-share="team" ${Object.hasOwn(data.teams, store.me().pid) ? 'checked' : ''}> Partager mon gouvernement</label>
+        </fieldset>` : '') +
         roster(data, store.me().pid) +
         '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
         (store.me().pid === GROUP_ADMIN ? '<p>Crée un groupe et envoie son lien aux amis que tu veux inviter.</p>' +
@@ -109,10 +114,7 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
         '<form id="create-group" class="group-actions"><label>Nom du groupe <input name="name" required minlength="2" maxlength="48"></label>' +
         '<button class="big">Créer et ouvrir le groupe</button></form></details>' : '<p>Rejoins un groupe à partir du lien envoyé par Vincent.</p>') +
         (group && group.code !== COMMON_GROUP ? '<button class="ghost group-invite" data-group-action="invite">Inviter des amis dans ' + escape(group.name) + '</button>' : '') +
-        (group ? '<details><summary>Partage des pronos</summary><div class="group-actions">' +
-          '<button class="ghost" data-group-action="share" aria-pressed="' + group.shared + '">' +
-          (group.shared ? 'Masquer mes pronos dans ce groupe' : 'Partager mes pronos dans ce groupe') + '</button></div>' +
-          '<p class="help">Les pronos partagés sont visibles dès leur enregistrement.</p></details>' : '') + '</section>';
+        '</section>';
     } catch {
       if (request === generation) root.innerHTML = '<p>Impossible de charger les joueurs.</p><button class="ghost" data-group-action="retry">Réessayer</button>';
     } finally {
@@ -151,10 +153,35 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
     finally { button.disabled = false; }
   }
 
-  root.addEventListener('change', e => {
-    if (e.target.id !== 'active-group') return;
-    selected = e.target.value;
-    render();
+  root.addEventListener('change', async e => {
+    const input = e.target;
+    if (input.id === 'active-group') {
+      selected = input.value;
+      await render();
+      return;
+    }
+    const kind = input.dataset.share;
+    if (!kind) return;
+    const fieldset = input.closest('fieldset');
+    if (root.hasAttribute('aria-busy') || fieldset.disabled) {
+      input.checked = !input.checked;
+      return;
+    }
+    const code = selected;
+    const groups = getStore().groups;
+    const checked = input.checked;
+    fieldset.disabled = true;
+    try {
+      if (kind === 'pronos') await groups.setSharing(code, checked);
+      else if (checked) await shareTeamWithGroup(code);
+      else await groups.unpublishTeam(code);
+      await render();
+    } catch (err) {
+      input.checked = !checked;
+      notify(err.message || 'Choix non enregistré. Réessaie.');
+    } finally {
+      fieldset.disabled = false;
+    }
   });
   root.addEventListener('submit', e => {
     e.preventDefault();
@@ -173,7 +200,6 @@ export function groupView(root, { getStore, withUser, drawTeam, notify }) {
     const groups = getStore().groups;
     run(b, async () => {
       if (action === 'join') { selected = await groups.join(invitation); removeInvite(); }
-      if (action === 'share') await groups.setSharing(code, b.getAttribute('aria-pressed') !== 'true');
       if (action === 'invite') {
         const url = new URL(location.pathname, location.origin);
         url.searchParams.set('groupe', code);
