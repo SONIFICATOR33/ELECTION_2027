@@ -32,6 +32,50 @@ const load = () => loading || (loading = fetch('fiches/fiches.json', { cache: 'n
 const el = () => $('#fiche');
 let cur = null, opener = null;
 
+const dateLabel = iso => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR');
+function programmeLink(c, p) {
+  if (!p || !/^https:\/\//.test(p.url)) return '';
+  return `<a class="programme-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(p.label + ' de ' + c.p + ' ' + c.n)} — site officiel, nouvel onglet">${esc(p.label)} <span aria-hidden="true">&nbsp;↗</span></a>`;
+}
+const searchKey = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr').trim();
+function filterDirectory() {
+  const q = searchKey($('#candidateSearch').value);
+  let count = 0;
+  for (const row of document.querySelectorAll('.candidate-entry')) {
+    const c = by[row.dataset.candidate];
+    row.hidden = !searchKey(`${c.p} ${c.n} ${c.party || ''}`).includes(q);
+    if (!row.hidden) count++;
+  }
+  $('#candidateEmpty').hidden = count > 0;
+}
+function renderDirectory(state = 'ready') {
+  $('#candidateDirectory').innerHTML = C.map(c => {
+    const p = DATA?.candidats[c.id]?.programme;
+    const link = programmeLink(c, p);
+    const note = link ? p.detail : state === 'ready' ? 'Programme 2027 non renseigné.' : state === 'error' ? 'Liens indisponibles pour le moment.' : 'Chargement des liens…';
+    return `<li class="candidate-entry" data-candidate="${c.id}">
+      <span class="medal sm" style="--c:${c.col}" aria-hidden="true">${portraitThumb(c)}</span>
+      <div class="candidate-identity"><b>${esc(c.p + ' ' + c.n)}</b><small>${esc(c.party)}</small></div>
+      <div class="candidate-actions"><button class="ghost" data-fiche="${c.id}" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}">Fiche</button>${link}</div>
+      <p class="programme-note">${esc(note)}</p>
+    </li>`;
+  }).join('');
+  filterDirectory();
+}
+async function loadDirectory() {
+  $('#programmeRetry').hidden = true;
+  $('#programmeStatus').textContent = 'Chargement des liens…';
+  try {
+    await load();
+    renderDirectory();
+    $('#programmeStatus').textContent = DATA.programmesCheckedAt ? `Liens officiels vérifiés le ${dateLabel(DATA.programmesCheckedAt)} · ouverture dans un nouvel onglet.` : 'Liens vers les sites officiels · ouverture dans un nouvel onglet.';
+  } catch {
+    renderDirectory('error');
+    $('#programmeStatus').textContent = 'Les liens n’ont pas pu être chargés. Réessaie dans un instant.';
+    $('#programmeRetry').hidden = false;
+  }
+}
+
 function body(id) {
   const c = by[id], f = DATA.candidats[id] || {}, fem = !!f.f;
   const pres = (f.pres || []).length
@@ -42,7 +86,13 @@ function body(id) {
   const photo = f.portrait;
   const credit = photo ? `<p class="fsrc">Photo <a href="${esc(photo.source)}">${esc(photo.titre)}</a> · ${esc(photo.auteur)} · <a href="${esc(photo.licenceUrl)}">${esc(photo.licence)}</a> · redimensionnée et recadrée à l’affichage.</p>` : '';
   const maj = DATA.maj ? new Date(DATA.maj + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  const programme = programmeLink(c, f.programme);
   return `
+  <section class="fsec fprogramme">
+    <h3>Programme et propositions</h3>
+    ${programme || '<p class="mut">Programme 2027 non renseigné.</p>'}
+    ${programme ? `<p class="programme-note">${esc(f.programme.detail)}</p><p class="fsrc">Site officiel · lien vérifié le ${esc(dateLabel(f.programme.checkedAt))} · nouvel onglet.</p>` : ''}
+  </section>
   <section class="fsec">
     <h3>Dans la course</h3>
     <p class="fstat">${esc(f.statut || '')}</p>
@@ -114,15 +164,11 @@ export function initFiches() {
   document.addEventListener('load', e => {
     if (e.target.classList?.contains('candidate-thumb')) e.target.classList.add('loaded');
   }, true);
-  /* bandeau d'accueil, de gauche à droite */
-  const rail = $('#rail');
-  if (rail) {
-    let h = '', sep = false;
-    for (const c of C) {
-      if (c.off && !sep) { h += '<span class="rsep" aria-hidden="true"></span>'; sep = true; }
-      h += `<button class="rc" data-fiche="${c.id}" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}"><span class="medal sm" style="--c:${c.col}" aria-hidden="true">${portraitThumb(c)}</span><b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b></button>`;
-    }
-    rail.innerHTML = h;
+  if ($('#candidateDirectory')) {
+    renderDirectory('loading');
+    $('#candidateSearch').addEventListener('input', filterDirectory);
+    $('#programmeRetry').addEventListener('click', loadDirectory);
+    loadDirectory();
   }
   const f = el();
   f.addEventListener('click', e => {
