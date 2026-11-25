@@ -333,10 +333,8 @@ async function drawPronoRecap() {
   canvas.height = 230 + sections.reduce((h, [, lines]) => h + 92 + Math.max(lines.length, 1) * 43, 0);
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
-  ctx.fillStyle = '#FFFCF6';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = '#15120E';
-  ctx.fillRect(0, 0, canvas.width, 192);
   ctx.fillStyle = '#F3E6C8';
   ctx.font = '64px Georgia';
   ctx.fillText('Mes pronos', 64, 96);
@@ -344,11 +342,11 @@ async function drawPronoRecap() {
   ctx.fillText(ME ? `Prone ton President · ${ME.pseudo}` : 'Prone ton President', 64, 151, 952);
   let y = 237;
   for (const [title, lines] of sections) {
-    ctx.fillStyle = '#79591C';
+    ctx.fillStyle = '#E6D3A3';
     ctx.font = 'bold 36px sans-serif';
     ctx.fillText(title, 64, y, 952);
     y += 52;
-    ctx.fillStyle = '#15120E';
+    ctx.fillStyle = '#F3EEE4';
     ctx.font = '32px sans-serif';
     for (const line of lines.length ? lines : ['Prono non enregistré']) {
       ctx.fillText(line, 64, y, 952);
@@ -518,30 +516,33 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   const serif = '"Bodoni Moda", Georgia, serif';
   const sans = '"Hanken Grotesk", system-ui, sans-serif';
   const cream = '#FFF8E5';
-  const navy = '#121E36';
+  const black = '#000000';
   const margin = 54, gap = 16, cardWidth = (W - 2 * margin - gap) / 2;
   const colors = ['#F4D078', '#F5AE96', '#C9D9FF', '#9ED8D2', '#D9BBFF'];
   const author = pseudo.trim() || 'moi';
   const title = 'Le gouvernement ' + (/^[aeiouyàâäéèêëîïôöùûü]/i.test(author) ? 'd’' : 'de ') + author;
 
   function card(label, name, left, top, width, height, accent, primary = false) {
-    x.fillStyle = primary ? accent : '#26354E';
+    x.fillStyle = black;
     x.beginPath();
     x.roundRect(left, top, width, height, 15);
     x.fill();
+    x.strokeStyle = primary ? accent : '#383838';
+    x.lineWidth = 2;
+    x.stroke();
     if (!primary) {
       x.fillStyle = accent;
       x.fillRect(left + 13, top + 15, 4, height - 30);
     }
-    x.fillStyle = primary ? navy : accent;
+    x.fillStyle = accent;
     x.font = '700 ' + (primary ? 26 : 24) + 'px ' + sans;
     x.fillText(fit(x, label, width - 58), left + 28, top + 36);
-    x.fillStyle = primary ? navy : cream;
+    x.fillStyle = cream;
     x.font = '700 ' + (primary ? 43 : 36) + 'px ' + sans;
     x.fillText(fit(x, name || 'Poste libre', width - 58), left + 28, top + (primary ? 90 : 78));
   }
 
-  x.fillStyle = navy;
+  x.fillStyle = black;
   x.fillRect(0, 0, W, H);
   colors.forEach((color, index) => {
     x.fillStyle = color;
@@ -566,10 +567,13 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   }
 
   const position = teamPosition(t);
-  x.fillStyle = '#1B2942';
+  x.fillStyle = black;
   x.beginPath();
   x.roundRect(margin, 934, W - 2 * margin, 420, 24);
   x.fill();
+  x.strokeStyle = '#383838';
+  x.lineWidth = 2;
+  x.stroke();
   x.textAlign = 'center';
   x.fillStyle = cream;
   x.font = '600 42px ' + serif;

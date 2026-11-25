@@ -2,18 +2,14 @@
 @font-face{font-family:"Bodoni Moda";font-style:normal;font-display:swap;font-weight:400 900;src:url(../fonts/bodoni-latin-ext.woff2) format("woff2-variations"),url(../fonts/bodoni-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:"Hanken Grotesk";font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/hanken-latin.woff2) format("woff2-variations"),url(../fonts/hanken-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:"Hanken Grotesk";font-style:normal;font-display:swap;font-weight:100 900;src:url(../fonts/hanken-latin-ext.woff2) format("woff2-variations"),url(../fonts/hanken-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-:root{color-scheme:light;
---nuit:#0E0E0E;--nuit2:#1D1C1A;--or:#C6A15B;--orC:#E6D3A3;--ivoire:#FAF6EE;
---bleu:#0E0E0E;--bleuT:#7A5C22;--rouge:#B3122E;--vert:#0B7A55;--vertbg:#E6F2EA;--rougebg:#F8E7E8;
---bg:#F6EFE3;--card:#FFFCF6;--line:#E6DCCB;--ink:#1A1A1A;--mut:#6A635B;
---c-lp:#3A4BA6;--c-jlm:#D7263D;--c-ep:#2A9DD8;--c-rg:#E0479E;--c-dl:#E07B00;--c-br:#0E8C7E;
+:root{color-scheme:dark;
+--nuit:#000000;--nuit2:#000000;--or:#C6A15B;--orC:#E6D3A3;--ivoire:#FAF6EE;
+--bleu:#000000;--bleuT:#E6D3A3;--rouge:#F07A8A;--vert:#36C48E;--vertbg:#0F2B22;--rougebg:#3A1418;
+--bg:#000000;--card:#000000;--line:#383838;--ink:#F3EEE4;--mut:#B3ABA0;
+--c-lp:#7484E6;--c-jlm:#E8404F;--c-ep:#3398CC;--c-rg:#E35BAD;--c-dl:#D47C0C;--c-br:#1FA391;
 --cond:"Bodoni Moda",Didot,Georgia,serif;--sans:"Hanken Grotesk",system-ui,sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark;
---bleuT:#E6D3A3;--vert:#36C48E;--vertbg:#0F2B22;--rougebg:#3A1418;
---bg:#121110;--card:#1C1B19;--line:#2E2C29;--ink:#F3EEE4;--mut:#B3ABA0;
---c-lp:#7484E6;--c-jlm:#E8404F;--c-ep:#3398CC;--c-rg:#E35BAD;--c-dl:#D47C0C;--c-br:#1FA391}}
 *{box-sizing:border-box;min-width:0}
-html{scroll-padding-top:72px}
+html{scroll-padding-top:72px;background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);overflow-x:clip;padding-bottom:84px}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -49,9 +45,9 @@ h3{margin:12px 0 4px;font:600 17px/1.2 var(--cond);color:var(--mut)}
 .pcol{display:grid;justify-items:center;gap:6px;text-align:center}
 .pcol b{font:600 18px/1.05 var(--cond)}
 .blk{width:100%;border-radius:10px 10px 0 0;display:grid;align-content:start;justify-items:center;padding-top:8px;color:#fff}
-.p1 .blk{height:128px;background:#fff;color:#141414;box-shadow:inset 0 0 0 1.5px #D5D5DC}
+.p1 .blk{height:128px;background:var(--card);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
 .p2 .blk{height:96px;background:var(--bleu)}
-.p3 .blk{height:72px;background:var(--rouge)}
+.p3 .blk{height:72px;background:var(--card);box-shadow:inset 0 0 0 1px var(--rouge)}
 .rk{font:600 36px/1 var(--cond)}.pv{font-weight:600;font-size:16px;white-space:nowrap}
 .moves{display:grid;gap:0 16px}
 @media(min-width:440px){.moves{grid-template-columns:1fr 1fr}}
@@ -169,8 +165,7 @@ th:first-child,td:first-child{text-align:left}
 .demo{font-size:13px;color:var(--mut);text-align:center;margin:0}
 /* ===== v2 : frise, étapes, jauges, classement ===== */
 select{font:inherit;color:inherit;width:100%;min-height:44px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);padding:8px 10px;font-size:16px}
-.banner{background:#FFF4D6;color:#5A4300;font-size:14px;padding:8px 16px;text-align:center}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .banner{background:#3A3010;color:#F5DE9A}}
+.banner{background:var(--bg);color:var(--orC);font-size:14px;padding:8px 16px;text-align:center}
 .frise{margin-top:16px}
 .track{position:relative;height:28px;margin:0 6px}
 .track .ln0{position:absolute;left:0;right:0;top:13px;height:3px;border-radius:2px;background:rgba(255,255,255,.25)}
@@ -282,7 +277,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .snd .x{display:none}.snd[aria-pressed=false] .x{display:inline}.snd[aria-pressed=false] .w1,.snd[aria-pressed=false] .w2{display:none}
 .banner{background:var(--nuit2);color:var(--orC)}
 /* boutons */
-.big{width:100%;min-height:54px;border:0;border-radius:10px;background:var(--nuit);color:var(--ivoire);font:600 20px/1.15 var(--cond);padding:10px 14px;letter-spacing:.1px}
+.big{width:100%;min-height:54px;border:1px solid var(--or);border-radius:10px;background:var(--nuit);color:var(--ivoire);font:600 20px/1.15 var(--cond);padding:10px 14px;letter-spacing:.1px}
 .big:active{transform:translateY(1px)}
 .big:disabled,.big.off{background:var(--line);color:var(--mut);cursor:default}
 .ghost{width:100%;min-height:48px;border:1px solid var(--ink);border-radius:10px;background:transparent;font-weight:600}
@@ -307,14 +302,14 @@ h2{font-weight:600;letter-spacing:-.2px}
 .gg .tr{background:rgba(233,215,168,.2)}.gg .tr i{background:var(--or)}
 .ptsgrid div{background:rgba(233,215,168,.1);border:1px solid rgba(233,215,168,.2)}
 .p1 .blk{box-shadow:inset 0 0 0 1px var(--or)}
-.p2 .blk{background:var(--nuit)}
+.p2 .blk{background:var(--nuit);box-shadow:inset 0 0 0 1px var(--line)}
 .photo b{font:500 26px/1 var(--cond)}
 .stage{border-left:3px solid var(--or)}
 .stage.closed{border-left-color:var(--line)}
 .tog{border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--ink)}
 .tile,.cand,.chip,.fin{border-width:1px}
 /* page d'accueil */
-.splash{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:32px 24px calc(28px + env(safe-area-inset-bottom));overflow:hidden auto;background:radial-gradient(120% 80% at 50% 28%,#2A2724 0%,#121110 55%,#050505 100%);color:var(--ivoire);text-align:center}
+.splash{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:32px 24px calc(28px + env(safe-area-inset-bottom));overflow:hidden auto;background:var(--bg);color:var(--ivoire);text-align:center}
 .splash[hidden]{display:none}
 .splash .gcv{opacity:1}
 .splash>*:not(.gcv){position:relative;z-index:1}
@@ -376,7 +371,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .fiche{position:fixed;inset:0;z-index:45;background:rgba(10,9,8,.55);display:flex;align-items:flex-end;justify-content:center}
 .fiche[hidden]{display:none}
 .fcard{width:100%;max-width:560px;height:94vh;height:94dvh;display:flex;flex-direction:column;background:var(--bg);border-radius:18px 18px 0 0;overflow:hidden;box-shadow:0 -12px 40px rgba(0,0,0,.35)}
-.fhead{flex:none;background:#0E0E0E;color:#FAF6EE;padding:6px 14px 12px;border-bottom:1px solid var(--or)}
+.fhead{flex:none;background:var(--bg);color:#FAF6EE;padding:6px 14px 12px;border-bottom:1px solid var(--or)}
 .fbar{display:flex;align-items:center;gap:2px}
 .fx{width:44px;height:44px;border:0;border-radius:50%;background:transparent;color:var(--orC);display:grid;place-items:center;flex:none}
 .fx:active{background:rgba(233,215,168,.12)}
@@ -500,8 +495,8 @@ h2{font-weight:600;letter-spacing:-.2px}
 .final-scores { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; }
 #team-visibility button { min-width: 72px; }
 .player-list .group-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.player-list .player-action { width: 100%; min-height: 44px; border-radius: 8px; border: 1px solid #28754c; background: #dff4e6; color: #174829; font-weight: 700; }
-.player-list .player-action:disabled { opacity: 1; border-color: #b47272; background: #f9e5e5; color: #702e2e; }
+.player-list .player-action { width: 100%; min-height: 44px; border-radius: 8px; border: 1px solid var(--vert); background: var(--vertbg); color: var(--vert); font-weight: 700; }
+.player-list .player-action:disabled { opacity: 1; border-color: var(--rouge); background: var(--rougebg); color: var(--rouge); }
 .group-filter select { width: 100%; }
 .player-groups { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }
 .player-groups details { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-top: 8px; }
@@ -512,17 +507,17 @@ h2{font-weight:600;letter-spacing:-.2px}
 
 .prono-sharing { margin-block: 12px; }
 .choice-control { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 1rem; font-weight: 700; cursor: pointer; }
-.choice-control input { width: 20px; height: 20px; flex: none; accent-color: #28754c; }
+.choice-control input { width: 20px; height: 20px; flex: none; accent-color: var(--vert); }
 .visibility-choices { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
 .visibility-choices .choice-control { min-width: 78px; padding-inline: 10px; border: 1px solid var(--line); border-radius: 8px; }
-.visibility-choices .choice-control:has(:checked) { border-color: #28754c; background: #dff4e6; color: #174829; }
+.visibility-choices .choice-control:has(:checked) { border-color: var(--vert); background: var(--vertbg); color: var(--vert); }
 
 .team-comments { list-style: none; padding: 0; }
 .team-comments li { padding: 10px 0; border-bottom: 1px solid var(--line); }
 .team-comments li p { white-space: pre-wrap; overflow-wrap: anywhere; margin-block: 4px; }
-[data-team-comments] textarea { display: block; width: 100%; font: inherit; margin-block: 6px; }
+[data-team-comments] textarea { display: block; width: 100%; font: inherit; margin-block: 6px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
 
-.team-gauge { background: #121E36; color: #FFF8E5; text-align: center; }
+.team-gauge { background: var(--card); color: #FFF8E5; text-align: center; }
 .team-gauge canvas { width: 100%; max-width: 480px; height: auto; display: block; margin-inline: auto; }
 .team-gauge p { margin: 4px 0 0; color: #FFF8E5; }
 
