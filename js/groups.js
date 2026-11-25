@@ -50,7 +50,11 @@ export function groupsStore(store) {
   return {
     ensureCommonGroup() {
       commonEnrollment ||= join(COMMON_GROUP, 'Tous les joueurs', true)
-        .then(joined => joined && this.setSharing(COMMON_GROUP, true))
+        .then(async () => {
+          const groups = await this.list();
+          await Promise.all(groups.filter(group => !group.shared || group.code === COMMON_GROUP)
+            .map(group => this.setSharing(group.code, true)));
+        })
         .catch(error => { commonEnrollment = null; throw error; });
       return commonEnrollment;
     },
@@ -65,7 +69,8 @@ export function groupsStore(store) {
       return code;
     },
     async join(code) {
-      if (await join(code)) await this.setSharing(code, true);
+      await join(code);
+      await this.setSharing(code, true);
       return code;
     },
     async list() {
@@ -103,6 +108,23 @@ export function groupsStore(store) {
     },
     async unpublishTeam(code) {
       await F.deleteDoc(entry(code, 'teams'));
+    },
+    async syncSharedTeam(team, onlyMissing) {
+      const player = pid();
+      const prefs = settings();
+      await F.runTransaction(db, async tx => {
+        const groups = Object.keys((await tx.get(prefs)).data()?.groups || {});
+        const refs = groups.map(code => doc('groups', code, 'teams', player));
+        const snapshots = await Promise.all(refs.map(ref => tx.get(ref)));
+        const value = team || (onlyMissing ? snapshots.find(snapshot => snapshot.exists())?.data()?.value : null);
+        groups.forEach((code, index) => {
+          const exists = snapshots[index].exists();
+          if (onlyMissing && (exists || code === COMMON_GROUP)) return;
+          if (code === COMMON_GROUP && !exists) return;
+          if (value) tx.set(refs[index], { value });
+          else if (exists) tx.delete(refs[index]);
+        });
+      });
     },
     watchTeamComments(code, team, update, fail) {
       const recent = F.query(comments(code, team), F.orderBy('createdAt', 'desc'), F.limit(50));

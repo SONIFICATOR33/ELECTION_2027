@@ -2,7 +2,7 @@ import { showTeamComments } from './team-comments.js';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=27';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES } from './groups.js?v=30';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -13,7 +13,7 @@ const clock = new Intl.DateTimeFormat('fr-FR', {
   day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris'
 });
 
-export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGroup, notify }) {
+export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGroup, syncExistingTeam, notify }) {
   let selected = COMMON_GROUP, generation = 0, display;
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
@@ -84,6 +84,7 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
     root.setAttribute('aria-busy', 'true');
     try {
       await store.groups.ensureCommonGroup().catch(console.warn);
+      await syncExistingTeam();
       const groups = await store.groups.list();
       if (request !== generation) return;
       if (invitation && groups.some(g => g.code === invitation)) {
@@ -99,15 +100,14 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
       if (request !== generation) return;
       data.players = Object.assign(Object.create(null), registered, data.players);
       display = data;
-      root.innerHTML = (invitation ? '<p><button class="big" data-group-action="join">Accepter l’invitation au groupe</button></p>' : '') +
+      root.innerHTML = (invitation ? '<p>En rejoignant ce groupe, ton gouvernement sera visible par ses membres.</p><p><button class="big" data-group-action="join">Accepter l’invitation au groupe</button></p>' : '') +
         (groups.length ? '<label class="group-filter">Afficher les joueurs de <select id="active-group">' + groups.map(g =>
           '<option value="' + g.code + '"' + (g.code === selected ? ' selected' : '') + '>' + escape(g.name) + '</option>').join('') +
           '</select></label>' : '') +
-        (group ? `<fieldset class="player-groups">
-          <legend>Partage dans « ${escape(group.name)} »</legend>
-          <label class="choice-control"><input type="checkbox" data-share="pronos" ${group.shared ? 'checked' : ''}> Partager mes pronos</label>
-          <label class="choice-control"><input type="checkbox" data-share="team" ${Object.hasOwn(data.teams, store.me().pid) ? 'checked' : ''}> Partager mon gouvernement</label>
-        </fieldset>` : '') +
+        (group?.code === COMMON_GROUP ? `<fieldset class="player-groups">
+          <legend>Visibilité de mon gouvernement</legend>
+          <label class="choice-control"><input type="checkbox" data-share-team ${Object.hasOwn(data.teams, store.me().pid) ? 'checked' : ''}> Partager mon gouvernement avec tous les joueurs</label>
+        </fieldset>` : group ? '<p class="help">Les pronos et les gouvernements sont partagés automatiquement dans ce groupe.</p>' : '') +
         roster(data, store.me().pid) +
         '<section class="player-groups" aria-labelledby="groups-title"><h3 id="groups-title">Mes groupes</h3>' +
         (store.me().pid === GROUP_ADMIN ? '<p>Crée un groupe et envoie son lien aux amis que tu veux inviter.</p>' +
@@ -166,21 +166,18 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
       await render();
       return;
     }
-    const kind = input.dataset.share;
-    if (!kind) return;
+    if (!input.hasAttribute('data-share-team')) return;
     const fieldset = input.closest('fieldset');
-    if (root.hasAttribute('aria-busy') || fieldset.disabled) {
+    if (selected !== COMMON_GROUP || root.hasAttribute('aria-busy') || fieldset.disabled) {
       input.checked = !input.checked;
       return;
     }
-    const code = selected;
     const groups = getStore().groups;
     const checked = input.checked;
     fieldset.disabled = true;
     try {
-      if (kind === 'pronos') await groups.setSharing(code, checked);
-      else if (checked) await shareTeamWithGroup(code);
-      else await groups.unpublishTeam(code);
+      if (checked) await shareTeamWithGroup(COMMON_GROUP);
+      else await groups.unpublishTeam(COMMON_GROUP);
       await render();
     } catch (err) {
       input.checked = !checked;
