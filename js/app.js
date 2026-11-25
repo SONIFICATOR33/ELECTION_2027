@@ -1,4 +1,4 @@
-import { groupView } from './group-view.js?v=22';
+import { groupView } from './group-view.js?v=26';
 import { COMMON_GROUP } from './groups.js?v=22';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
@@ -437,61 +437,13 @@ function renderTeam() {
   $('#t-jl').value = draft.team.jl || '';
   renderPublish();
 }
-const visibility = $('#team-visibility');
-let visibilityRequest = 0;
-async function renderTeamVisibility() {
-  const request = ++visibilityRequest;
-  if (!store.groups) {
-    visibility.textContent = 'Le partage en groupe nécessite une connexion.';
-    return;
+async function shareTeamWithGroup(code) {
+  if (!draft.team.coeur && !draft.team.pm) {
+    throw new Error('Choisis au moins ton président ou ton Premier ministre dans Mon gouvernement.');
   }
-  if (!ME) {
-    visibility.innerHTML = '<button class="ghost" data-join>Me connecter pour choisir</button>';
-    return;
-  }
-  visibility.textContent = 'Chargement de tes groupes…';
-  try {
-    await store.groups.ensureCommonGroup().catch(console.warn);
-    const groups = await store.groups.teamVisibility();
-    if (request !== visibilityRequest) return;
-    const visible = groups.some(g => g.visible);
-    visibility.innerHTML = `<div class="visibility-choices" role="group" aria-label="Visibilité du gouvernement">
-      <label class="choice-control"><input type="radio" name="government-visibility" value="yes" ${visible ? 'checked' : ''}> Oui</label>
-      <label class="choice-control"><input type="radio" name="government-visibility" value="no" ${visible ? '' : 'checked'}> Non</label>
-    </div><p class="help" role="status">${visible ? 'Ton gouvernement est visible.' : 'Ton gouvernement est privé.'}</p>`;
-  } catch {
-    if (request === visibilityRequest) visibility.innerHTML = '<p>Impossible de vérifier la visibilité.</p><button class="ghost" data-retry-visibility>Réessayer</button>';
-  }
+  await store.groups.publishTeam(code, clone(draft.team));
+  await saveTeam();
 }
-visibility.addEventListener('click', e => {
-  if (e.target.closest('[data-retry-visibility]')) renderTeamVisibility();
-});
-visibility.addEventListener('change', async e => {
-  if (e.target.name !== 'government-visibility' || !ME) return;
-  const hide = e.target.value === 'no';
-  if (!hide && !draft.team.coeur && !draft.team.pm) {
-    toast('Choisis au moins ton président ou ton Premier ministre.');
-    visibility.querySelector('[value="no"]').checked = true;
-    return;
-  }
-  for (const input of visibility.querySelectorAll('input')) input.disabled = true;
-  try {
-    const groups = await store.groups.teamVisibility();
-    if (hide) await Promise.all(groups.filter(g => g.visible).map(g => store.groups.unpublishTeam(g.code)));
-    else {
-      const common = groups.find(g => g.code === COMMON_GROUP);
-      if (!common) throw new Error('Le groupe commun est indisponible.');
-      await Promise.all(groups.filter(g => g.visible || g.code === COMMON_GROUP)
-        .map(g => store.groups.publishTeam(g.code, clone(draft.team))));
-      await saveTeam();
-    }
-    toast(hide ? 'Gouvernement privé.' : 'Gouvernement visible.');
-    await renderTeamVisibility();
-  } catch (err) {
-    toast(err.message || 'Impossible de modifier la visibilité.');
-    await renderTeamVisibility();
-  }
-});
 const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
 function renderPublish() {
   const n = teamCount(), ok = n === 12, b = $('#teamShare');
@@ -693,20 +645,18 @@ function show() {
   window.scrollTo(0, 0);
   if (v === 'sondages') requestAnimationFrame(draw);
   if (v === 'classement') groupUI.render();
-  if (v === 'team') renderTeamVisibility();
   if (v === 'paris') renderPronoSharing();
 }
 window.addEventListener('hashchange', show);
 window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
 
 const groupUI = groupView($('#group-view'), {
-  getStore: () => store, withUser: withMe, drawTeam, notify: toast
+  getStore: () => store, withUser: withMe, drawTeam, shareTeamWithGroup, notify: toast
 });
 function renderAll() {
   renderHeader(); renderSnd(); renderHero(); renderPollsHome();
   renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
   renderTeam();
-  if (location.hash === '#team') renderTeamVisibility();
   if (location.hash === '#paris') renderPronoSharing();
   if (location.hash === '#classement') groupUI.render();
 }
