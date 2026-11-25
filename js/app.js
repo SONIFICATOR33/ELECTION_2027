@@ -1,5 +1,5 @@
 import { drawTeamGauge, teamPosition } from './team-gauge.js?v=33';
-import { groupView } from './group-view.js?v=39';
+import { groupView } from './group-view.js?v=43';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
