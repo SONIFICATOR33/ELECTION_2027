@@ -200,7 +200,7 @@ function renderPhoto() {
   if (!isOpen('gp')) { el.innerHTML = '<p class="okbar">Pronostic clos.</p>'; return; }
   const cw = S.clampWeek(w);
   el.innerHTML = done('gp')
-    ? `<div class="photo"><b>×${fmt(D.mult(cw))}</b><span>Ton prono est repris chaque lundi.</span></div>`
+    ? ''
     : `<div class="photo" style="background:var(--rougebg)"><b style="color:var(--rouge)">×${fmt(D.mult(cw))}</b><span>Une semaine sans prono vaut zéro.</span></div>`;
 }
 const rankedTop = () => [...gp().top].sort((a, b) => b.pct - a.pct);
