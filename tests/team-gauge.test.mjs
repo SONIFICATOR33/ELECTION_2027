@@ -13,13 +13,14 @@ const left = ['Marine Tondelier', 'François Hollande', 'Olivier Faure', 'Fabien
 test('deux chefs à droite, six ministres à gauche et quatre à droite font six voix partout', () => {
   const result = teamPosition(cabinet(right[0], right[1], ...left.slice(0, 6), ...right.slice(2, 6)));
   assert.equal(result.label, 'Égalité gauche–droite');
+  assert.equal(result.balance, 0);
   assert.equal(result.counts, '6 à gauche · 0 au centre · 6 à droite');
   assert.deepEqual(result.segments.map(s => [s.label, s.count]), [['Gauche', 6], ['Droite', 6]]);
   assert.deepEqual(result.people[0].roles, ['Président']);
   assert.deepEqual(result.people[1].roles, ['Premier ministre']);
 });
 
-test('une majorité de sept sur douze conserve cinq cases minoritaires dans les deux sens', () => {
+test('une majorité de sept sur douze conserve cinq voix minoritaires dans les deux sens', () => {
   for (const [majority, minority, label] of [[right, left, 'Majorité à droite'], [left, right, 'Majorité à gauche']]) {
     const result = teamPosition(cabinet(...minority.slice(0, 5), ...majority));
     assert.equal(result.label, label);
@@ -75,4 +76,14 @@ test('le gouvernement de référence conserve toutes ses composantes', () => {
   assert.equal(result.counts, '2 à gauche · 1 au centre · 7 à droite');
   assert.equal(result.coverage, '10/12 profils classés · hors joker');
   assert.equal(result.mixed, true);
+});
+
+test('le cadran reflète les écarts et écarte les personnes sans repère', () => {
+  const team = cabinet(...left.slice(0, 6), ...right.slice(0, 4), 'Teddy Riner');
+  assert.equal(teamPosition(team).balance, -0.2);
+  assert.equal(teamPosition(cabinet(right[0], left[0], right[1], 'François Bayrou')).balance, 0.25);
+  assert.equal(teamPosition(cabinet(left[0])).balance, -1);
+  assert.equal(teamPosition(cabinet(right[0])).balance, 1);
+  assert.equal(teamPosition(cabinet('Teddy Riner')).balance, null);
+  assert.equal(teamPosition(cabinet(left[0], 'Teddy Riner', 'Nom libre')).balance, null);
 });

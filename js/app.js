@@ -1,4 +1,4 @@
-import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=49';
+import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=51';
 import { groupView } from './group-view.js?v=44';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
