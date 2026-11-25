@@ -1,4 +1,4 @@
-import { PEOPLE_GROUPS, POSTES } from './data.js?v=49';
+import { PEOPLE_GROUPS, POSTES } from './data.js?v=50';
 
 const bands = [
   ['Extrême gauche', '#EF7272'], ['Gauche', '#FFAD83'], ['Centre gauche', '#F4BF91'],
@@ -63,6 +63,7 @@ export function teamPosition(team) {
   else if (left === right && left === half) label = 'Égalité gauche–droite';
 
   return {
+    balance: classified && classified >= half ? (right - left) / classified : null,
     label, filled: people.size, people: [...people.values()],
     segments: bands.map(([label, color], index) => ({ label, color, count: counts[index] }))
       .filter(segment => segment.count > 0),
@@ -72,27 +73,77 @@ export function teamPosition(team) {
   };
 }
 
-// Une case par personne, avec la même légende à l’écran et sur l’affiche.
-export const gaugeHeight = position => 72 + 38 * Math.ceil(position.segments.length / 2);
+const legendTop = 257;
+export const gaugeHeight = position => legendTop + 38 * Math.ceil(position.segments.length / 2);
 
 export function drawTeamGauge(ctx, left, top, width, position) {
   if (!position.filled) return;
   ctx.save();
   ctx.translate(left, top);
   ctx.scale(width / 640, width / 640);
-  const gap = 5, inset = 12;
-  const cellWidth = (640 - 2 * inset - (position.filled - 1) * gap) / position.filled;
-  let offset = inset;
+
+  // Les graduations mesurent le rapport numérique gauche–droite.
+  const cx = 320, cy = 194, radius = 175;
+  const angleAt = balance => -Math.PI / 2 + balance * Math.PI / 2;
+  const dial = ctx.createRadialGradient(cx, cy, 8, cx, cy, radius);
+  dial.addColorStop(0, '#202126');
+  dial.addColorStop(1, '#101114');
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, -Math.PI, 0);
+  ctx.closePath();
+  ctx.fillStyle = dial;
+  ctx.fill();
+  const rim = ctx.createLinearGradient(cx - radius, 0, cx + radius, 0);
+  rim.addColorStop(0, bands[1][1]);
+  rim.addColorStop(0.5, '#E9E1D4');
+  rim.addColorStop(1, bands[5][1]);
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, -Math.PI, 0);
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = rim;
+  ctx.stroke();
+
+  for (let tick = 0; tick <= 20; tick++) {
+    const major = tick % 5 === 0;
+    const angle = angleAt((tick - 10) / 10);
+    const outer = radius - 10, inner = outer - (major ? 20 : 9);
+    ctx.beginPath();
+    ctx.moveTo(cx + inner * Math.cos(angle), cy + inner * Math.sin(angle));
+    ctx.lineTo(cx + outer * Math.cos(angle), cy + outer * Math.sin(angle));
+    ctx.lineWidth = major ? 4 : 2;
+    ctx.strokeStyle = major ? '#FFF8E5' : '#999B9F';
+    ctx.stroke();
+  }
+
+  if (position.balance !== null) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angleAt(position.balance));
+    ctx.fillStyle = '#FF846B';
+    ctx.beginPath();
+    ctx.moveTo(-13, -7);
+    ctx.lineTo(radius - 24, 0);
+    ctx.lineTo(-13, 7);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.beginPath();
+  ctx.arc(cx, cy, 11, 0, 2 * Math.PI);
+  ctx.fillStyle = '#E9E1D4';
+  ctx.fill();
+  ctx.font = '600 24px Manrope, system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Gauche', cx - radius, 225);
+  ctx.fillText('Équilibre', cx, 225);
+  ctx.fillText('Droite', cx + radius, 225);
+
   ctx.font = '600 27px Manrope, system-ui, sans-serif';
   ctx.textAlign = 'left';
-  ctx.textBaseline = 'middle';
   position.segments.forEach(({ label, color, count }, i) => {
+    const x = 12 + (i % 2) * 314, y = legendTop + 16 + Math.floor(i / 2) * 38;
     ctx.fillStyle = color;
-    for (let cell = 0; cell < count; cell++) {
-      ctx.fillRect(offset, 14, cellWidth, 34);
-      offset += cellWidth + gap;
-    }
-    const x = inset + (i % 2) * 314, y = 81 + Math.floor(i / 2) * 38;
     ctx.fillRect(x, y - 8, 16, 16);
     ctx.fillStyle = '#FFF8E5';
     ctx.fillText(label + ' · ' + count, x + 27, y);

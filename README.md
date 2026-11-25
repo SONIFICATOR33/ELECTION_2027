@@ -44,17 +44,17 @@ dans Joueurs et Groupes ou le menu du navigateur.
 
 ## Repères politiques
 
-La jauge représente chaque personne nommée par une case de même taille.
+L’aiguille du cadran indique la différence entre les effectifs de droite et de gauche, divisée par le nombre de profils classés. À égalité, elle pointe au milieu. Elle est masquée si aucun profil ou moins de la moitié des personnes nommées ont un repère.
 Le président, le Premier ministre et les dix ministres ont le même poids.
 Une personne nommée deux fois compte une fois, le joker est exclu et les postes
-vides ne comptent pas. Une case grise signale un nom sans repère.
+vides ne comptent pas. La légende indique en gris les profils sans repère.
 La légende donne l’effectif de chaque sensibilité. Le détail dans le jeu associe
 chaque nom à ses fonctions et au repère retenu.
 
 Le décompte regroupe les trois sensibilités de gauche et les trois de droite.
-Une majorité demande plus de la moitié de toutes les personnes nommées, cases
-grises comprises. Six ministres de gauche, quatre de droite et les deux têtes de
-l’exécutif à droite donnent donc six cases de chaque côté.
+Une majorité demande plus de la moitié de toutes les personnes nommées, profils
+sans repère compris. Six ministres de gauche, quatre de droite et les deux têtes de
+l’exécutif à droite donnent donc six voix de chaque côté.
 
 - **Raphaël Glucksmann** figure au centre gauche. Son parti est Place publique et il siège au groupe des Socialistes et Démocrates. [Parlement européen](https://www.europarl.europa.eu/meps/fr/197694/RAPHAEL_GLUCKSMANN/home) · [Le Monde sur Place publique](https://www.lemonde.fr/politique/article/2025/07/04/raphael-glucksmann-accuse-de-rejouer-le-macron-de-2017_6617878_823448.html)
 - **Christine Lagarde** figure à droite au titre de son parcours politique français, notamment au sein de l’opposition municipale UMP à Paris. [Archives de Bercy](https://www.economie.gouv.fr/saef/christine-lagarde) · [Le Parisien](https://www.leparisien.fr/paris-75/paris-75009/ce-ne-sont-pas-les-pauvres-petits-socialistes-qui-portent-les-parisiens-29-05-2009-529827.php)
