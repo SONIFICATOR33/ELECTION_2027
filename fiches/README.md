@@ -9,15 +9,14 @@
 | [Fabien Roussel](roussel.md) | PCF | 58 ans | Candidat du PCF |
 | [Marine Tondelier](tondelier.md) | Les Écologistes | 40 ans | Vote des militants des Écologistes le 13 décembre |
 | [Delphine Batho](batho.md) | Génération écologie | 54 ans | Candidature annoncée le 25 novembre 2025, investie par Génération écologie le 6 juin 2026 |
-| [Raphaël Glucksmann](glucksmann.md) | Place publique | 47 ans | Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre |
 | [François Hollande](hollande.md) | PS | 72 ans | Pas déclaré : sa décision, d’abord promise pour décembre, est repoussée à janvier |
 | [Karim Bouamrane](bouamrane.md) | PS, hors primaire | 54 ans | Candidature annoncée le 9 juin 2026, hors primaire du PS |
 | [Bernard Cazeneuve](cazeneuve.md) | La Convention | 63 ans | « Lettre aux Français » le 16 juillet 2026, refuse la primaire du PS |
+| [Raphaël Glucksmann](glucksmann.md) | Place publique | 47 ans | Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre |
 | [Gabriel Attal](attal.md) | Renaissance | 38 ans | Candidature annoncée le 22 mai 2026 |
 | [Olivier Becht](becht.md) | Apparenté Ensemble pour la République | 50 ans | Candidature annoncée le 24 septembre 2026 |
 | [Édouard Philippe](philippe.md) | Horizons | 56 ans | Candidature annoncée le 3 septembre 2024 |
 | [Xavier Bertrand](bertrand.md) | Nous France | 62 ans | « Je le serai » le 27 août 2026, déclaration officielle prévue en fin d’année |
-| [Teddy Riner](riner.md) | Sans étiquette | 38 ans | Candidature annoncée le 9 novembre 2026 |
 | [Dominique de Villepin](villepin.md) | La France humaniste | 73 ans | Candidature officialisée le 20 novembre 2026 |
 | [Bruno Retailleau](retailleau.md) | Les Républicains | 66 ans | Candidature annoncée le 12 février 2026 |
 | [David Lisnard](lisnard.md) | Nouvelle Énergie | 58 ans | Candidature annoncée en janvier 2025 |
@@ -27,6 +26,7 @@
 | [Marine Le Pen](lepen.md) | Rassemblement national | 58 ans | Candidate déclarée le 7 juillet 2026, jour de l’arrêt d’appel qui la laisse éligible ; pourvoi en cassation en attente |
 | [Éric Zemmour](zemmour.md) | Reconquête | 68 ans | Candidature officialisée le 10 novembre 2026 |
 | [Jean Lassalle](lassalle.md) | Résistons ! | 71 ans | Recherche des soutiens pour une troisième candidature. LCP le cite parmi les annonces, sans date de déclaration personnelle précisée. |
+| [Teddy Riner](riner.md) | Sans étiquette | 38 ans | Candidature annoncée le 9 novembre 2026 |
 | [Natacha Polony](polony.md) | Nous sommes la France | 52 ans | Candidature annoncée le 14 octobre 2026 |
 
 ## Comment c’est fait

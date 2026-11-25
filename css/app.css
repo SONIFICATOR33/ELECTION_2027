@@ -10,7 +10,7 @@
 --nuit:#0a0a0a;--nuit2:#0a0a0a;--or:#C6A15B;--orC:#E6D3A3;--ivoire:var(--ink);
 --bleu:#0a0a0a;--bleuT:#E6D3A3;--rouge:#F07A8A;--vert:#36C48E;--vertbg:#0F2B22;--rougebg:#3A1418;
 --bg:#0a0a0a;--card:#0a0a0a;--line:#383838;--ink:rgba(255, 255, 255, 0.87);--mut:#C8C2B8;
---c-lp:#7484E6;--c-jlm:#E8404F;--c-ep:#3398CC;--c-rg:#E35BAD;--c-dl:#D47C0C;--c-br:#1FA391;
+--c-lp:#BD8761;--c-jlm:#E8404F;--c-ep:#3398CC;--c-rg:#E35BAD;--c-dl:#D47C0C;--c-br:#1FA391;
 --sans:"Manrope",sans-serif;--cond:var(--sans)}
 *{box-sizing:border-box;min-width:0}
 html{scroll-padding-top:72px;background:var(--bg)}
@@ -532,6 +532,9 @@ h2{font-weight:600;letter-spacing:-.2px}
 [data-team-comments] textarea { display: block; width: 100%; font: inherit; font-size: var(--text-ui); margin-block: 6px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
 
 .team-gauge { background: var(--card); color: #FFF8E5; text-align: center; }
+.team-gauge details { margin-top: 12px; text-align: left; }
+.team-gauge summary { cursor: pointer; }
+.team-gauge ul { padding-inline-start: 20px; }
 .team-gauge canvas { width: 100%; max-width: 480px; height: auto; display: block; margin-inline: auto; }
 .team-gauge p { margin: 4px 0 0; color: #FFF8E5; }
 

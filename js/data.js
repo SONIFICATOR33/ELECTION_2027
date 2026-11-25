@@ -47,24 +47,24 @@ export const C = [
   { id: 'roussel', p: 'Fabien', n: 'Roussel', party: 'PCF', col: '#B0101C', main: 1, poll: 1 },
   { id: 'tondelier', p: 'Marine', n: 'Tondelier', party: 'Les Écologistes', col: '#2E9E4F', main: 1, poll: 2.5, note: 'Choix du parti le 13 déc.' },
   { id: 'batho', p: 'Delphine', n: 'Batho', party: 'Génération écologie', col: '#5E9A2E' },
-  { id: 'glucksmann', p: 'Raphaël', n: 'Glucksmann', party: 'Place publique', col: 'var(--c-rg)', main: 1, poll: 9.8 },
   { id: 'hollande', p: 'François', n: 'Hollande', party: 'PS', col: '#C24F86', main: 1, poll: 7, und: 1, note: 'Décision en janvier' },
   { id: 'bouamrane', p: 'Karim', n: 'Bouamrane', party: 'PS, hors primaire', col: '#C7608F' },
   { id: 'cazeneuve', p: 'Bernard', n: 'Cazeneuve', party: 'La Convention', col: '#A85C80' },
+  { id: 'glucksmann', p: 'Raphaël', n: 'Glucksmann', party: 'Place publique', col: 'var(--c-rg)', main: 1, poll: 9.8 },
   { id: 'attal', p: 'Gabriel', n: 'Attal', party: 'Renaissance', col: '#C99700', main: 1, poll: 5 },
   { id: 'becht', p: 'Olivier', n: 'Becht', party: 'Apparenté Ensemble pour la République', col: '#B8932A' },
   { id: 'philippe', p: 'Édouard', n: 'Philippe', party: 'Horizons', col: 'var(--c-ep)', main: 1, poll: 9 },
   { id: 'bertrand', p: 'Xavier', n: 'Bertrand', party: 'Nous France', col: '#2F6FB0' },
-  { id: 'riner', p: 'Teddy', n: 'Riner', party: 'Sans étiquette', col: '#64748B', main: 1, poll: 3.5 },
   { id: 'villepin', p: 'Dominique', n: 'de Villepin', party: 'La France humaniste', col: '#6C63B5', main: 1, poll: 1.5 },
   { id: 'retailleau', p: 'Bruno', n: 'Retailleau', party: 'Les Républicains', col: 'var(--c-br)', main: 1, poll: 6 },
   { id: 'lisnard', p: 'David', n: 'Lisnard', party: 'Nouvelle Énergie', col: 'var(--c-dl)', main: 1, poll: 10 },
   { id: 'nda', p: 'Nicolas', n: 'Dupont-Aignan', party: 'Debout la France', col: '#34427E', main: 1, poll: 1 },
   { id: 'asselineau', p: 'François', n: 'Asselineau', party: 'UPR', col: '#2C6E7F' },
-  { id: 'philippot', p: 'Florian', n: 'Philippot', party: 'Les Patriotes', col: '#4B3F8F' },
+  { id: 'philippot', p: 'Florian', n: 'Philippot', party: 'Les Patriotes', col: '#B99070' },
   { id: 'lepen', p: 'Marine', n: 'Le Pen', party: 'Rassemblement national', col: 'var(--c-lp)', main: 1, poll: 31.6 },
-  { id: 'zemmour', p: 'Éric', n: 'Zemmour', party: 'Reconquête', col: '#3A2E57', main: 1, poll: 3.5 },
+  { id: 'zemmour', p: 'Éric', n: 'Zemmour', party: 'Reconquête', col: '#AB7455', main: 1, poll: 3.5 },
   { id: 'lassalle', p: 'Jean', n: 'Lassalle', party: 'Résistons !', col: '#7A6A3A', off: 1, und: 1, note: 'Attendu' },
+  { id: 'riner', p: 'Teddy', n: 'Riner', party: 'Sans étiquette', col: '#64748B', off: 1, main: 1, poll: 3.5 },
   { id: 'polony', p: 'Natacha', n: 'Polony', party: 'Nous sommes la France', col: '#7A7A85', off: 1 }
 ];
 export const by = Object.fromEntries(C.map(c => [c.id, c]));
@@ -82,11 +82,13 @@ export const RETIRES = [
 /* ---------- Personnalités pour Matignon et les ministères (menus déroulants) ----------
    Liste « réaliste » : candidats sérieux et personnalités gouvernementales, par famille. */
 export const PEOPLE_GROUPS = [
-  ['Gauche', ['Jean-Luc Mélenchon', 'Fabien Roussel', 'Marine Tondelier', 'Raphaël Glucksmann', 'François Hollande', 'Bernard Cazeneuve', 'Karim Bouamrane', 'Olivier Faure', 'Boris Vallaud', 'Carole Delga', 'Ségolène Royal', 'Manuel Bompard', 'Mathilde Panot', 'David Guiraud', 'Manon Aubry', 'Clémence Guetté', 'Clémentine Autain', 'François Ruffin', 'Yannick Jadot', 'Benoît Hamon', 'Arnaud Montebourg', 'Alain Bauer']],
-  ['Centre', ['Gabriel Attal', 'Édouard Philippe', 'Jean-Louis Borloo', 'François Bayrou', 'Dominique de Villepin', 'Gérald Darmanin', 'Élisabeth Borne', 'Bruno Le Maire', 'Sébastien Lecornu', 'Yaël Braun-Pivet', 'Jean-Noël Barrot', 'Christophe Béchu', 'Jean Castex', 'Édouard Geffray']],
-  ['Droite', ['Bruno Retailleau', 'David Lisnard', 'Xavier Bertrand', 'Laurent Wauquiez', 'Valérie Pécresse', 'Michel Barnier', 'Rachida Dati', 'François Baroin', 'Annie Genevard', 'Othman Nasrou', 'Philippe Juvin', 'Michèle Tabarot', 'Patrick Hetzel']],
+  ['Gauche', ['Jean-Luc Mélenchon', 'Fabien Roussel', 'Marine Tondelier', 'François Hollande', 'Bernard Cazeneuve', 'Karim Bouamrane', 'Olivier Faure', 'Boris Vallaud', 'Carole Delga', 'Ségolène Royal', 'Manuel Bompard', 'Mathilde Panot', 'David Guiraud', 'Manon Aubry', 'Clémence Guetté', 'Clémentine Autain', 'François Ruffin', 'Yannick Jadot', 'Benoît Hamon', 'Arnaud Montebourg', 'Alain Bauer']],
+  ['Centre gauche · Place publique', ['Raphaël Glucksmann']],
+  ['Centre', ['Thierry Breton', 'Gabriel Attal', 'Édouard Philippe', 'Jean-Louis Borloo', 'François Bayrou', 'Dominique de Villepin', 'Gérald Darmanin', 'Élisabeth Borne', 'Bruno Le Maire', 'Sébastien Lecornu', 'Yaël Braun-Pivet', 'Jean-Noël Barrot', 'Christophe Béchu', 'Jean Castex', 'Édouard Geffray']],
+  ['Droite', ['Christine Lagarde', 'Bruno Retailleau', 'David Lisnard', 'Xavier Bertrand', 'Laurent Wauquiez', 'Valérie Pécresse', 'Michel Barnier', 'Rachida Dati', 'François Baroin', 'Annie Genevard', 'Othman Nasrou', 'Philippe Juvin', 'Michèle Tabarot', 'Patrick Hetzel']],
   ['RN, UDR et Reconquête', ['Marine Le Pen', 'Jordan Bardella', 'Sébastien Chenu', 'Éric Ciotti', 'Éric Zemmour', 'Sarah Knafo', 'Jean-Philippe Tanguy', 'Laure Lavalette', 'Edwige Diaz', 'Thomas Ménagé']],
-  ['Société civile', ['Christine Lagarde', 'Laurent Berger', 'Thierry Breton', 'Teddy Riner', 'Natacha Polony']]
+  ['Candidatures hors axe', ['Teddy Riner', 'Natacha Polony']],
+  ['Syndicalisme', ['Laurent Berger']]
 ];
 export const POSTES = ['Intérieur', 'Économie et Finances', 'Affaires étrangères', 'Armées', 'Justice', 'Éducation nationale', 'Santé', 'Travail et Emploi', 'Écologie et Énergie', 'Agriculture'];
 

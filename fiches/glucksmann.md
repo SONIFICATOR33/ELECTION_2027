@@ -13,7 +13,7 @@ Photo [Portrait officiel de Raphaël Glucksmann, juillet 2024](https://commons.w
 
 ## Aujourd’hui
 
-Député européen depuis 2019, cofondateur de Place publique
+Cofondateur de Place publique et député européen depuis 2019, il siège au groupe des Socialistes et Démocrates (S&D).
 
 ## Parcours
 
@@ -29,6 +29,7 @@ Député européen depuis 2019, cofondateur de Place publique
 
 ## Sources
 
+- [Parlement européen](https://www.europarl.europa.eu/meps/fr/197694/RAPHAEL_GLUCKSMANN/home)
 - [Wikipédia](https://fr.wikipedia.org/wiki/Rapha%C3%ABl_Glucksmann)
 - [LCP, 23 nov. 2026](https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932)
 

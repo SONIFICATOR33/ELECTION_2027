@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=48">
+<link rel="stylesheet" href="css/app.css?v=49">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -176,11 +176,18 @@
       <p class="pick-instruction">Ton gouvernement est visible par tous les joueurs dès que tu commences à le composer. Il ne rapporte aucun point.</p>
     </article>
     <article class="card team-gauge" id="team-gauge" hidden>
-      <h2>La polarité de ton Gouve</h2>
-      <canvas id="team-gauge-canvas" width="640" height="208" aria-hidden="true"></canvas>
+      <h2>Répartition politique</h2>
+      <canvas id="team-gauge-canvas" width="640" height="68" role="img" aria-label="Répartition politique"></canvas>
       <p id="team-gauge-summary" aria-live="polite"></p>
       <p id="team-gauge-counts"></p>
       <p><small id="team-gauge-coverage"></small></p>
+      <details>
+        <summary>Voir le calcul par personne</summary>
+        <p>Président, Premier ministre et ministres comptent chacun pour une voix. Une personne qui cumule deux postes compte une seule fois. Le joker est exclu.</p>
+        <ul id="team-gauge-people"></ul>
+        <p>Les repères sont des choix éditoriaux fondés sur les partis et les parcours publics. Les profils sans repère apparaissent en gris.</p>
+        <p><a href="https://github.com/SONIFICATOR33/ELECTION_2027#rep%C3%A8res-politiques">Méthode et sources</a></p>
+      </details>
     </article>
     <article class="card pm">
       <h2>Président</h2>
@@ -341,7 +348,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=47"></script>
+<script type="module" src="js/app.js?v=49"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
