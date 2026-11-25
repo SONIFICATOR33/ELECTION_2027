@@ -42,12 +42,24 @@ dans Joueurs et Groupes ou le menu du navigateur.
    coefficient descend de ×2 à ×1.
 4. **Mon gouvernement.** Président, Premier ministre et ministres, sans points.
 
-La jauge compte chaque personnalité une fois, hors joker. Elle affiche le nombre
-de profils classés à gauche, au centre et à droite. Si une de ces familles
-dépasse la moitié des profils classés, l’aiguille indique la sensibilité médiane
-de cette famille. Entre deux sensibilités, les deux libellés apparaissent. La
-jauge reste sans aiguille en l’absence de majorité ou lorsque moins de la moitié
-des personnalités nommées ont un repère.
+## Repères politiques
+
+La jauge représente chaque personne nommée par une case de même taille.
+Le président, le Premier ministre et les dix ministres ont le même poids.
+Une personne nommée deux fois compte une fois, le joker est exclu et les postes
+vides ne comptent pas. Une case grise signale un nom sans repère.
+La légende donne l’effectif de chaque sensibilité. Le détail dans le jeu associe
+chaque nom à ses fonctions et au repère retenu.
+
+Le décompte regroupe les trois sensibilités de gauche et les trois de droite.
+Une majorité demande plus de la moitié de toutes les personnes nommées, cases
+grises comprises. Six ministres de gauche, quatre de droite et les deux têtes de
+l’exécutif à droite donnent donc six cases de chaque côté.
+
+- **Raphaël Glucksmann** figure au centre gauche. Son parti est Place publique et il siège au groupe des Socialistes et Démocrates. [Parlement européen](https://www.europarl.europa.eu/meps/fr/197694/RAPHAEL_GLUCKSMANN/home) · [Le Monde sur Place publique](https://www.lemonde.fr/politique/article/2025/07/04/raphael-glucksmann-accuse-de-rejouer-le-macron-de-2017_6617878_823448.html)
+- **Christine Lagarde** figure à droite au titre de son parcours politique français, notamment au sein de l’opposition municipale UMP à Paris. [Archives de Bercy](https://www.economie.gouv.fr/saef/christine-lagarde) · [Le Parisien](https://www.leparisien.fr/paris-75/paris-75009/ce-ne-sont-pas-les-pauvres-petits-socialistes-qui-portent-les-parisiens-29-05-2009-529827.php)
+- **Thierry Breton** figure au centre en raison de son parcours européen d’indépendant proche de Renew. Il a auparavant été ministre des gouvernements Raffarin et de Villepin. [Toute l’Europe](https://www.touteleurope.eu/institutions/qui-sont-les-27-commissaires-europeens-2019-2024/) · [Archives de Bercy](https://www.economie.gouv.fr/saef/thierry-breton)
+- **Laurent Berger** figure dans « Syndicalisme » pour son parcours à la CFDT. **Teddy Riner** et **Natacha Polony** figurent dans « Candidatures hors axe ». Le jeu laisse ces trois profils sans repère sur la jauge. [CFDT](https://www.cfdt.fr/histoire-de-la-cfdt) · [Candidature de Teddy Riner](https://www.lemonde.fr/politique/article/2026/11/10/teddy-riner-une-candidature-inattendue-qui-vient-bousculer-un-peu-plus-la-campagne-presidentielle_6808802_823448.html) · [Candidature de Natacha Polony](https://www.lemonde.fr/politique/article/2026/10/14/presidentielle-2027-natacha-polony-se-declare-candidate_6793497_823448.html)
 
 Ces repères sont des choix éditoriaux du jeu. Ils distinguent notamment le
 centre droit d’Horizons et de l’UDI, les ministres issus de la droite et l’aile

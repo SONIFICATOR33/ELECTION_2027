@@ -295,7 +295,7 @@
     "glucksmann": {
       "naissance": "1979-10-15",
       "statut": "Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre",
-      "aujourdhui": "Député européen depuis 2019, cofondateur de Place publique",
+      "aujourdhui": "Cofondateur de Place publique et député européen depuis 2019, il siège au groupe des Socialistes et Démocrates (S&D).",
       "parcours": [
         [
           "2024",
@@ -322,6 +322,10 @@
       "metier": "Documentariste et essayiste",
       "pres": [],
       "sources": [
+        [
+          "Parlement européen",
+          "https://www.europarl.europa.eu/meps/fr/197694/RAPHAEL_GLUCKSMANN/home"
+        ],
         [
           "Wikipédia",
           "https://fr.wikipedia.org/wiki/Rapha%C3%ABl_Glucksmann"

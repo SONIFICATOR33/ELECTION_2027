@@ -2,7 +2,7 @@
    FICHES DES CANDIDATS — lues dans fiches/fiches.json, ouvertes en feuille
    Image : fiches/img/<id>.jpg|png|webp si présente, sinon médaillon.
    ===================================================================== */
-import { C, by, TOUR1 } from './data.js';
+import { C, by, TOUR1 } from './data.js?v=49';
 import { snd } from './sound.js';
 
 const $ = s => document.querySelector(s);
