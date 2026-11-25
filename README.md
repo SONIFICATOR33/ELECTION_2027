@@ -35,6 +35,21 @@ dans Joueurs et Groupes ou le menu du navigateur.
    coefficient descend de ×2 à ×1.
 4. **Mon gouvernement.** Président, Premier ministre et ministres, sans points.
 
+La jauge compte chaque personnalité une fois, hors joker. Elle affiche le nombre
+de profils classés à gauche, au centre et à droite. Si une de ces familles
+dépasse la moitié des profils classés, l’aiguille indique la sensibilité médiane
+de cette famille. Entre deux sensibilités, les deux libellés apparaissent. La
+jauge reste sans aiguille en l’absence de majorité ou lorsque moins de la moitié
+des personnalités nommées ont un repère.
+
+Ces repères sont des choix éditoriaux du jeu. Ils distinguent notamment le
+centre droit d’Horizons et de l’UDI, les ministres issus de la droite et l’aile
+gauche de la majorité présidentielle. Voir le [comité de campagne d’Édouard
+Philippe](https://www.edouardphilippe.fr/actualites/le-comite-de-campagne-est-lance),
+l’[histoire de l’UDI](https://parti-udi.fr/histoire), [l’appel des ministres
+issus de la droite](https://www.leparisien.fr/elections/legislatives/legislatives-lappel-des-ministres-de-droite-a-leurs-anciens-collegues-de-lr-12-06-2024-JD73JLHTONEFDOGBLJBTCSQ2EE.php)
+et le [parcours d’Élisabeth Borne](https://www.lemonde.fr/politique/article/2023/10/06/elisabeth-borne-tisse-ses-reseaux-aupres-de-l-aile-droite-de-la-majorite_6192866_823448.html).
+
 ## Déploiement
 
 Le front est servi par GitHub Pages. Le projet Firebase utilise

@@ -1,4 +1,4 @@
-import { drawTeamGauge, teamPosition } from './team-gauge.js';
+import { drawTeamGauge, teamPosition } from './team-gauge.js?v=33';
 import { groupView } from './group-view.js?v=30';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
@@ -423,14 +423,15 @@ const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D
 function renderTeamGauge() {
   const position = teamPosition(draft.team);
   const card = $('#team-gauge');
-  card.hidden = position.average === null;
+  card.hidden = !position.filled;
   if (card.hidden) return;
   const canvas = $('#team-gauge-canvas');
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawTeamGauge(ctx, 0, 0, canvas.width, position.average);
-  $('#team-gauge-summary').textContent = position.label + ' · ' + position.coverage
-    + (position.mixed ? ' · Équipe très contrastée' : '');
+  drawTeamGauge(ctx, 0, 0, canvas.width, position.needle);
+  $('#team-gauge-summary').textContent = position.label + (position.mixed ? ' · Équipe très contrastée' : '');
+  $('#team-gauge-counts').textContent = position.counts;
+  $('#team-gauge-coverage').textContent = position.coverage;
 }
 function renderPublish() {
   renderTeamGauge();
@@ -573,12 +574,15 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
   x.fillStyle = cream;
   x.font = '600 42px ' + serif;
   x.fillText('La polarité de ton Gouve', W / 2, 995);
-  drawTeamGauge(x, margin + 30, 1002, W - 2 * (margin + 30), position.average);
+  drawTeamGauge(x, margin + 30, 1002, W - 2 * (margin + 30), position.needle);
   x.fillStyle = cream;
-  x.font = '600 26px ' + sans;
-  const summary = position.average === null ? 'Aucune position renseignée'
-    : position.label + ' · ' + position.coverage + (position.mixed ? ' · Équipe très contrastée' : '');
-  x.fillText(fit(x, summary, W - 2 * margin - 48), W / 2, 1317);
+  x.font = '700 30px ' + sans;
+  const summary = position.label + (position.mixed ? ' · Équipe très contrastée' : '');
+  x.fillText(fit(x, summary, W - 2 * margin - 48), W / 2, 1292);
+  x.font = '600 24px ' + sans;
+  x.fillText(position.counts, W / 2, 1320);
+  x.font = '500 21px ' + sans;
+  x.fillText(position.coverage, W / 2, 1344);
   x.fillStyle = colors[0];
   x.font = '600 26px ' + sans;
   x.fillText('Prône ton Président · Just for fun', W / 2, 1410);
