@@ -52,6 +52,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Nathalie_Arthaud_(LO)_19-05-2024.jpg",
         "titre": "Nathalie Arthaud (LO) 19-05-2024.jpg"
+      },
+      "programme": {
+        "url": "https://www.nathalie-arthaud.info/documents/brochure-juin-2026-195370.html",
+        "label": "Brochure",
+        "detail": "Brochure de campagne · juin 2026",
+        "checkedAt": "2026-11-25"
       }
     },
     "melenchon": {
@@ -113,6 +119,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Portrait_officiel_JLM_20-01-2026.jpg",
         "titre": "Portrait officiel JLM 20-01-2026.jpg"
+      },
+      "programme": {
+        "url": "https://melenchon2027.fr/programme/decouvrir/",
+        "label": "Programme",
+        "detail": "L’Avenir en commun · édition 2027",
+        "checkedAt": "2026-11-25"
       }
     },
     "roussel": {
@@ -166,6 +178,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Roussel_Fabien_1.jpg",
         "titre": "Roussel Fabien 1.jpg"
+      },
+      "programme": {
+        "url": "https://www.fabienroussel2027.fr/",
+        "label": "Orientations",
+        "detail": "Vivre ! · orientations de campagne",
+        "checkedAt": "2026-11-25"
       }
     },
     "tondelier": {
@@ -210,6 +228,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Huma2023MarineTondelier_(cropped).jpg",
         "titre": "Huma2023MarineTondelier (cropped).jpg"
+      },
+      "programme": {
+        "url": "https://lesecologistes.fr/pages/6ImK65GKUnvibm33WGkjkj/projet-2027",
+        "label": "Programme",
+        "detail": "Projet 2027 des Écologistes",
+        "checkedAt": "2026-11-25"
       }
     },
     "batho": {
@@ -260,6 +284,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Delphine_Batho_(cropped-2).png",
         "titre": "Delphine Batho (cropped-2).png"
+      },
+      "programme": {
+        "url": "https://www.delphinebatho.fr/priorites/",
+        "label": "Priorités",
+        "detail": "Priorités de campagne",
+        "checkedAt": "2026-11-25"
       }
     },
     "glucksmann": {
@@ -308,6 +338,12 @@
         "licenceUrl": "https://www.europarl.europa.eu/legal-notice/true",
         "source": "https://commons.wikimedia.org/wiki/File:1720448398743_20240708_GLUCKSMANN_Raphael_FR_006.jpg",
         "titre": "Portrait officiel de Raphaël Glucksmann, juillet 2024"
+      },
+      "programme": {
+        "url": "https://glucks2027.fr/revolution-ecologique/",
+        "label": "Propositions",
+        "detail": "Écologie · les 100 premiers jours",
+        "checkedAt": "2026-11-25"
       }
     },
     "hollande": {
@@ -410,6 +446,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Karim_Bouamrane_en_2026_(cropped).jpg",
         "titre": "Karim Bouamrane en 2026 (cropped).jpg"
+      },
+      "programme": {
+        "url": "https://www.karimbouamrane2027.org/manifeste.html",
+        "label": "Manifeste",
+        "detail": "Manifeste de candidature",
+        "checkedAt": "2026-11-25"
       }
     },
     "cazeneuve": {
@@ -458,6 +500,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0",
         "source": "https://commons.wikimedia.org/wiki/File:Bernard_Cazeneuve,_(42399145362)_(cropped).jpg",
         "titre": "Bernard Cazeneuve, (42399145362) (cropped).jpg"
+      },
+      "programme": {
+        "url": "https://assets.nationbuilder.com/laconvention/pages/2515/attachments/original/1784151599/Auxfrancaisversionfinale1507.pdf",
+        "label": "Projet PDF",
+        "detail": "Tenir la promesse de la France · juillet 2026",
+        "checkedAt": "2026-11-25"
       }
     },
     "attal": {
@@ -510,6 +558,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Gabriel_Attal_in_2026_(2).jpg",
         "titre": "Gabriel Attal in 2026 (2).jpg"
+      },
+      "programme": {
+        "url": "https://attalpresident.fr/programme",
+        "label": "Propositions",
+        "detail": "Premières mesures de campagne",
+        "checkedAt": "2026-11-25"
       }
     },
     "becht": {
@@ -562,6 +616,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
         "source": "https://commons.wikimedia.org/wiki/File:Olivier_Becht_2023_(cropped).jpg",
         "titre": "Olivier Becht 2023 (cropped).jpg"
+      },
+      "programme": {
+        "url": "https://becht2027.fr/",
+        "label": "Propositions",
+        "detail": "Le Projet France · propositions par thème",
+        "checkedAt": "2026-11-25"
       }
     },
     "philippe": {
@@ -610,6 +670,12 @@
         "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
         "source": "https://commons.wikimedia.org/wiki/File:Edouard_Philippe_3x4_crop.jpg",
         "titre": "Edouard Philippe 3x4 crop.jpg"
+      },
+      "programme": {
+        "url": "https://www.edouardphilippe.fr/programme",
+        "label": "Programme",
+        "detail": "Croire en nous · volume 1 et propositions en ligne",
+        "checkedAt": "2026-11-25"
       }
     },
     "bertrand": {
@@ -754,6 +820,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
         "source": "https://commons.wikimedia.org/wiki/File:Dominique_de_Villepin_20100330_Salon_du_livre_de_Paris_2_cropped.jpg",
         "titre": "Dominique de Villepin 20100330 Salon du livre de Paris 2 cropped.jpg"
+      },
+      "programme": {
+        "url": "https://lafrancehumaniste.fr/france2027.html",
+        "label": "Programme",
+        "detail": "Projet France 2027",
+        "checkedAt": "2026-11-25"
       }
     },
     "retailleau": {
@@ -802,6 +874,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Bruno_Retailleau_-_Ministre_de_l%27Int%C3%A9rieur_fran%C3%A7ais_(cropped).jpg",
         "titre": "Bruno Retailleau - Ministre de l'Intérieur français (cropped).jpg"
+      },
+      "programme": {
+        "url": "https://www.avecretailleau.fr/projet",
+        "label": "Projet",
+        "detail": "Projet de campagne 2027",
+        "checkedAt": "2026-11-25"
       }
     },
     "lisnard": {
@@ -850,6 +928,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:David_Lisnard_en_2026.jpg",
         "titre": "David Lisnard en 2026.jpg"
+      },
+      "programme": {
+        "url": "https://www.unenouvelleenergie.fr/notre-programme/",
+        "label": "Programme",
+        "detail": "Programme 2027 de Nouvelle Énergie",
+        "checkedAt": "2026-11-25"
       }
     },
     "nda": {
@@ -911,6 +995,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:Nicolas_Dupont-Aignan,_homme_politique_fran%C3%A7ais.jpg",
         "titre": "Nicolas Dupont-Aignan, homme politique français.jpg"
+      },
+      "programme": {
+        "url": "https://www.debout-la-france.fr/notre-projet/",
+        "label": "Projet",
+        "detail": "Projet de Debout la France · actualisation 2027 en cours",
+        "checkedAt": "2026-11-25"
       }
     },
     "asselineau": {
@@ -1002,6 +1092,12 @@
         "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
         "source": "https://commons.wikimedia.org/wiki/File:2022-04-16_16-49-26_MAM-Paris_02.jpg",
         "titre": "2022-04-16 16-49-26 MAM-Paris 02.jpg"
+      },
+      "programme": {
+        "url": "https://les-patriotes.fr/wp-content/uploads/2026/09/Projet-pour-la-France-2026-v2.pdf",
+        "label": "Projet PDF",
+        "detail": "Orientations des Patriotes · édition 2026–2027",
+        "checkedAt": "2026-11-25"
       }
     },
     "lepen": {
@@ -1119,6 +1215,12 @@
         "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
         "source": "https://commons.wikimedia.org/wiki/File:Portrait_d%27%C3%89ric_Zemmour,_avril_2022.jpg",
         "titre": "Portrait d'Éric Zemmour, avril 2022.jpg"
+      },
+      "programme": {
+        "url": "https://www.ericzemmour.fr/priorites",
+        "label": "Priorités",
+        "detail": "Priorités de campagne",
+        "checkedAt": "2026-11-25"
       }
     },
     "lassalle": {
@@ -1233,7 +1335,14 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
         "source": "https://commons.wikimedia.org/wiki/File:Natacha_Polony_Cannes_2015.jpg",
         "titre": "Natacha Polony Cannes 2015.jpg"
+      },
+      "programme": {
+        "url": "https://natachapolony2027.fr/natacha-polony/mes-principes",
+        "label": "Convictions",
+        "detail": "Principes et convictions de la candidate",
+        "checkedAt": "2026-11-25"
       }
     }
-  }
+  },
+  "programmesCheckedAt": "2026-11-25"
 }

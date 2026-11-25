@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=34">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=35">
+<link rel="stylesheet" href="css/app.css?v=36">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -37,6 +37,7 @@
   <p class="tag2">Prone ton President</p>
   <p class="jbig"><b id="splashJ">J-145</b>avant le premier tour</p>
   <button class="big go" id="splashGo">Entrer</button>
+  <button class="ghost splash-candidates" data-go="candidats">Fiches et programmes</button>
   <button class="splash-install" data-install aria-controls="splash-install-help" aria-expanded="false" hidden>Ajouter à l’écran d’accueil</button>
   <p id="splash-install-help" hidden></p>
 </section>
@@ -77,30 +78,6 @@
     </div>
   </div>
   <div class="wrap stack">
-    <div id="pollsHome">
-      <div class="stack" style="padding:0">
-        <article class="card">
-          <h2>Le podium des sondages</h2>
-          <p class="poll-date" id="podDate"></p>
-          <p class="src" id="podSrc"></p>
-          <div class="podium" id="podium"></div>
-        </article>
-        <article class="card">
-          <div class="poll-heading"><h2>Ça bouge</h2><time id="movesDate" class="poll-date"></time></div>
-          <div class="moves" id="moves"></div>
-        </article>
-        <article class="card">
-          <h2>Dernier sondage</h2>
-          <p class="src" id="lastSrc"></p>
-          <div id="last"></div>
-        </article>
-      </div>
-    </div>
-    <article class="card" id="candsCard">
-      <h2>Les candidats</h2>
-      <p class="src">De gauche à droite. Touche un nom pour lire sa fiche.</p>
-      <div class="rail" id="rail" aria-label="Fiches des candidats"></div>
-    </article>
     <article class="card">
       <h2>Jouer entre amis</h2>
       <button class="ghost" data-go="classement">Joueurs et Groupes</button>
@@ -114,6 +91,25 @@
         <li><b>Sinon, 2nd tour le 2 mai</b> entre les deux candidats arrivés en tête.</li>
       </ol>
     </details>
+  </div>
+</section>
+
+<!-- ===================== FICHES ET PROGRAMMES ===================== -->
+<section class="view" id="v-candidats">
+  <div class="wrap stack">
+    <article class="card" id="candsCard">
+      <button class="linkbtn" data-go="accueil">← Accueil</button>
+      <h2>Fiches et programmes</h2>
+      <p class="help">Découvre les candidats et leurs propositions sur leurs sites officiels.</p>
+      <p class="fine">Le type de document est indiqué sous chaque lien.</p>
+      <label class="candidate-search" for="candidateSearch">Chercher un candidat
+        <input id="candidateSearch" type="search" placeholder="Nom ou parti" autocomplete="off" aria-controls="candidateDirectory">
+      </label>
+      <p class="fine" id="programmeStatus" role="status">Chargement des liens…</p>
+      <button class="linkbtn" id="programmeRetry" hidden>Réessayer</button>
+      <ul class="candidate-directory" id="candidateDirectory" aria-label="Fiches et programmes des candidats"></ul>
+      <p class="help" id="candidateEmpty" hidden>Aucun candidat ne correspond à ta recherche.</p>
+    </article>
   </div>
 </section>
 
@@ -228,6 +224,25 @@
 <!-- ===================== SONDAGES ===================== -->
 <section class="view" id="v-sondages">
   <div class="wrap stack">
+    <div id="pollsOverview">
+      <div class="stack" style="padding:0">
+        <article class="card">
+          <h2>Le podium des sondages</h2>
+          <p class="poll-date" id="podDate"></p>
+          <p class="src" id="podSrc"></p>
+          <div class="podium" id="podium"></div>
+        </article>
+        <article class="card">
+          <div class="poll-heading"><h2>Ça bouge</h2><time id="movesDate" class="poll-date"></time></div>
+          <div class="moves" id="moves"></div>
+        </article>
+        <article class="card">
+          <h2>Dernier sondage</h2>
+          <p class="src" id="lastSrc"></p>
+          <div id="last"></div>
+        </article>
+      </div>
+    </div>
     <div id="pollsBody">
       <div class="stack" style="padding:0">
         <article class="card">
@@ -344,7 +359,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=35"></script>
+<script type="module" src="js/app.js?v=36"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
