@@ -24,12 +24,13 @@ function setup(saved = {}) {
 const own = 'pronos/antoine';
 const copy = code => `groups/${code}/teams/antoine`;
 
-test('legacy phone government becomes an account backup and visible to another group member', async () => {
+test('legacy phone government becomes visible to a player outside all private groups', async () => {
   const { groups, data, client } = setup();
   await groups.syncSharedTeam(team, true);
   assert.deepEqual(data.get(own).team, team);
   assert.deepEqual((await client('vince').load(PRIVATE)).teams.antoine, team);
-  assert.equal(data.has(copy(COMMON_GROUP)), false);
+  data.set(`groups/${COMMON_GROUP}/members/outsider`, { pseudo: 'outsider', shared: true, submitted: [] });
+  assert.deepEqual((await client('outsider').load(COMMON_GROUP)).teams.antoine, team);
   await assert.rejects(client('outsider').load(PRIVATE), /permission-denied/);
 });
 
@@ -38,6 +39,7 @@ test('new device restores the account government; stale local draft cannot overw
   const restored = await groups.syncSharedTeam(normalizeTeam({ pm: 'Ancien' }), true);
   assert.deepEqual(restored, team);
   assert.deepEqual(data.get(copy(PRIVATE)).value, team);
+  assert.deepEqual(data.get(copy(COMMON_GROUP)).value, team);
 });
 
 test('an old shared copy restores a government absent from both phone and account', async () => {
@@ -45,6 +47,7 @@ test('an old shared copy restores a government absent from both phone and accoun
   data.set(copy(PRIVATE), { value: team });
   assert.deepEqual(await groups.syncSharedTeam(null, true), team);
   assert.deepEqual(data.get(own).team, team);
+  assert.deepEqual(data.get(copy(COMMON_GROUP)).value, team);
 });
 
 test('unchanged shared copies survive repeated synchronization', async () => {
@@ -57,7 +60,7 @@ test('unchanged shared copies survive repeated synchronization', async () => {
   assert.deepEqual(data.get(copy(COMMON_GROUP)).value, team);
 });
 
-test('latest account government repairs stale private and opted-in public copies', async () => {
+test('latest account government repairs stale private and public copies', async () => {
   const { groups, data } = setup({ team });
   for (const code of [PRIVATE, COMMON_GROUP]) data.set(copy(code), { value: normalizeTeam({ pm: 'Ancien' }) });
   await groups.syncSharedTeam(null, true);
@@ -89,6 +92,7 @@ test('empty fresh device does not prevent later migration from the old phone', a
   const { groups, data } = setup();
   await groups.syncSharedTeam(null, true);
   assert.equal(Object.hasOwn(data.get(own), 'team'), false);
+  assert.equal(data.has(copy(COMMON_GROUP)), false);
   await groups.syncSharedTeam(team, true);
   assert.deepEqual(data.get(own).team, team);
 });
@@ -102,19 +106,20 @@ test('new private group receives the existing government automatically', async (
   assert.deepEqual(data.get(copy(OTHER)).value, team);
 });
 
-test('public opt-out stays off after editing', async () => {
-  const { groups, data } = setup({ team });
-  await groups.publishTeam(COMMON_GROUP, team);
-  await groups.unpublishTeam(COMMON_GROUP);
-  await groups.syncSharedTeam({ ...team, pm: 'Nouveau' }, false);
-  assert.equal(data.has(copy(COMMON_GROUP)), false);
-  assert.equal(data.get(copy(PRIVATE)).value.pm, 'Nouveau');
+test('a first partial edit is shared even when the author belongs to no private group', async () => {
+  const { groups, data } = setup();
+  delete data.get('players/antoine/settings/groups').groups[PRIVATE];
+  data.delete(`groups/${PRIVATE}/members/antoine`);
+  const partial = normalizeTeam({ pm: 'Nouveau' });
+  await groups.syncSharedTeam(partial, false);
+  assert.deepEqual(data.get(copy(COMMON_GROUP)).value, partial);
+  assert.equal(data.has(copy(PRIVATE)), false);
 });
 
 test('a second member sees government updates through the listener and can unsubscribe', async () => {
   const { groups, client, listenerCount } = setup();
   const seen = [];
-  const stop = client('vince').watchTeams(PRIVATE, teams => seen.push(teams));
+  const stop = client('vince').watchTeams(COMMON_GROUP, teams => seen.push(teams));
   await groups.syncSharedTeam(team, false);
   await new Promise(resolve => queueMicrotask(resolve));
   assert.deepEqual(seen.at(-1).antoine, team);
