@@ -76,4 +76,10 @@ front pour activer l’écriture des photos mensuelles.
 - `fiches/fiches.json` contient les biographies, sources et crédits photo. Voir
   [les fiches](fiches/README.md).
 - Le visuel d’accueil `img/habit.jpg` est une image générée pour le jeu. La police
-  [Inter](https://rsms.me/inter/) est hébergée dans le dépôt sous licence SIL OFL 1.1.
+  [Manrope](https://github.com/googlefonts/manrope) est hébergée dans le dépôt sous licence SIL OFL 1.1.
+
+Le thème sombre utilise un fond `#0a0a0a`, un texte principal blanc à 87 %,
+et Manrope variable en graisse 400, 16 px, interligne 1,55 et espacement nul.
+Les titres et contrôles conservent leur hiérarchie typographique.
+La police est distribuée localement dans `fonts/manrope-variable.woff2`,
+avec sa licence dans `fonts/OFL-Manrope.txt`.

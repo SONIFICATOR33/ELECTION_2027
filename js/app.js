@@ -9,7 +9,7 @@ import * as S from './scoring.js';
 import { openStore } from './store.js?v=30';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
-import { initFiches, portraitThumb } from './fiches.js?v=36';
+import { initFiches, portraitThumb } from './fiches.js?v=38';
 
 /* place de chaque candidat sur l'axe gauche-droite (-1 à 1), null = hors axe : sert au son */
 const AXIS = (() => { const a = C.filter(c => !c.off), m = {}; a.forEach((c, i) => m[c.id] = -1 + 2 * i / (a.length - 1)); return id => id in m ? m[id] : null; })();
@@ -320,8 +320,8 @@ $('#recap-share').onclick = async () => {
 };
 
 async function drawPronoRecap() {
-  try { await Promise.all([document.fonts.load('600 64px "Inter"'), document.fonts.load('500 32px "Inter"')]); } catch {}
-  const font = '"Inter", system-ui, sans-serif';
+  try { await Promise.all([document.fonts.load('600 64px "Manrope"'), document.fonts.load('500 32px "Manrope"')]); } catch {}
+  const font = '"Manrope", system-ui, sans-serif';
   const saved = mine(), g = S.current(saved);
   const candidate = id => by[id] ? by[id].p + ' ' + by[id].n : id;
   const sections = [
@@ -335,7 +335,7 @@ async function drawPronoRecap() {
   canvas.height = 230 + sections.reduce((h, [, lines]) => h + 92 + Math.max(lines.length, 1) * 43, 0);
   const ctx = canvas.getContext('2d');
   if (!ctx) return null;
-  ctx.fillStyle = '#000000';
+  ctx.fillStyle = '#0a0a0a';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#F3E6C8';
   ctx.font = '600 64px ' + font;
@@ -348,7 +348,7 @@ async function drawPronoRecap() {
     ctx.font = '700 36px ' + font;
     ctx.fillText(title, 64, y, 952);
     y += 52;
-    ctx.fillStyle = '#F3EEE4';
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.87)';
     ctx.font = '500 32px ' + font;
     for (const line of lines.length ? lines : ['Prono non enregistré']) {
       ctx.fillText(line, 64, y, 952);
@@ -512,12 +512,12 @@ $('#teamShare').onclick = async event => {
   }
 };
 async function drawTeam(t = draft.team, pseudo = ME?.pseudo || 'moi') {
-  try { await Promise.all([document.fonts.load('600 60px "Inter"'), document.fonts.load('700 36px "Inter"'), document.fonts.load('500 26px "Inter"')]); } catch {}
+  try { await Promise.all([document.fonts.load('600 60px "Manrope"'), document.fonts.load('700 36px "Manrope"'), document.fonts.load('500 26px "Manrope"')]); } catch {}
   const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = 1460;
   const x = cv.getContext('2d');
-  const font = '"Inter", system-ui, sans-serif';
-  const cream = '#FFF8E5';
-  const black = '#000000';
+  const font = '"Manrope", system-ui, sans-serif';
+  const cream = 'rgba(255, 255, 255, 0.87)';
+  const black = '#0a0a0a';
   const margin = 54, gap = 16, cardWidth = (W - 2 * margin - gap) / 2;
   const colors = ['#F4D078', '#F5AE96', '#C9D9FF', '#9ED8D2', '#D9BBFF'];
   const author = pseudo.trim() || 'moi';

@@ -35,7 +35,7 @@ let cur = null, opener = null;
 const dateLabel = iso => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR');
 function programmeLink(c, p) {
   if (!p || !/^https:\/\//.test(p.url)) return '';
-  return `<a class="programme-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(p.label + ' de ' + c.p + ' ' + c.n)} — site officiel, nouvel onglet">${esc(p.label)} <span aria-hidden="true">&nbsp;↗</span></a>`;
+  return `<a class="programme-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(p.label + ' de ' + c.p + ' ' + c.n)} — site officiel, nouvel onglet">${esc(p.label)} <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M7 7h10v10"/></svg></a>`;
 }
 const searchKey = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr').trim();
 function filterDirectory() {
