@@ -148,6 +148,7 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
     const player = display?.players[id];
     if (!player || root.hasAttribute('aria-busy')) return;
     heading.textContent = (kind === 'team' ? 'Gouvernement de ' : 'Pronos de ') + player.pseudo;
+    heading.classList.toggle('visually-hidden', kind === 'team' && hasTeam(display.teams[id]));
     if (kind === 'team' && !hasTeam(display.teams[id])) {
       details.innerHTML = '<p>Ce gouvernement n’est pas encore disponible.</p><p>Si ' + escape(player.pseudo) +
         ' l’a déjà composé, il suffit de rouvrir le jeu sur le même appareil pour le partager avec le groupe. Sinon, il apparaîtra dès sa composition.</p>';
@@ -175,7 +176,10 @@ export function groupView(root, { getStore, withUser, drawTeam, shareTeamWithGro
       img.alt = 'Composition du gouvernement de ' + player.pseudo;
       image.replaceChildren(img);
     } catch {
-      if (!closeOnLoad.signal.aborted && dialog.open) image.textContent = 'Image indisponible.';
+      if (!closeOnLoad.signal.aborted && dialog.open) {
+        heading.classList.remove('visually-hidden');
+        image.textContent = 'Image indisponible.';
+      }
     }
   }
 
