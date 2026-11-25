@@ -136,6 +136,7 @@
       <div class="count"><span><b id="n2">0</b> candidats auront leurs signatures</span><button class="linkbtn" id="pre2">Reprendre mon étape 1</button></div>
       <div class="tiles" id="tiles2"></div>
       <p class="fine">Fait foi : la liste officielle du Conseil constitutionnel, au plus tard le 26 mars. Un candidat qui a ses signatures mais se retire compte comme absent.</p>
+      <p class="fine">Le recueil officiel ouvre le lendemain de la publication du décret de convocation. Clôture le 12 mars 2027 à 18 h. <a href="https://www.info.gouv.fr/actualite/election-presidentielle-2027">Calendrier du Gouvernement</a></p>
       <p class="fine" id="lock2note"></p>
       <button class="big" id="save2">Valider mon pari</button>
       </div>
@@ -229,6 +230,7 @@
         <article class="card">
           <h2>Dernier sondage</h2>
           <p class="src" id="lastSrc"></p>
+          <p class="fine"><a id="lastLink">Notice de la Commission des sondages</a></p>
           <div id="last"></div>
         </article>
       </div>
@@ -249,7 +251,7 @@
         </article>
         <article class="card">
           <h2>Seconds tours testés</h2>
-          <p class="src">Dernière mesure de chaque duel, d'après Sondax</p>
+          <p class="src">Intentions de vote mesurées dans chaque hypothèse</p>
           <div id="duels"></div>
         </article>
       </div>
@@ -257,13 +259,14 @@
     <article class="card">
       <h2>Sources</h2>
       <ul class="links">
+        <li><a href="https://commission-des-sondages.fr/notices/">Commission des sondages</a>, notices des instituts</li>
         <li><a href="https://sondax.fr/">Sondax</a>, moyenne et duels de 2nd tour</li>
         <li><a href="https://www.france-vote.fr/sondages">France-Vote</a>, moyennes sur 120 jours</li>
         <li><a href="https://en.wikipedia.org/wiki/Opinion_polling_for_the_2027_French_presidential_election">Wikipédia</a>, liste des sondages</li>
         <li><a href="https://www.touteleurope.eu/vie-politique-des-etats-membres/presidentielle-2027-qui-sont-les-candidats-deja-declares/">Toute l'Europe</a>, candidats déclarés</li>
         <li><a href="https://www.conseil-constitutionnel.fr/">Conseil constitutionnel</a>, parrainages et liste officielle</li>
       </ul>
-      <p class="fine">Données arrêtées au 24 nov. 2026, mises à jour chaque semaine.</p>
+      <p class="fine" id="pollUpdateDate"></p>
     </article>
   </div>
 </section>
@@ -348,7 +351,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=49"></script>
+<script type="module" src="js/app.js?v=50"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

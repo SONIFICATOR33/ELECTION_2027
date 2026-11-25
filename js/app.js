@@ -4,12 +4,12 @@ import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=49';
+import * as D from './data.js?v=50';
 import * as S from './scoring.js';
 import { openStore } from './store.js?v=44';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
-import { initFiches, portraitThumb } from './fiches.js?v=49';
+import { initFiches, portraitThumb } from './fiches.js?v=50';
 
 const { C, by } = D;
 
@@ -114,6 +114,7 @@ function renderPollsOverview() {
   const DN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
   $('#moves').innerHTML = D.MOVES.map(([h, l]) => `<div><h3>${h}</h3>${l.map(([id, u, t]) => `<div class="mv" data-fiche="${id}" role="button" tabindex="0"><span class="ar ${u ? 'up' : 'dn'}">${u ? UP : DN}</span>${av(by[id], 40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
   $('#lastSrc').textContent = D.LAST_SRC;
+  $('#lastLink').href = D.LAST_LINK;
   $('#last').innerHTML = D.LAST.map(([id, v]) => `<div class="bar" data-fiche="${id}" role="button" tabindex="0">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${v / 35 * 100}%;--c:${by[id].col}"></i></div><span class="v">${v} %</span></div>`).join('');
 }
 
@@ -635,8 +636,10 @@ function initPolls() {
   });
   svg.addEventListener('pointerleave', () => { tip.hidden = true; const cr = $('#cross'); if (cr) { cr.setAttribute('x1', -9); cr.setAttribute('x2', -9); } });
   $('#tbl').innerHTML = '<tr><th>Candidat</th>' + D.ML.map(l => `<th>${l}</th>`).join('') + '</tr>' + D.SER.map(id => `<tr><td>${by[id].n}</td>${AVG[id].map(v => `<td>${v == null ? '–' : fmt(Math.round(v * 10) / 10)}</td>`).join('')}</tr>`).join('') + `<tr><td>Nb de sondages</td>${D.MO.map(m => `<td>${D.P.filter(p => p[0].startsWith(m)).length}</td>`).join('')}</tr>`;
-  $('#novlist').innerHTML = D.NOV.map(([a, b, c]) => `<div class="poll"><b>${a}</b>, ${b}<p>${c} (en %)</p></div>`).join('');
-  $('#duels').innerHTML = D.DUELS.map(([a, v, b, s]) => `<div class="db"><div class="lbl"><span>${by[a].n} ${v} %</span><span>${by[b].n} ${100 - v} %</span></div><div class="sp"><i style="width:${v}%;--c:${by[a].col}"></i><i style="width:${100 - v}%;--c:${by[b].col}"></i></div><span class="fine">${s}</span></div>`).join('');
+  const notice = url => url ? ` · <a href="${esc(url)}">Notice</a>` : '';
+  $('#novlist').innerHTML = D.NOV.map(([a, b, c, url]) => `<div class="poll"><b>${esc(a)}</b>, ${esc(b)}<p>${esc(c)} (en %)${notice(url)}</p></div>`).join('');
+  $('#duels').innerHTML = D.DUELS.map(([a, v, b, s, url]) => `<div class="db"><div class="lbl"><span>${by[a].n} ${v} %</span><span>${by[b].n} ${100 - v} %</span></div><div class="sp"><i style="width:${v}%;--c:${by[a].col}"></i><i style="width:${100 - v}%;--c:${by[b].col}"></i></div><span class="fine">${esc(s)}${notice(url)}</span></div>`).join('');
+  $('#pollUpdateDate').textContent = 'Données vérifiées le ' + dateFr(D.POLL_UPDATE_DATE, { day: 'numeric', month: 'long', year: 'numeric' }) + '.';
 }
 function draw() {
   if (!svg) return; const W = svg.clientWidth, H = svg.clientHeight; if (!W) return;

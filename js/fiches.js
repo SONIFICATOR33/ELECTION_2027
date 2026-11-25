@@ -2,7 +2,7 @@
    FICHES DES CANDIDATS — lues dans fiches/fiches.json, ouvertes en feuille
    Image : fiches/img/<id>.jpg|png|webp si présente, sinon médaillon.
    ===================================================================== */
-import { C, by, TOUR1 } from './data.js?v=49';
+import { C, by, TOUR1 } from './data.js?v=50';
 import { snd } from './sound.js';
 
 const $ = s => document.querySelector(s);
@@ -75,7 +75,8 @@ function body(id) {
   const src = (f.sources || []).map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join(', ');
   const photo = f.portrait;
   const credit = photo ? `<p class="fsrc">Photo <a href="${esc(photo.source)}">${esc(photo.titre)}</a> · ${esc(photo.auteur)} · <a href="${esc(photo.licenceUrl)}">${esc(photo.licence)}</a> · redimensionnée et recadrée à l’affichage.</p>` : '';
-  const maj = DATA.maj ? new Date(DATA.maj + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  const updated = f.maj || DATA.maj;
+  const maj = updated ? new Date(updated + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
   const programme = programmeLink(c, f.programme);
   return `
   <section class="fsec fprogramme">
@@ -94,7 +95,7 @@ function body(id) {
     <div class="frow"><span class="fl">Métier</span><p class="fv">${esc(f.metier || 'Non communiqué')}</p></div>
   </section>
   ${credit}
-  <p class="fsrc">Sources : ${src}. À jour le ${esc(maj)}.</p>`;
+  <p class="fsrc">Sources : ${src}.${maj ? ' À jour le ' + esc(maj) + '.' : ''}</p>`;
 }
 
 function head(id) {
