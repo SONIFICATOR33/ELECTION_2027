@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=55">
+<link rel="stylesheet" href="css/app.css?v=56">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -58,6 +58,16 @@
 <!-- ===================== ACCUEIL ===================== -->
 <section class="view" id="v-accueil">
   <div class="wrap stack">
+    <article class="card game-intro" aria-labelledby="game-intro-title">
+      <h2 id="game-intro-title">La présidentielle, à toi de jouer</h2>
+      <p>Fais tes pronos, compose ton gouvernement et donne tes 👍 à ceux des autres.</p>
+      <div class="game-start" role="group" aria-label="Choisir comment jouer">
+        <button data-go="paris" aria-label="Faire mes pronostics">Pronos</button>
+        <button data-go="team" aria-label="Composer mon gouvernement">Composer</button>
+        <button data-go="classement" aria-label="Découvrir les gouvernements des joueurs">Découvrir</button>
+      </div>
+      <p class="fine">Tout est visible par les joueurs. Participe aux rubriques qui te plaisent.</p>
+    </article>
     <article class="card" id="candsCard">
       <h2>Fiches et programmes</h2>
       <p class="fine" id="programmeStatus" role="status">Chargement des liens…</p>
@@ -85,12 +95,6 @@
     </div>
   </div>
   <div class="wrap stack">
-    <article class="card">
-      <h2>Jouer entre amis</h2>
-      <p>Pronostique la présidentielle, compose ton gouvernement et vote pour ceux des autres. <strong>Donne 1, 2 ou 3 👍 aux gouvernements. Le total reçu fait le classement.</strong></p>
-      <p>Tous les pronos et gouvernements enregistrés sont visibles par tous les joueurs. Tu participes aux rubriques qui te plaisent.</p>
-      <button class="ghost" data-go="classement">Joueurs et Groupes</button>
-    </article>
     <details class="card rules">
       <summary><h2>La règle de sélection</h2></summary>
       <ol>

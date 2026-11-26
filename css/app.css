@@ -559,6 +559,11 @@ h2{font-weight:600;letter-spacing:-.2px}
 /* Accès aux candidats depuis l’affiche d’accueil. */
 .candidate-search{display:grid;gap:6px;margin:18px 0 10px;font-size:var(--text-body);font-weight:600}
 .candidate-search input{width:100%;min-height:46px;border:1px solid var(--line);border-radius:10px;background:var(--bg);padding:10px 12px;font-size:var(--text-ui)}
+.game-intro > p:not(.fine){margin:10px 0 14px;font-size:var(--text-ui)}
+.game-start{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.game-start button{min-height:44px;padding:8px 4px;border:1px solid var(--or);border-radius:10px;background:transparent;color:var(--orC);font-size:var(--text-body);font-weight:600}
+.game-start button:hover{background:rgb(198 161 91 / .12)}
+.game-intro > .fine{margin:12px 0 0}
 .candidate-directory{list-style:none;margin:8px 0 0;padding:0}
 .candidate-entry{display:grid;grid-template-columns:48px minmax(0,1fr);gap:10px 12px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}
 .candidate-entry[hidden]{display:none}
