@@ -6,7 +6,7 @@ import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=60';
 import { teamPosition } from './team-gauge.js?v=66';
-import { createVotingOrder } from './voting-order.js?v=89';
+import { createVotingOrder } from './voting-order.js?v=93';
 import { firstRoundForecast, closedForecastWeeks, forecastPhotoDate } from './community-forecast.js?v=92';
 import { portraitThumb } from './fiches.js?v=51';
 
@@ -23,7 +23,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   root.innerHTML = `<div class="players-toolbar" hidden>
     <label for="players-sort">Trier par</label>
     <select id="players-sort">
-      <option value="random" selected>Au hasard · reste à voter</option>
+      <option value="random" selected>Au hasard · à voter en premier</option>
       <option value="thumbs">Nombre de pouces levés</option>
       <option value="name">Ordre alphabétique</option>
       <option value="points">Points de pronos</option>
@@ -230,9 +230,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     focusPlayerAction(focus);
     find('.politics-legend').hidden = !political;
     more.hidden = ordered.length <= limit;
-    find('.players-table-wrap').hidden = random && !ordered.length;
     voteStatus.textContent = !votesReady ? voteError || 'Chargement des votes…'
-      : random && !ordered.length ? 'Aucun gouvernement à voter pour le moment. Choisis un autre tri pour voir tous les joueurs.'
       : 'Vote pour un gouvernement de 0 à 3 👍 en cliquant sur « Voter » pour chaque joueur.';
   }
 
