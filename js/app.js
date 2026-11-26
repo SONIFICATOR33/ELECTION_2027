@@ -7,7 +7,7 @@ import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=92';
+import * as D from './data.js?v=96';
 import * as S from './scoring.js';
 import { openStore } from './store.js?v=60';
 import { snd } from './sound.js';
@@ -112,8 +112,8 @@ function renderPollsOverview() {
   }
   if (blocked) return;
   const longDate = { day: 'numeric', month: 'long', year: 'numeric' };
-  $('#home-poll-date').textContent = D.POLL_DATE + ' · Moyenne au ' + dateFr(D.PODIUM_DATE, longDate);
-  $('#home-podium').innerHTML = D.POD.map(([id, value], i) => {
+  $('#home-poll-date').textContent = 'Mis à jour le ' + dateFr(D.PODIUM_DATE, longDate);
+  $('#home-podium').innerHTML = D.POD.slice(0, 5).map(([id, value], i) => {
     const candidate = by[id], name = candidate.p + ' ' + candidate.n;
     return `<button type="button" class="home-poll-row" data-fiche="${id}" aria-label="${esc(name)}, ${fmt(value)} %, ouvrir la fiche">
       <span class="home-rank">${i + 1}</span>${av(candidate, 32)}<span class="home-candidate">${esc(name)}</span><strong>${fmt(value)} %</strong>
