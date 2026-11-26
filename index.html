@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=69">
+<link rel="stylesheet" href="css/app.css?v=70">
 </head>
 <body>
 <main>
@@ -63,6 +63,11 @@
         <h2>Mon espace</h2>
         <img data-player-portrait src="img/portraits/vieux-bouc.webp" alt="" width="46" height="46">
       </div>
+      <dl class="home-player-scores" aria-label="Mes scores" aria-live="polite">
+        <div><dt>Points de pronos</dt><dd data-player-points>…</dd></div>
+        <div><dt>Pouces reçus</dt><dd data-player-thumbs>…</dd></div>
+      </dl>
+      <p class="fine" data-player-score-status hidden></p>
       <div class="page-links">
         <a href="#profil" data-go="profil">Mon profil</a>
         <a href="#paris" data-go="paris">Mes pronos</a>
@@ -94,7 +99,7 @@
   <div class="wrap space-wrap">
     <a class="page-back" href="#accueil" data-back aria-label="Accueil"><span>Accueil</span></a>
     <div class="space-identity">
-      <button type="button" class="space-portrait" id="edit-portrait" aria-label="Personnaliser mon portrait" aria-haspopup="dialog">
+      <button type="button" class="space-portrait" id="edit-portrait" data-edit-portrait aria-label="Personnaliser mon portrait" aria-haspopup="dialog">
         <img id="space-portrait" data-player-portrait src="img/portraits/vieux-bouc.webp" alt="" width="105" height="105">
         <span aria-hidden="true">+</span>
       </button>
@@ -144,6 +149,10 @@
       <span class="sound-action" id="sound-action" aria-hidden="true">Couper le son</span>
     </button>
     <article class="card dashboard-card">
+      <button type="button" class="profile-portrait-edit" data-edit-portrait aria-haspopup="dialog">
+        <img data-player-portrait src="img/portraits/vieux-bouc.webp" alt="" width="70" height="70">
+        <span>Changer ma photo</span>
+      </button>
       <dl class="profile-facts">
         <div><dt>Pseudo</dt><dd id="profile-pseudo"></dd></div>
         <div><dt>Mot de passe</dt><dd><output id="profile-pin" aria-live="polite">••••</output> <button class="linkbtn" id="show-pin" aria-pressed="false" hidden>Afficher</button></dd></div>
@@ -456,7 +465,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=69"></script>
+<script type="module" src="js/app.js?v=70"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

@@ -76,7 +76,7 @@ export function portraitView({ getPlayer, onUpdate }) {
     dialog.close();
   }
 
-  document.querySelector('#edit-portrait').onclick = () => {
+  for (const button of document.querySelectorAll('[data-edit-portrait]')) button.onclick = () => {
     render();
     if (player && !dialog.open) dialog.showModal();
   };

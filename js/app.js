@@ -1,7 +1,7 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=66';
-import { playersView } from './players-view.js?v=66';
+import { playersView } from './players-view.js?v=70';
 import { accountView } from './account-view.js?v=69';
-import { portraitView } from './portrait-view.js?v=59';
+import { portraitView } from './portrait-view.js?v=70';
 import { GROUP_ADMIN } from './groups.js?v=60';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
@@ -702,7 +702,7 @@ function show() {
     requestPollDraw();
   }
   if (view === 'profil') account.openProfile(ME, ME.pid === GROUP_ADMIN);
-  if (view === 'accueil' || view === 'espace') portrait.render();
+  if (view === 'accueil' || view === 'espace' || view === 'profil') portrait.render();
   if (view === 'espace') account.renderParticipation();
   if (ME) players.resume(view === 'classement');
   else players.pause();
