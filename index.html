@@ -93,6 +93,22 @@
       </dl>
       <div class="page-links"><a href="#classement" data-go="classement">Voir tous les joueurs</a></div>
     </article>
+    <article class="card dashboard-card" aria-labelledby="community-podium-title">
+      <div class="leaders-heading">
+        <h2 id="community-podium-title">Podium des joueurs</h2>
+        <details class="leaders-info">
+          <summary aria-label="Comprendre le podium des joueurs"><span aria-hidden="true">i</span></summary>
+          <div class="leaders-bubble">
+            <p>Les trois candidats en tête des pronostics du premier tour. Chaque joueur compte une fois, avec son dernier top 5 enregistré.</p>
+            <p>Les pourcentages sont la moyenne des scores saisis. Un candidat absent d’un top 5 compte pour 0 dans cette moyenne. Les scores ne sont pas ramenés à 100 %.</p>
+            <p>À égalité, les candidats ont le même rang et sont affichés par ordre alphabétique. Ce sont les pronostics du jeu, pas un sondage.</p>
+          </div>
+        </details>
+      </div>
+      <p class="fine" id="community-podium-status" role="status">Chargement des pronostics…</p>
+      <div class="home-podium" id="community-podium" aria-label="Candidats en tête des pronostics du premier tour"></div>
+      <div class="page-links"><a href="#paris" data-go="paris">Mes pronos</a></div>
+    </article>
     <article class="card dashboard-card">
       <h2>Les infos de la campagne</h2>
       <div id="home-poll-data">
@@ -489,7 +505,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=90"></script>
+<script type="module" src="js/app.js?v=91"></script>
 <script type="module" src="js/install.js?v=15"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>
