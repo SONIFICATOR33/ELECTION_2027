@@ -504,6 +504,11 @@ h2{font-weight:600;letter-spacing:-.2px}
 .home-space-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
 .home-space-heading h2 { margin: 0; }
 .home-space-heading img { display: block; flex: none; width: 46px; height: 46px; object-fit: cover; border: 1px solid var(--or); border-radius: 50%; }
+/* Personal scores use the same live totals as the players table. */
+.home-player-scores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0 12px; }
+.home-player-scores > div { display: flex; flex-direction: column; gap: 5px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.home-player-scores dt { color: var(--mut); font-size: var(--text-ui); }
+.home-player-scores dd { margin: auto 0 0; color: var(--orC); font-size: 24px; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
 .page-links { gap: 0; }
 .page-links a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 2px; color: var(--orC); text-decoration: none; font-weight: 600; }
 .page-links a::after, .campaign-fold > summary::after { content: ""; flex: none; width: 7px; height: 7px; margin-right: 4px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); }
@@ -668,3 +673,6 @@ body:has(#v-espace.on) {
   .space-card-line { flex-wrap: wrap; }
   .space-summary { --space-candidate-size: 30px; gap: 5px; }
 }
+
+.profile-portrait-edit { display: flex; align-items: center; gap: 14px; width: 100%; padding: 0 0 14px; border: 0; background: transparent; color: var(--orC); text-align: left; font: inherit; cursor: pointer; }
+.profile-portrait-edit img { flex: none; width: 70px; height: 70px; object-fit: cover; border: 1px solid var(--or); border-radius: 50%; }

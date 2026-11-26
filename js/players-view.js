@@ -61,6 +61,14 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   }
 
   function renderLeaders() {
+    const pid = getStore().me()?.pid;
+    const own = rows.find(row => row.pid === pid);
+    document.querySelector('[data-player-points]').textContent = display ? fmt(own?.total || 0) + ' pts' : '—';
+    document.querySelector('[data-player-thumbs]').textContent = votesReady ? fmt(scores[pid]?.points || 0) + ' 👍' : '—';
+    const scoreStatus = document.querySelector('[data-player-score-status]');
+    scoreStatus.textContent = !display ? status.textContent || 'Chargement des scores…'
+      : !votesReady ? voteError || 'Chargement des pouces…' : '';
+    scoreStatus.hidden = !scoreStatus.textContent;
     const first = rows[0];
     setLeader(pointsLeaders, display
       ? first?.total > 0 ? first.pseudo + ' · ' + fmt(first.total) + ' pts' : 'Actif dès les premiers points'
