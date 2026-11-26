@@ -58,7 +58,7 @@ dans Mon profil ou le menu du navigateur.
 ### Votes des gouvernements
 
 La page **Classements** affiche tous les joueurs, avec ta ligne toujours en tête.
-Le tri par défaut **Tirage aléatoire** place ensuite les gouvernements auxquels tu
+Le tri par défaut **Aléatoire** place ensuite les gouvernements auxquels tu
 n’as pas encore attribué de vote, dans un ordre aléatoire propre à ta session.
 Les autres joueurs restent visibles à la suite, y compris ceux sans gouvernement. Un vote à
 zéro compte comme un vote déjà effectué. La liste reste visible pendant le
