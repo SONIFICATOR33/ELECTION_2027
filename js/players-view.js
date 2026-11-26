@@ -20,9 +20,9 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   root.innerHTML = `<div class="players-toolbar" hidden>
     <label for="players-sort">Trier par</label>
     <select id="players-sort">
+      <option value="thumbs">Nombre de pouces levés</option>
       <option value="name">Ordre alphabétique</option>
       <option value="points">Points de pronos</option>
-      <option value="thumbs">Pouces levés</option>
       <option value="politics">De gauche à droite</option>
     </select>
   </div>

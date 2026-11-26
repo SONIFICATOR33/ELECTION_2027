@@ -79,26 +79,50 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
   }
   showPin.onclick = () => setPinVisibility(Boolean(sessionPin) && showPin.getAttribute('aria-pressed') !== 'true');
 
-  function renderSpaceCard(name, value, max, status, count) {
+  function renderSpaceCard(name, value, max, status, count, selection) {
     const card = $(`[data-space-card="${name}"]`);
     const progress = card.querySelector('progress');
     progress.max = max;
     progress.value = value;
     card.dataset.complete = String(value === max);
     card.querySelector('[data-space-status]').textContent = status;
-    if (count) card.querySelector('[data-space-count]').textContent = count;
+    if (!count) return;
+    progress.setAttribute('aria-valuetext', count);
+    const counter = card.querySelector('[data-space-count]');
+    const summary = card.querySelector('[data-space-summary]');
+    const chosen = Boolean(selection.president || selection.primeMinister);
+    counter.textContent = count;
+    counter.hidden = chosen;
+    summary.hidden = !chosen;
+
+    const photo = summary.querySelector('[data-space-photo]');
+    photo.hidden = !selection.photo;
+    photo.innerHTML = selection.photo;
+    for (const [key, person] of [['president', selection.president], ['pm', selection.primeMinister]]) {
+      const choice = summary.querySelector(`[data-space-${key}]`);
+      if (!choice) continue;
+      choice.hidden = !person;
+      choice.querySelector('b').textContent = person || '';
+    }
   }
 
   function renderParticipation() {
-    const { pronos, totalPronos, team, startedTeam, totalTeam } = getParticipation();
+    const {
+      pronos, totalPronos, team, startedTeam, totalTeam,
+      predictedName, predictedPortrait, presidentName, presidentPortrait, primeMinister
+    } = getParticipation();
     const label = (filled, total, started = filled > 0) => filled === total ? 'Complet' : started ? 'Incomplet' : 'À remplir';
     $('#profile-pronos').textContent = label(pronos, totalPronos) + ' · ' + pronos + '/' + totalPronos;
     $('#profile-team').textContent = label(team, totalTeam, startedTeam) + ' · ' + team + '/' + totalTeam + ' postes';
     const portrait = hasPortrait();
     const percent = (value, max) => Math.round(100 * value / max) + ' %';
     renderSpaceCard('profil', Number(portrait), 1, portrait ? 'Complet' : 'À compléter');
-    renderSpaceCard('pronos', pronos, totalPronos, percent(pronos, totalPronos), `${pronos}/${totalPronos} pronos enregistrés`);
-    renderSpaceCard('gouvernement', team, totalTeam, percent(team, totalTeam), `${team}/${totalTeam} postes pourvus`);
+    renderSpaceCard('pronos', pronos, totalPronos, percent(pronos, totalPronos), `${pronos}/${totalPronos} pronos enregistrés`, {
+      president: predictedName, photo: predictedPortrait
+    });
+    renderSpaceCard('gouvernement', team, totalTeam, percent(team, totalTeam), `${team}/${totalTeam} postes pourvus`, {
+      president: presidentName, photo: presidentPortrait, primeMinister
+    });
   }
 
   function closeProfile() {

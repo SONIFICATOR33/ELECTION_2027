@@ -1,6 +1,6 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=55';
-import { playersView } from './players-view.js?v=57';
-import { accountView } from './account-view.js?v=57';
+import { playersView } from './players-view.js?v=58';
+import { accountView } from './account-view.js?v=58';
 import { portraitView } from './portrait-view.js?v=57';
 import { GROUP_ADMIN } from './groups.js?v=54';
 import { normalizeTeam, hasTeam } from './team-state.js';
@@ -667,12 +667,13 @@ function draw() {
 }
 
 /* ===================== NAVIGATION ===================== */
-const VIEWS = ['acces', 'accueil', 'espace', 'profil', 'paris', 'team', 'classement', 'joueurs', 'sondages'];
-const TAB = { profil: 'espace', paris: 'espace', team: 'espace', joueurs: 'classement' };
+const VIEWS = ['acces', 'accueil', 'espace', 'profil', 'paris', 'team', 'classement', 'sondages'];
+const TAB = { profil: 'espace', paris: 'espace', team: 'espace' };
 let currentView = 'acces';
 
 function show() {
-  const hash = location.hash.slice(1);
+  const requested = location.hash.slice(1);
+  const hash = requested === 'joueurs' ? 'classement' : requested;
   const view = ME ? (VIEWS.includes(hash) && hash !== 'acces' ? hash : 'accueil') : 'acces';
   if (view === currentView) return;
   if (currentView === 'profil') account.closeProfile();
@@ -699,7 +700,7 @@ function show() {
     portrait.render();
     account.renderParticipation();
   }
-  if (ME) players.resume(view === 'joueurs');
+  if (ME) players.resume(view === 'classement');
   else players.pause();
 }
 
@@ -772,7 +773,14 @@ const account = accountView({
   hasPortrait: portrait.hasSelection,
   getParticipation: () => {
     const team = draft.team;
+    const predicted = by[S.current(mine())?.pres];
+    const president = by[byName[team.coeur]];
     return {
+      predictedName: predicted ? predicted.p + ' ' + predicted.n : '',
+      predictedPortrait: av(predicted, 32),
+      presidentName: team.coeur,
+      presidentPortrait: av(president, 32),
+      primeMinister: team.pm,
       pronos: ['l1', 'l2', 'gp'].filter(done).length,
       totalPronos: 3,
       team: countTeamRoles(team),
