@@ -73,8 +73,7 @@ export function teamPosition(team) {
   };
 }
 
-const legendTop = 257;
-export const gaugeHeight = position => legendTop + 38 * Math.ceil(position.segments.length / 2);
+export const gaugeHeight = () => 250;
 
 export function drawTeamGauge(ctx, left, top, width, position) {
   if (!position.filled) return;
@@ -139,14 +138,5 @@ export function drawTeamGauge(ctx, left, top, width, position) {
   ctx.fillText('Équilibre', cx, 225);
   ctx.fillText('Droite', cx + radius, 225);
 
-  ctx.font = '600 27px Manrope, system-ui, sans-serif';
-  ctx.textAlign = 'left';
-  position.segments.forEach(({ label, color, count }, i) => {
-    const x = 12 + (i % 2) * 314, y = legendTop + 16 + Math.floor(i / 2) * 38;
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y - 8, 16, 16);
-    ctx.fillStyle = '#FFF8E5';
-    ctx.fillText(label + ' · ' + count, x + 27, y);
-  });
   ctx.restore();
 }

@@ -1,4 +1,4 @@
-import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=51';
+import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=55';
 import { groupView } from './group-view.js?v=54';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
@@ -434,16 +434,8 @@ function renderTeamGauge() {
   if (card.hidden) return;
   const canvas = $('#team-gauge-canvas');
   canvas.height = gaugeHeight(position);
-  canvas.setAttribute('aria-label', position.segments.map(s => s.label + ' · ' + s.count).join(', '));
+  canvas.setAttribute('aria-label', 'Polarité politique : ' + position.label);
   drawTeamGauge(canvas.getContext('2d'), 0, 0, canvas.width, position);
-  $('#team-gauge-people').replaceChildren(...position.people.map(person => {
-    const li = document.createElement('li');
-    li.textContent = person.roles.join(' / ') + ' — ' + person.name + ' · ' + person.label;
-    return li;
-  }));
-  $('#team-gauge-summary').textContent = position.label + (position.mixed ? ' · Équipe très contrastée' : '');
-  $('#team-gauge-counts').textContent = position.counts;
-  $('#team-gauge-coverage').textContent = position.coverage;
 }
 function renderPublish() {
   renderTeamGauge();
@@ -521,7 +513,7 @@ $('#teamShare').onclick = async event => {
     teamImageFile = new File([blob], 'mon-gouvernement.png', { type: 'image/png' });
     teamImageUrl = URL.createObjectURL(blob);
     teamImagePreview.src = teamImageUrl;
-    teamImagePreview.alt = castingTitle(ME?.pseudo) + ' · gouvernement et répartition politique';
+    teamImagePreview.alt = castingTitle(ME?.pseudo) + ' · gouvernement et polarité politique';
     teamImageDialog.setAttribute('aria-label', castingTitle(ME?.pseudo));
     teamImageDownload.href = teamImageUrl;
     teamImageShare.hidden = !(navigator.share && navigator.canShare?.({ files: [teamImageFile] }));
@@ -537,7 +529,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
   const position = teamPosition(t);
   const gaugeWidth = 912;
   const gaugeBottom = 1010 + gaugeHeight(position) * gaugeWidth / 640;
-  const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = Math.ceil(gaugeBottom + 205);
+  const cv = document.createElement('canvas'), W = cv.width = 1080, H = cv.height = Math.ceil(gaugeBottom + 115);
   const x = cv.getContext('2d');
   const font = '"Manrope", system-ui, sans-serif';
   const cream = 'rgba(255, 255, 255, 0.87)';
@@ -592,7 +584,7 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
 
   x.fillStyle = black;
   x.beginPath();
-  x.roundRect(margin, 934, W - 2 * margin, gaugeBottom + 103 - 934, 24);
+  x.roundRect(margin, 934, W - 2 * margin, gaugeBottom + 20 - 934, 24);
   x.fill();
   x.strokeStyle = '#383838';
   x.lineWidth = 2;
@@ -600,16 +592,8 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
   x.textAlign = 'center';
   x.fillStyle = cream;
   x.font = '600 42px ' + font;
-  x.fillText('Répartition politique', W / 2, 995);
+  x.fillText('Polarité politique', W / 2, 995);
   drawTeamGauge(x, margin + 30, 1010, gaugeWidth, position);
-  x.fillStyle = cream;
-  x.font = '700 30px ' + font;
-  const summary = position.label + (position.mixed ? ' · Équipe très contrastée' : '');
-  x.fillText(fit(x, summary, W - 2 * margin - 48), W / 2, gaugeBottom + 28);
-  x.font = '600 24px ' + font;
-  x.fillText(position.counts, W / 2, gaugeBottom + 60);
-  x.font = '500 21px ' + font;
-  x.fillText(position.coverage, W / 2, gaugeBottom + 88);
   x.fillStyle = colors[0];
   x.font = '600 26px ' + font;
   x.fillText('Prône ton Président · Just for fun', W / 2, H - 50);
