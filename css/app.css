@@ -548,11 +548,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 [data-team-comments] textarea { display: block; width: 100%; font: inherit; font-size: var(--text-ui); margin-block: 6px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
 
 .team-gauge { background: var(--card); color: #FFF8E5; text-align: center; }
-.team-gauge details { margin-top: 12px; text-align: left; }
-.team-gauge summary { cursor: pointer; }
-.team-gauge ul { padding-inline-start: 20px; }
 .team-gauge canvas { width: 100%; max-width: 480px; height: auto; display: block; margin-inline: auto; }
-.team-gauge p { margin: 4px 0 0; color: #FFF8E5; }
 
 #team-image-dialog { width: min(94vw, 540px); max-height: 90dvh; padding: 16px; border: 1px solid var(--line); border-radius: 16px; color: var(--ink); background: var(--bg); }
 #team-image-dialog::backdrop { background: rgb(0 0 0 / .55); }
