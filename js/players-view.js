@@ -6,6 +6,7 @@ import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=60';
 import { teamPosition } from './team-gauge.js?v=66';
+import { createVotingOrder } from './voting-order.js?v=89';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -20,6 +21,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   root.innerHTML = `<div class="players-toolbar" hidden>
     <label for="players-sort">Trier par</label>
     <select id="players-sort">
+      <option value="random" selected>Au hasard · reste à voter</option>
       <option value="thumbs">Nombre de pouces levés</option>
       <option value="name">Ordre alphabétique</option>
       <option value="points">Points de pronos</option>
@@ -53,7 +55,8 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   const details = document.querySelector('#player-detail');
   let display, rows = [], scores = {}, votes = [], votesReady = false, voteError = '';
   let active = false, visible = false, unsubscribes = [], generation = 0, frame, limit = PAGE_SIZE;
-  let openTeam, votePending, dialogRequest, imageUrl, opener;
+  let openTeam, votePending, dialogRequest, imageUrl, opener, sortViewer;
+  const votingOrder = createVotingOrder();
 
   function leaderRows(label, ranked, ready, unit) {
     const top = ranked.slice(0, 3);
@@ -95,7 +98,9 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   function focusPlayerAction(button) {
     if (!button?.dataset.player) return;
     const { player, detail } = button.dataset;
-    tableBody.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`)?.focus({ preventScroll: true });
+    const target = tableBody.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`);
+    if (target) target.focus({ preventScroll: true });
+    else if (!dialog.open) (tableBody.querySelector('[data-detail="team"]') || sort).focus({ preventScroll: true });
   }
 
   dialog.addEventListener('close', () => {
@@ -156,23 +161,29 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     }
 
     const pid = getStore().me().pid;
+    const random = sort.value === 'random';
     const political = sort.value === 'politics';
     const positions = political ? new Map(rows.map(row =>
       [row.pid, teamPosition(normalizeTeam(display.teams[row.pid])).balance])) : new Map();
-    const ordered = rows.filter(row => row.pid !== pid);
+    const ordered = random
+      ? votingOrder(rows, { pid, teams: display.teams, scores, ready: votesReady })
+      : rows.filter(row => row.pid !== pid);
     if (sort.value === 'name') ordered.sort(alphabetical);
     if (sort.value === 'thumbs') ordered.sort((a, b) =>
       (scores[b.pid]?.points || 0) - (scores[a.pid]?.points || 0) || alphabetical(a, b));
     if (political) ordered.sort((a, b) =>
       (positions.get(a.pid) ?? Infinity) - (positions.get(b.pid) ?? Infinity) || alphabetical(a, b));
-    const own = rows.find(row => row.pid === pid);
+    const own = !random && rows.find(row => row.pid === pid);
     const focus = document.activeElement;
     tableBody.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
       .map(row => rowHTML(row, pid, political, positions)).join('');
     focusPlayerAction(focus);
     find('.politics-legend').hidden = !political;
     more.hidden = ordered.length <= limit;
-    voteStatus.textContent = votesReady ? 'Vote pour un gouvernement de 0 à 3 👍 en cliquant sur « Voter » pour chaque joueur.' : voteError || 'Chargement des votes…';
+    find('.players-table-wrap').hidden = random && !ordered.length;
+    voteStatus.textContent = !votesReady ? voteError || 'Chargement des votes…'
+      : random && !ordered.length ? 'Aucun gouvernement à voter pour le moment. Choisis un autre tri pour voir tous les joueurs.'
+      : 'Vote pour un gouvernement de 0 à 3 👍 en cliquant sur « Voter » pour chaque joueur.';
   }
 
   function refresh() {
@@ -281,6 +292,11 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
 
     active = true;
     const request = ++generation, store = getStore();
+    if (sortViewer !== store.me().pid) {
+      sortViewer = store.me().pid;
+      sort.value = 'random';
+      limit = PAGE_SIZE;
+    }
     display = null;
     rows = [];
     scores = {};
