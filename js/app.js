@@ -233,7 +233,7 @@ function renderPick() {
     const fullName = esc(c.p + ' ' + c.n);
     return `<div class="candidate-choice"><button class="chip${selected ? ' on' : ''}" data-id="${c.id}" aria-pressed="${!!selected}" ${locked ? 'disabled' : ''}>${av(c, 32)}${fullName}</button>
       <button class="ghost candidate-help" data-fiche="${c.id}" aria-label="Fiche de ${fullName}">?</button>
-      ${selected ? `<label class="prono-pct"><input type="number" min="0" max="60" step="any" inputmode="decimal" data-score="${c.id}" value="${selected.pct}" aria-label="Pourcentage de ${fullName}" ${locked ? 'disabled' : ''}> %</label>` : ''}</div>`;
+      ${selected ? `<label class="prono-pct"><input type="number" min="0" max="60" step="any" inputmode="decimal" data-score="${c.id}" value="${selected.pct === 0 ? '' : selected.pct}" aria-label="Pourcentage de ${fullName}" ${locked ? 'disabled' : ''}> %</label>` : ''}</div>`;
   }).join('');
 }
 $('#pick').addEventListener('click', e => {
