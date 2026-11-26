@@ -1,12 +1,14 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=55';
-import { groupView } from './group-view.js?v=54';
+import { playersView } from './players-view.js?v=56';
+import { accountView } from './account-view.js?v=56';
+import { GROUP_ADMIN } from './groups.js?v=54';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=50';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=54';
+import { openStore } from './store.js?v=56';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=50';
@@ -45,7 +47,6 @@ const teamNeedsSync = () => {
 let teamRevision = 0;
 let draft = { l1: [], l2: [], gp: { pres: null, top: [], win: 52 }, team: blankTeam() };
 const dirty = { l1: false, l2: false, gp: false, team: false };
-let pending = null;
 
 const mine = () => ME ? (ALL.pronos[ME.pid] || {}) : {};
 const isOpen = k => now() < { l1: +D.LOCK1, l2: +D.LOCK2, gp: +D.LOCKGP }[k];
@@ -64,19 +65,16 @@ async function refresh(force) {
   try { ALL = await store.loadAll(force); } catch (e) { console.error(e); toast('Connexion difficile : données peut-être pas à jour'); }
 }
 
-/* ===================== EN-TÊTE ===================== */
-function renderHeader() {
-  const mb = $('#meBtn');
-  mb.textContent = ME ? ME.pseudo.replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2).toUpperCase() || '?' : 'Entrer';
-  mb.classList.toggle('in', !!ME); mb.setAttribute('aria-label', ME ? 'Tu joues en tant que ' + ME.pseudo : 'Entrer dans le jeu');
+function renderSession() {
+  $('#welcome-title').textContent = ME ? 'Bienvenue ' + ME.pseudo : 'Bienvenue';
   const b = $('#banner');
-  if (store.mode === 'local') {
-    b.hidden = false;
-    b.textContent = store.fallback ? 'Base partagée injoignable : tes paris restent sur ce téléphone pour l’instant.' : 'Mode essai : en attendant la base partagée, tes paris restent sur ce téléphone.';
-  } else b.hidden = true;
+  b.hidden = store.mode !== 'local';
+  if (store.mode === 'local') b.textContent = store.fallback
+    ? 'Connexion au jeu indisponible. Recharge la page pour réessayer.'
+    : 'Mode essai · Tes données restent sur cet appareil.';
 }
 
-/* ===================== ACCUEIL ===================== */
+/* ===================== CALENDRIER ===================== */
 function renderHero() {
   requestAnimationFrame(() => guilloche($('#gHero'), { cx: 0.85, cy: 0.3, alpha: 0.16, scale: 1.1 }));
   const jj = Math.max(0, daysTo(D.TOUR1));
@@ -103,8 +101,22 @@ const done = k => { const p = mine(); return k === 'gp' ? !!S.current(p) : !!(p[
 
 function renderPollsOverview() {
   const box = $('#pollsOverview');
-  if (inBlackout()) { box.innerHTML = '<p class="blackout">Sondages masqués la veille et le jour du vote, comme le veut la loi du 19 juillet 1977.</p>'; return; }
+  const blocked = inBlackout();
+  const message = 'Sondages masqués la veille et le jour du vote.';
+  box.hidden = $('#pollsBody').hidden = $('#home-poll-data').hidden = blocked;
+  for (const element of [$('#home-blackout'), $('#polls-blackout')]) {
+    element.hidden = !blocked;
+    element.textContent = blocked ? message : '';
+  }
+  if (blocked) return;
   const longDate = { day: 'numeric', month: 'long', year: 'numeric' };
+  $('#home-poll-date').textContent = D.POLL_DATE + ' · Moyenne au ' + dateFr(D.PODIUM_DATE, longDate);
+  $('#home-podium').innerHTML = D.POD.map(([id, value], i) => {
+    const candidate = by[id], name = candidate.p + ' ' + candidate.n;
+    return `<button type="button" class="home-poll-row" data-fiche="${id}" aria-label="${esc(name)}, ${fmt(value)} %, ouvrir la fiche">
+      <span class="home-rank">${i + 1}</span>${av(candidate, 32)}<span class="home-candidate">${esc(name)}</span><strong>${fmt(value)} %</strong>
+    </button>`;
+  }).join('');
   $('#podDate').textContent = 'Dernier sondage présenté · ' + dateFr(D.LAST_POLL_DATE, longDate);
   $('#podSrc').textContent = `${D.POLL_DATE} · Moyenne au ${dateFr(D.PODIUM_DATE, longDate)}`;
   $('#movesDate').dateTime = D.PODIUM_DATE.toISOString().slice(0, 10);
@@ -399,12 +411,10 @@ function renderTeam() {
 let teamSync = Promise.resolve();
 
 function queueTeamSync(onlyMissing) {
-  if (!ME || !store.groups) return Promise.resolve();
+  if (!ME || !store?.groups) return Promise.resolve();
   const player = ME.pid, revision = teamRevision, key = teamKey();
   const team = hasTeam(draft.team) ? clone(draft.team) : null;
   teamSync = teamSync.catch(() => {}).then(async () => {
-    if (ME?.pid !== player || revision !== teamRevision) return;
-    await store.groups.ensureCommonGroup();
     if (ME?.pid !== player || revision !== teamRevision) return;
     const value = await store.groups.syncSharedTeam(team, onlyMissing && !teamNeedsSync());
     // Une sauvegarde terminée ne doit pas effacer une modification plus récente.
@@ -417,6 +427,7 @@ function queueTeamSync(onlyMissing) {
       } catch {}
       pendingTeamSync.delete(key);
       renderTeam();
+      if (currentView === 'profil') account.renderParticipation();
     }
   });
   return teamSync;
@@ -426,7 +437,8 @@ function syncExistingTeam() {
   return queueTeamSync(true).then(() => true).catch(error => { console.warn(error); return false; });
 }
 
-const teamCount = () => (draft.team.coeur ? 1 : 0) + (draft.team.pm ? 1 : 0) + D.POSTES.filter(p => (draft.team.min || {})[p]).length;
+const countTeamRoles = team => Number(Boolean(team?.coeur)) + Number(Boolean(team?.pm)) + D.POSTES.filter(p => team?.min?.[p]).length;
+const teamCount = () => countTeamRoles(draft.team);
 function renderTeamGauge() {
   const position = teamPosition(draft.team);
   const card = $('#team-gauge');
@@ -606,11 +618,14 @@ const AVG = {}; D.SER.forEach((id, k) => AVG[id] = D.MO.map(m => { const v = D.P
 const onS = new Set(D.SER);
 let svg, tip, G = null;
 function initPolls() {
-  if (inBlackout()) { $('#pollsBody').innerHTML = '<p class="blackout">Sondages masqués la veille et le jour du vote, comme le veut la loi du 19 juillet 1977. Ils reviennent dimanche à 20 h.</p>'; return; }
   svg = $('#chart'); tip = $('#tip');
   $('#lchips').innerHTML = D.SER.map(id => `<button class="lchip" data-id="${id}" aria-pressed="true"><i style="--c:var(${D.CV[id]})"></i>${by[id].n}</button>`).join('');
   $('#lchips').addEventListener('click', e => { const b = e.target.closest('.lchip'); if (!b) return; const id = b.dataset.id; if (onS.has(id)) { if (onS.size > 1) onS.delete(id); } else onS.add(id); b.setAttribute('aria-pressed', onS.has(id)); draw(); });
   new ResizeObserver(draw).observe($('#fig'));
+  $('#chart').closest('details').addEventListener('toggle', requestPollDraw);
+  $('#gHero').closest('details').addEventListener('toggle', event => {
+    if (event.currentTarget.open) renderHero();
+  });
   svg.addEventListener('pointermove', e => {
     if (!G) return; const r = svg.getBoundingClientRect(), px = e.clientX - r.left;
     const i = Math.max(0, Math.min(4, Math.round((px - G.m.l) / G.stepX))), cx = G.x(i), cr = $('#cross'); cr.setAttribute('x1', cx); cr.setAttribute('x2', cx);
@@ -625,6 +640,7 @@ function initPolls() {
   $('#duels').innerHTML = D.DUELS.map(([a, v, b, s, url]) => `<div class="db"><div class="lbl"><span>${by[a].n} ${v} %</span><span>${by[b].n} ${100 - v} %</span></div><div class="sp"><i style="width:${v}%;--c:${by[a].col}"></i><i style="width:${100 - v}%;--c:${by[b].col}"></i></div><span class="fine">${esc(s)}${notice(url)}</span></div>`).join('');
   $('#pollUpdateDate').textContent = 'Données vérifiées le ' + dateFr(D.POLL_UPDATE_DATE, { day: 'numeric', month: 'long', year: 'numeric' }) + '.';
 }
+function requestPollDraw() { requestAnimationFrame(draw); }
 function draw() {
   if (!svg) return; const W = svg.clientWidth, H = svg.clientHeight; if (!W) return;
   const nar = W < 420, m = { l: 30, r: nar ? 98 : 116, t: 14, b: 28 }, stepX = (W - m.l - m.r) / (D.MO.length - 1);
@@ -648,147 +664,154 @@ function draw() {
   svg.innerHTML = g; G = { x, stepX, m, W };
 }
 
-/* ===================== CLASSEMENT ===================== */
-const sheet = $('#sheet');
-function openJoin(msg) {
-  if (ME) {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Tu joues en tant que ${esc(ME.pseudo)}</h2><p class="help">Pour jouer sur un autre téléphone, entre le même pseudo et ton code à 4 chiffres.</p><div class="form"><button class="big" id="close">Continuer</button><button class="ghost" id="logout">Changer de pseudo</button></div>`;
-  } else {
-    $('#sheetIn').innerHTML = `<h2 id="sheetT">Se connecter ou créer un compte</h2><p class="help">${msg ? esc(msg) + ' ' : ''}Tu as déjà joué ? Entre le même pseudo et le même code à 4 chiffres pour retrouver tes pronos et tes groupes, même dans l’app installée. Première partie ? Choisis un pseudo et un code à 4 chiffres. Tous tes pronos et ton gouvernement sont visibles par les autres joueurs. Tu peux simplement faire tes pronos, le gouvernement est facultatif.</p>
-      <form class="form" id="joinF" novalidate><label>Ton pseudo<input id="jp" maxlength="24" autocomplete="nickname" autocapitalize="words" required></label>
-      <label>Ton code secret (4 chiffres)<input id="jc" class="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" required></label>
-      <p class="err" id="jerr" role="alert"></p><p id="joinStatus" role="status"></p><button class="big" type="submit" id="jgo">Continuer</button></form>`;
-  }
-  sheet.classList.add('open');
-  setTimeout(() => { const f = $('#jp') || $('#close'); if (f) f.focus(); }, 50);
-}
-sheet.addEventListener('click', async e => {
-  if (e.target === sheet || e.target.id === 'close') { sheet.classList.remove('open'); pending = null; return; }
-  if (e.target.id === 'logout') { await store.logout(); ME = null; loadDraft(); initSB(); renderAll(); openJoin(); }
-});
-sheet.addEventListener('submit', async e => {
-  e.preventDefault();
-  const form = e.target, b = form.querySelector('#jgo');
-  if (b.disabled) return;
-  const p = form.querySelector('#jp').value.trim(), c = form.querySelector('#jc').value.trim();
-  const er = form.querySelector('#jerr'), status = form.querySelector('#joinStatus');
-  er.textContent = '';
-  status.textContent = 'Connexion en cours…';
-  b.disabled = true;
-  form.setAttribute('aria-busy', 'true');
-  const slow = setTimeout(() => { status.textContent = 'La connexion prend plus de temps que prévu. Vérifie ton réseau.'; }, 8000);
-  try {
-    ME = await store.join(p, c);
-    store.groups?.ensureCommonGroup().catch(console.warn);
-  } catch (err) {
-    er.textContent = err.message || 'Connexion impossible.';
-    status.textContent = '';
-    b.disabled = false;
-    form.removeAttribute('aria-busy');
-    return;
-  } finally {
-    clearTimeout(slow);
-  }
-  const action = pending;
-  pending = null;
-  sheet.classList.remove('open');
-  renderHeader();
-  toast('Salut ' + ME.pseudo + ' !');
-  $('#meBtn').focus({ preventScroll: true });
-  const keep = clone(draft), kd = { ...dirty };
-  if (kd.team) {
-    try { localStorage.setItem(teamKey(), JSON.stringify(keep.team)); } catch {}
-  }
-  await refresh(true);
-  loadDraft();
-  for (const k in kd) if (kd[k]) { draft[k] = keep[k]; dirty[k] = true; }
-  initSB();
-  syncExistingTeam();
-  renderAll();
-  if (action) await action();
-});
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { sheet.classList.remove('open'); pending = null; } });
-$('#meBtn').onclick = () => openJoin();
-async function withMe(f) {
-  if (!ME) { pending = async () => { try { await f(); } catch (e) { toast(e.message || 'Erreur'); } }; openJoin('Choisis d’abord ton pseudo pour enregistrer.'); return; }
-  try { await f(); } catch (e) { snd.error(); toast(e.message || 'Erreur'); }
-}
-function renderSnd() { const b = $('#sndBtn'), o = snd.isOn(); b.setAttribute('aria-pressed', o); b.setAttribute('aria-label', o ? 'Son activé, toucher pour couper' : 'Son coupé, toucher pour activer'); }
-$('#sndBtn').onclick = () => { snd.toggle(); renderSnd(); toast(snd.isOn() ? 'Son activé' : 'Son coupé'); };
-
 /* ===================== NAVIGATION ===================== */
-document.addEventListener('click', e => {
-  const j = e.target.closest('[data-join]'); if (j) { openJoin(); return; }
-  const g = e.target.closest('[data-go]'); if (!g) return;
-  e.preventDefault(); const [v, a] = g.dataset.go.split('#');
-  if (location.hash.slice(1) !== v) location.hash = v; else show();
-  if (a && /^st[123]$/.test(a)) { SB[+a[2]] = true; renderSB(); }
-  if (a) setTimeout(() => { const t = document.getElementById(a); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80);
-});
-const VIEWS = ['accueil', 'paris', 'team', 'sondages', 'classement'];
+const VIEWS = ['acces', 'accueil', 'espace', 'profil', 'paris', 'team', 'classement', 'joueurs', 'sondages'];
+const TAB = { profil: 'espace', paris: 'espace', team: 'espace', joueurs: 'classement' };
+let currentView = 'acces';
+
 function show() {
-  const v = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'accueil';
-  VIEWS.forEach(n => $('#v-' + n).classList.toggle('on', n === v));
-  $$('.tabs a').forEach(a => { const o = a.dataset.t === v; a.classList.toggle('on', o); if (o) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  const hash = location.hash.slice(1);
+  const view = ME ? (VIEWS.includes(hash) && hash !== 'acces' ? hash : 'accueil') : 'acces';
+  if (view === currentView) return;
+  if (currentView === 'profil') account.closeProfile();
+  currentView = view;
+  VIEWS.forEach(name => $('#v-' + name).classList.toggle('on', name === view));
+  $('.tabs').hidden = !ME;
+  $$('.tabs a').forEach(tab => {
+    const selected = tab.dataset.t === (TAB[view] || view);
+    tab.classList.toggle('on', selected);
+    if (selected) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  });
   window.scrollTo(0, 0);
-  hideSplash();
-  if (v === 'sondages') requestAnimationFrame(draw);
-  if (v === 'classement') groupUI.render();
-  else groupUI.pause();
-}
-window.addEventListener('hashchange', show);
-window.addEventListener('beforeunload', e => { if (Object.values(dirty).some(Boolean)) { e.preventDefault(); e.returnValue = ''; } });
-
-const groupUI = groupView($('#group-view'), {
-  getStore: () => store, withUser: withMe, drawTeam, syncExistingTeam, notify: toast
-});
-function renderAll() {
-  renderHeader(); renderSnd(); renderHero(); renderPollsOverview();
-  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
-  renderTeam();
-  if (location.hash === '#classement') groupUI.render();
+  const heading = $('#v-' + view).querySelector('h1, h2');
+  heading.tabIndex = -1;
+  heading.focus({ preventScroll: true });
+  if (view === 'sondages' || view === 'accueil') renderPollsOverview();
+  if (view === 'sondages') {
+    if ($('#gHero').closest('details').open) renderHero();
+    requestPollDraw();
+  }
+  if (view === 'profil') account.openProfile(ME, ME.pid === GROUP_ADMIN);
+  if (ME) players.resume(view === 'joueurs');
+  else players.pause();
 }
 
-/* ===================== AFFICHE D'ACCUEIL ===================== */
-const splash = $('#splash');
-function showSplash() {
-  $('#splashJ').textContent = `J-${Math.max(0, daysTo(D.TOUR1))}`;
-  splash.hidden = false; document.body.style.overflow = 'hidden';
-  requestAnimationFrame(() => guilloche($('#gSplash'), { cy: 0.3, alpha: 0.16, scale: 1.1 }));
+function go(view, { replace = false } = {}) {
+  if (location.hash !== '#' + view || replace) {
+    history[replace ? 'replaceState' : 'pushState'](
+      replace ? null : { gameFrom: currentView }, '', '#' + view
+    );
+  }
+  show();
 }
-function hideSplash() { splash.hidden = true; document.body.style.overflow = ''; }
+
 const entrySound = new Audio(new URL('../audio/bouchon2.wav', import.meta.url));
-entrySound.preload = 'auto';
+entrySound.preload = 'none';
 function playEntrySound() {
   if (!snd.isOn()) return;
   entrySound.currentTime = 0;
   entrySound.play().catch(() => {});
 }
-$$('.tabs a').forEach(tab => {
-  tab.addEventListener('click', event => {
-    if (!event.defaultPrevented && tab.getAttribute('aria-current') !== 'page') playEntrySound();
-  });
+
+document.addEventListener('click', event => {
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const back = event.target.closest('[data-back]');
+  if (back) {
+    event.preventDefault();
+    if (history.state?.gameFrom && history.state.gameFrom !== 'acces') history.back();
+    else go(back.hash.slice(1), { replace: true });
+    return;
+  }
+  const link = event.target.closest('[data-go]');
+  if (!link) return;
+  event.preventDefault();
+  const [view, anchor] = link.dataset.go.split('#');
+  if (link.dataset.t && view !== currentView) playEntrySound();
+  go(view);
+  if (anchor && /^st[123]$/.test(anchor)) {
+    SB[+anchor[2]] = true;
+    renderSB();
+    requestAnimationFrame(() => document.getElementById(anchor)?.scrollIntoView({ block: 'start' }));
+  }
 });
-$('#splashGo').onclick = () => {
-  playEntrySound();
-  hideSplash();
-  location.hash = 'accueil';
-  show();
-};
-$('#brandBtn').onclick = () => showSplash();
+window.addEventListener('popstate', show);
+window.addEventListener('hashchange', show);
+window.addEventListener('beforeunload', event => {
+  if (Object.values(dirty).some(Boolean)) { event.preventDefault(); event.returnValue = ''; }
+});
+
+async function withMe(action) {
+  if (!ME) return;
+  try { await action(); } catch (error) { snd.error(); toast(error.message || 'Erreur'); }
+}
+
+function renderSnd() {
+  const button = $('#sndBtn'), on = snd.isOn();
+  button.textContent = on ? 'Son activé' : 'Son coupé';
+  button.setAttribute('aria-pressed', on);
+}
+$('#sndBtn').onclick = () => { snd.toggle(); renderSnd(); };
+
+const players = playersView($('#players-view'), {
+  getStore: () => store, drawTeam, syncExistingTeam, notify: toast
+});
+const account = accountView({
+  getStore: () => store,
+  getParticipation: () => {
+    const team = mine().team ?? (store.mode === 'local' ? readTeam() : null);
+    return {
+      pronos: ['l1', 'l2', 'gp'].filter(done).length,
+      totalPronos: 3,
+      team: countTeamRoles(team),
+      startedTeam: hasTeam(team),
+      totalTeam: D.POSTES.length + 2
+    };
+  },
+  notify: toast,
+  async onJoin(player) {
+    playEntrySound();
+    ME = player;
+    await refresh(true);
+    loadDraft();
+    initSB();
+    renderAll();
+    go('accueil', { replace: true });
+    syncExistingTeam();
+  },
+  onLogout() {
+    ME = null;
+    ALL = { players: {}, pronos: {} };
+    loadDraft();
+    initSB();
+    go('acces', { replace: true });
+  }
+});
+
+function renderAll() {
+  renderSession(); renderSnd();
+  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
+  renderTeam();
+  if (currentView === 'profil') account.renderParticipation();
+}
 
 /* ===================== DÉMARRAGE ===================== */
 (async function start() {
   initFiches();
   window.addEventListener('fiche-error', () => toast('Fiches indisponibles pour le moment, réessaie dans un instant'));
+  initPolls();
   store = await openStore();
   ME = store.me();
-  if (ME) store.groups?.ensureCommonGroup().catch(console.warn);
-  await refresh(true);
-  loadDraft(); initSB();
-  syncExistingTeam();
-  initPolls();
-  renderAll(); show();
-  if (!location.hash && !groupUI.hasInvite()) showSplash();
-  if (groupUI.hasInvite()) { location.hash = 'classement'; }
+  renderSession();
+  if (ME) {
+    await refresh(true);
+    loadDraft();
+    initSB();
+    renderAll();
+    go('accueil', { replace: true });
+    syncExistingTeam();
+  } else {
+    account.ready();
+    go('acces', { replace: true });
+  }
 })();

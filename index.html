@@ -21,95 +21,122 @@
 <link rel="stylesheet" href="css/app.css?v=56">
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <defs>
-    
-    <symbol id="flagS" viewBox="0 0 36 24"><rect width="12" height="24" fill="#1F3A93"/><rect x="12" width="12" height="24" fill="#FBF9F4"/><rect x="24" width="12" height="24" fill="#C8102E"/></symbol>
-  </defs>
-</svg>
-
-<section class="splash" id="splash" hidden aria-labelledby="punch">
-  <canvas class="gcv" id="gSplash" aria-hidden="true"></canvas>
-  <p class="credit"><svg width="27" height="18" aria-hidden="true"><use href="#flagS"/></svg>Craquettes et vieux boucs production présente</p>
-  <div class="portrait"><img src="img/habit.jpg" width="640" height="859" alt="Habit présidentiel sans tête : nœud papillon blanc, grand cordon, collier et plaques, devant une bibliothèque" decoding="async"></div>
-  <h2 class="punch" id="punch">Qui va gagner en mai&nbsp;27&nbsp;?</h2>
-  <div class="filet" aria-hidden="true"><i></i></div>
-  <p class="tag2">Prone ton President</p>
-  <p class="jbig"><b id="splashJ">J-145</b>avant le premier tour</p>
-  <button class="big go" id="splashGo">Entrer</button>
-  <button class="splash-install" data-install aria-controls="splash-install-help" aria-expanded="false" hidden>Ajouter à l’écran d’accueil</button>
-  <p id="splash-install-help" hidden></p>
+<main>
+<div class="banner" id="banner" hidden></div>
+<section class="view on" id="v-acces" aria-labelledby="access-title">
+  <div class="wrap access">
+    <img class="access-portrait" src="img/habit.jpg" width="640" height="859" alt="" fetchpriority="high">
+    <article class="card access-card">
+      <h1 id="access-title">Prône ton Président</h1>
+      <p>Pronostique la présidentielle de 2027. Compose ton gouvernement et récolte les pouces des autres joueurs.</p>
+      <p id="access-loading" role="status">Ouverture du jeu…</p>
+      <div id="access-options" class="access-options" hidden>
+        <button class="big" data-access="register">S’inscrire</button>
+        <button class="ghost" data-access="login">Se reconnecter</button>
+      </div>
+      <form class="form" id="access-form" hidden>
+        <button type="button" class="page-back" data-access="">Retour</button>
+        <h2 id="access-form-title"></h2>
+        <p class="fine" id="access-help"></p>
+        <label>Pseudo<input name="pseudo" maxlength="24" autocomplete="username" autocapitalize="words" required></label>
+        <label>Mot de passe à 4 chiffres<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></label>
+        <p class="err" id="access-error" role="alert" hidden></p>
+        <p id="access-status" role="status" hidden></p>
+        <button class="big" type="submit" id="access-submit"></button>
+      </form>
+    </article>
+  </div>
 </section>
 
-<header class="top">
-  <div class="wrap toprow">
-    <button class="brand" id="brandBtn" aria-label="Revoir la page d’ouverture">
-      <svg class="flag" viewBox="0 0 36 24" aria-hidden="true"><use href="#flagS"/></svg>
-      <span class="bt"><b>Prone ton President</b></span>
-    </button>
-    <button class="snd" id="sndBtn" aria-pressed="true" aria-label="Son activé"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path class="w1" d="M15.5 9a4 4 0 0 1 0 6"/><path class="w2" d="M18.5 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5"/></svg></button>
-    <button class="me" id="meBtn" aria-haspopup="dialog">Entrer</button>
-  </div>
-  <div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
-  <div class="banner" id="banner" hidden></div>
-</header>
-
-<main>
-<!-- ===================== ACCUEIL ===================== -->
-<section class="view" id="v-accueil">
+<section class="view" id="v-accueil" aria-labelledby="welcome-title">
   <div class="wrap stack">
-    <article class="card game-intro" aria-labelledby="game-intro-title">
-      <h2 id="game-intro-title">La présidentielle, à toi de jouer</h2>
-      <p>Fais tes pronos, compose ton gouvernement et donne tes 👍 à ceux des autres.</p>
-      <div class="game-start" role="group" aria-label="Choisir comment jouer">
-        <button data-go="paris" aria-label="Faire mes pronostics">Pronos</button>
-        <button data-go="team" aria-label="Composer mon gouvernement">Composer</button>
-        <button data-go="classement" aria-label="Découvrir les gouvernements des joueurs">Découvrir</button>
+    <div class="welcome">
+      <h1 id="welcome-title">Bienvenue</h1>
+      <p>Trouve qui sera élu et récolte le plus de 👍 avec ton gouvernement.</p>
+    </div>
+    <article class="card dashboard-card">
+      <h2>Mon espace</h2>
+      <div class="page-links">
+        <a href="#profil" data-go="profil">Mon profil</a>
+        <a href="#paris" data-go="paris">Mes pronos</a>
+        <a href="#team" data-go="team">Mon gouvernement</a>
       </div>
-      <p class="fine">Tout est visible par les joueurs. Participe aux rubriques qui te plaisent.</p>
     </article>
-    <article class="card" id="candsCard">
-      <h2>Fiches et programmes</h2>
-      <p class="fine" id="programmeStatus" role="status">Chargement des liens…</p>
-      <button class="linkbtn" id="programmeRetry" hidden>Réessayer</button>
-      <ul class="candidate-directory" id="candidateDirectory" aria-label="Fiches et programmes des candidats"></ul>
+    <article class="card dashboard-card">
+      <h2>Classements</h2>
+      <dl class="leaders">
+        <div><dt>En tête des pronos</dt><dd data-points-leader>Chargement…</dd></div>
+        <div><dt>En tête des gouvernements</dt><dd data-votes-leader>Chargement…</dd></div>
+      </dl>
+      <div class="page-links"><a href="#joueurs" data-go="joueurs">Voir tous les joueurs</a></div>
+    </article>
+    <article class="card dashboard-card">
+      <h2>Les infos de la campagne</h2>
+      <div id="home-poll-data">
+        <h3>Podium des sondages</h3>
+        <p class="poll-date" id="home-poll-date"></p>
+        <div class="home-podium" id="home-podium"></div>
+      </div>
+      <p class="fine" id="home-blackout" hidden></p>
+      <div class="page-links"><a href="#sondages" data-go="sondages">Voir les sondages</a></div>
     </article>
   </div>
-  <div class="hero">
-    <canvas class="gcv" id="gHero" aria-hidden="true"></canvas>
-    <div class="wrap herogrid">
-      <div><div class="jx" id="jx">145</div><p class="jsub" id="jxl">jours avant le 1er tour, dimanche 18 avril 2027</p></div>
-      <svg class="urne" viewBox="0 0 120 120" aria-hidden="true">
-        <defs><clipPath id="above"><rect width="120" height="45"/></clipPath></defs>
-        <g clip-path="url(#above)"><g class="bul"><rect x="45" y="12" width="30" height="40" rx="2" fill="#fff"/><rect x="45" y="12" width="10" height="6" fill="#2730C9"/><rect x="65" y="12" width="10" height="6" fill="#E1000F"/><rect x="50" y="24" width="20" height="2.5" rx="1" fill="#000091" opacity=".35"/><rect x="50" y="30" width="14" height="2.5" rx="1" fill="#000091" opacity=".35"/></g></g>
-        <rect x="18" y="48" width="84" height="62" rx="8" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-opacity=".75" stroke-width="2"/>
-        <rect x="26" y="84" width="26" height="17" rx="2" fill="#fff" opacity=".3" transform="rotate(-14 39 92)"/>
-        <rect x="58" y="88" width="26" height="15" rx="2" fill="#fff" opacity=".22" transform="rotate(10 71 95)"/>
-        <rect x="12" y="40" width="96" height="11" rx="4" fill="#fff" fill-opacity=".22" stroke="#fff" stroke-opacity=".85" stroke-width="2"/>
-        <rect x="42" y="43.5" width="36" height="4" rx="2" fill="#00003D"/>
-      </svg>
-    </div>
-    <div class="wrap frise" aria-label="Les échéances du jeu">
-      <div class="track" id="track"></div>
-      <div class="steps" id="steps"></div>
-    </div>
-  </div>
+</section>
+
+<section class="view" id="v-espace" aria-labelledby="space-title">
   <div class="wrap stack">
-    <details class="card rules">
-      <summary><h2>La règle de sélection</h2></summary>
-      <ol>
-        <li><b>500 parrainages</b> d'élus (maires, parlementaires, élus départementaux et régionaux…), venus d'au moins 30 départements ou collectivités d'outre-mer, sans dépasser 10 % pour un même département. Date limite : 12 mars 2027 à 18 h.</li>
-        <li><b>Liste officielle</b> publiée par le Conseil constitutionnel au plus tard le 26 mars 2027.</li>
-        <li><b>1er tour le 18 avril</b> : élu d'office avec la majorité absolue des suffrages exprimés.</li>
-        <li><b>Sinon, 2nd tour le 2 mai</b> entre les deux candidats arrivés en tête.</li>
-      </ol>
+    <a class="page-back" href="#accueil" data-back>Accueil</a>
+    <h1 class="page-title" id="space-title">Mon espace</h1>
+    <article class="card dashboard-card page-links">
+      <a href="#profil" data-go="profil">Mon profil</a>
+      <a href="#paris" data-go="paris">Mes pronos</a>
+      <a href="#team" data-go="team">Mon gouvernement</a>
+    </article>
+  </div>
+</section>
+
+<section class="view" id="v-profil" aria-labelledby="profile-title">
+  <div class="wrap stack">
+    <a class="page-back" href="#espace" data-back>Retour</a>
+    <h1 class="page-title" id="profile-title">Mon profil</h1>
+    <article class="card dashboard-card">
+      <dl class="profile-facts">
+        <div><dt>Pseudo</dt><dd id="profile-pseudo"></dd></div>
+        <div><dt>Mot de passe</dt><dd><output id="profile-pin" aria-live="polite">••••</output> <button class="linkbtn" id="show-pin" aria-pressed="false" hidden>Afficher</button></dd></div>
+      </dl>
+      <p class="fine" id="profile-pin-help">Utilise le même code à 4 chiffres sur tes autres appareils.</p>
+      <form class="form" id="profile-name-form">
+        <label>Ton vrai nom (facultatif)<input name="real-name" maxlength="80" autocomplete="name" aria-describedby="profile-private-help" disabled></label>
+        <p class="fine" id="profile-private-help">Seul Vince peut voir le nom que tu renseignes.</p>
+        <button class="ghost" type="submit" disabled>Enregistrer mon nom</button>
+        <p class="fine" id="profile-name-status" role="status"></p>
+      </form>
+    </article>
+    <article class="card dashboard-card">
+      <h2>Ma participation</h2>
+      <dl class="profile-facts">
+        <div><dt>Pronostics</dt><dd id="profile-pronos"></dd></div>
+        <div><dt>Gouvernement</dt><dd id="profile-team"></dd></div>
+      </dl>
+    </article>
+    <details class="card campaign-fold" id="vince-names" hidden>
+      <summary>Vrais noms renseignés</summary>
+      <ul id="vince-names-list"></ul>
+      <p class="fine" id="vince-names-status" role="status"></p>
     </details>
+    <div class="profile-actions">
+      <button class="ghost" id="sndBtn" aria-pressed="true">Son activé</button>
+      <button class="ghost" id="install-app" data-install aria-controls="install-help" aria-expanded="false" hidden>Installer le jeu</button>
+      <button class="ghost" id="logout">Se déconnecter</button>
+    </div>
+    <p class="fine" id="install-help" hidden></p>
   </div>
 </section>
 
 <!-- ===================== MES PARIS ===================== -->
 <section class="view" id="v-paris">
   <div class="wrap stack">
+    <a class="page-back" href="#espace" data-back>Retour</a>
     <article class="card">
       <h2>Mes pronos</h2>
       <p class="help">Tes pronos enregistrés sont visibles par tous les joueurs. Tu peux participer uniquement aux pronos.</p>
@@ -177,6 +204,7 @@
 <!-- ===================== TEAM DE RÊVE ===================== -->
 <section class="view" id="v-team">
   <div class="wrap stack">
+    <a class="page-back" href="#espace" data-back>Retour</a>
     <article class="card">
       <h2>Mon gouvernement</h2>
     </article>
@@ -209,49 +237,75 @@
 <!-- ===================== SONDAGES ===================== -->
 <section class="view" id="v-sondages">
   <div class="wrap stack">
-    <div id="pollsOverview">
-      <div class="stack" style="padding:0">
-        <article class="card">
-          <h2>Le podium des sondages</h2>
-          <p class="poll-date" id="podDate"></p>
-          <p class="src" id="podSrc"></p>
-          <div class="podium" id="podium"></div>
-        </article>
-        <article class="card">
-          <div class="poll-heading"><h2>Ça bouge</h2><time id="movesDate" class="poll-date"></time></div>
-          <div class="moves" id="moves"></div>
-        </article>
-        <article class="card">
-          <h2>Dernier sondage</h2>
-          <p class="src" id="lastSrc"></p>
-          <p class="fine"><a id="lastLink">Notice de la Commission des sondages</a></p>
-          <div id="last"></div>
-        </article>
-      </div>
+    <a class="page-back" href="#accueil" data-back>Retour</a>
+    <h1 class="page-title">Sondages</h1>
+    <p class="blackout" id="polls-blackout" hidden></p>
+    <div class="stack poll-overview" id="pollsOverview">
+      <article class="card">
+        <h2>Le podium des sondages</h2>
+        <p class="poll-date" id="podDate"></p>
+        <p class="src" id="podSrc"></p>
+        <div class="podium" id="podium"></div>
+      </article>
+      <article class="card">
+        <div class="poll-heading"><h2>Ça bouge</h2><time id="movesDate" class="poll-date"></time></div>
+        <div class="moves" id="moves"></div>
+      </article>
     </div>
-    <div id="pollsBody">
-      <div class="stack" style="padding:0">
-        <article class="card">
-          <h2>Les courbes du 1er tour</h2>
-          <p class="src">Moyenne mensuelle des intentions de vote, juillet à novembre 2026</p>
-          <div class="chips" id="lchips"></div>
-          <div class="fig" id="fig"><svg id="chart" role="img" aria-label="Évolution mensuelle des intentions de vote au premier tour"></svg><div class="tip" id="tip" hidden></div></div>
-          <p class="fine">Moyenne simple des sondages listés (1re hypothèse, rangés au mois de fin de terrain). Novembre en pointillé : chiffre provisoire.</p>
-          <details class="tbl"><summary>Voir les chiffres</summary><div class="scroll"><table id="tbl"></table></div></details>
-        </article>
-        <article class="card">
-          <h2>Les derniers sondages</h2>
-          <div id="novlist"></div>
-        </article>
-        <article class="card">
-          <h2>Seconds tours testés</h2>
-          <p class="src">Intentions de vote mesurées dans chaque hypothèse</p>
-          <div id="duels"></div>
-        </article>
-      </div>
+    <div class="stack poll-folds" id="pollsBody">
+      <details class="card campaign-fold">
+        <summary>Dernier sondage</summary>
+        <p class="src" id="lastSrc"></p>
+        <p class="fine"><a id="lastLink">Notice de la Commission des sondages</a></p>
+        <div id="last"></div>
+      </details>
+      <details class="card campaign-fold">
+        <summary>Les courbes du 1er tour</summary>
+        <p class="src">Moyenne mensuelle des intentions de vote, juillet à novembre 2026</p>
+        <div class="chips" id="lchips"></div>
+        <div class="fig" id="fig"><svg id="chart" role="img" aria-label="Évolution mensuelle des intentions de vote au premier tour"></svg><div class="tip" id="tip" hidden></div></div>
+        <p class="fine">Moyenne simple des sondages listés (1re hypothèse, rangés au mois de fin de terrain). Novembre en pointillé : chiffre provisoire.</p>
+        <details class="tbl"><summary>Voir les chiffres</summary><div class="scroll"><table id="tbl"></table></div></details>
+      </details>
+      <details class="card campaign-fold">
+        <summary>Les derniers sondages</summary>
+        <div id="novlist"></div>
+      </details>
+      <details class="card campaign-fold">
+        <summary>Seconds tours testés</summary>
+        <p class="src">Intentions de vote mesurées dans chaque hypothèse</p>
+        <div id="duels"></div>
+      </details>
     </div>
-    <article class="card">
-      <h2>Sources</h2>
+    <details class="card campaign-fold">
+      <summary>Calendrier de la campagne</summary>
+      <div class="hero">
+        <canvas class="gcv" id="gHero" aria-hidden="true"></canvas>
+        <div class="jx" id="jx"></div>
+        <p class="jsub" id="jxl"></p>
+        <div class="frise" aria-label="Les échéances du jeu">
+          <div class="track" id="track"></div>
+          <div class="steps" id="steps"></div>
+        </div>
+      </div>
+    </details>
+    <details class="card campaign-fold">
+      <summary>La règle de sélection</summary>
+      <ol>
+        <li><b>500 parrainages</b> d'élus (maires, parlementaires, élus départementaux et régionaux…), venus d'au moins 30 départements ou collectivités d'outre-mer, sans dépasser 10 % pour un même département. Date limite : 12 mars 2027 à 18 h.</li>
+        <li><b>Liste officielle</b> publiée par le Conseil constitutionnel au plus tard le 26 mars 2027.</li>
+        <li><b>1er tour le 18 avril</b> : élu d'office avec la majorité absolue des suffrages exprimés.</li>
+        <li><b>Sinon, 2nd tour le 2 mai</b> entre les deux candidats arrivés en tête.</li>
+      </ol>
+    </details>
+    <details class="card campaign-fold" id="candsCard">
+      <summary>Fiches et programmes</summary>
+      <p class="fine" id="programmeStatus" role="status">Chargement des liens…</p>
+      <button class="linkbtn" id="programmeRetry" hidden>Réessayer</button>
+      <ul class="candidate-directory" id="candidateDirectory" aria-label="Fiches et programmes des candidats"></ul>
+    </details>
+    <details class="card campaign-fold">
+      <summary>Sources</summary>
       <ul class="links">
         <li><a href="https://commission-des-sondages.fr/notices/">Commission des sondages</a>, notices des instituts</li>
         <li><a href="https://sondax.fr/">Sondax</a>, moyenne et duels de 2nd tour</li>
@@ -261,20 +315,24 @@
         <li><a href="https://www.conseil-constitutionnel.fr/">Conseil constitutionnel</a>, parrainages et liste officielle</li>
       </ul>
       <p class="fine" id="pollUpdateDate"></p>
-    </article>
+    </details>
   </div>
 </section>
 
 <!-- ===================== CLASSEMENT ===================== -->
 <section class="view" id="v-classement">
   <div class="wrap stack">
-    <article class="players-panel">
-      <div id="group-view"><p role="status">Chargement des joueurs…</p></div>
-      <button class="ghost" id="install-app" data-install aria-controls="install-help" aria-expanded="false" hidden>Installer le jeu comme une app</button>
-      <p id="install-help" hidden></p>
+    <a class="page-back" href="#accueil" data-back>Accueil</a>
+    <h1 class="page-title">Classements</h1>
+    <article class="card dashboard-card">
+      <dl class="leaders">
+        <div><dt>En tête des pronos</dt><dd data-points-leader>Chargement…</dd></div>
+        <div><dt>En tête des gouvernements</dt><dd data-votes-leader>Chargement…</dd></div>
+      </dl>
+      <div class="page-links"><a href="#joueurs" data-go="joueurs">Voir tous les joueurs</a></div>
     </article>
-    <details class="card rules">
-      <summary><h2>Comment on marque</h2></summary>
+    <details class="card rules campaign-fold">
+      <summary>Comment on marque</summary>
       <p><b>Gouvernements : donne 1, 2 ou 3 👍.</b> Le classement additionne tous les pouces reçus. Un seul choix par joueur et par gouvernement, modifiable ou retirable, sans vote pour soi. Sans vote : 0 👍. Les gouvernements et les pronostics ont chacun leur classement.</p>
       <ul class="pts">
         <li><b>1 à 5</b><span><b>« Qui sera là ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
@@ -288,19 +346,22 @@
     </details>
   </div>
 </section>
+<section class="view" id="v-joueurs" aria-labelledby="players-title">
+  <div class="wrap stack players-wrap">
+    <a class="page-back" href="#classement" data-back>Retour</a>
+    <h1 class="page-title" id="players-title">Joueurs</h1>
+    <div id="players-view"></div>
+  </div>
+</section>
 </main>
 
-<nav class="tabs" aria-label="Onglets">
-  <a href="#accueil" data-t="accueil"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg><span>Accueil</span></a>
-  <a href="#paris" data-t="paris"><svg viewBox="0 0 24 24"><path d="M4 11h16v9H4zM8 11V4h8v7M10.5 7.5l1.5 1.5 2.5-3"/></svg><span>Mes pronos</span></a>
-  <a href="#team" data-t="team"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15.5 14.5c3 0 5.5 2 5.5 5.5"/></svg><span>Mon gouver&shy;nement</span></a>
-  <a href="#sondages" data-t="sondages"><svg viewBox="0 0 24 24"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
-  <a href="#classement" data-t="classement"><svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Joueurs et Groupes</span></a>
+<nav class="tabs" aria-label="Onglets" hidden>
+  <a href="#accueil" data-t="accueil" data-go="accueil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg><span>Accueil</span></a>
+  <a href="#espace" data-t="espace" data-go="espace"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Mon espace</span></a>
+  <a href="#classement" data-t="classement" data-go="classement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Classements</span></a>
+  <a href="#sondages" data-t="sondages" data-go="sondages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
 </nav>
 
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT">
-  <div class="in" id="sheetIn"></div>
-</div>
 <div class="fiche" id="fiche" role="dialog" aria-modal="true" aria-labelledby="fName" hidden>
   <div class="fcard" id="fCard">
     <div class="fhead">
@@ -325,7 +386,7 @@
   </div>
 </div>
 <dialog id="player-dialog" aria-labelledby="player-title">
-  <form method="dialog" class="dialog-toolbar"><button class="dialog-close" aria-label="Fermer" autofocus><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button></form>
+  <form method="dialog" class="dialog-toolbar"><button class="dialog-close" aria-label="Retour aux joueurs" autofocus><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button></form>
   <h2 id="player-title"></h2>
   <div id="player-detail"></div>
 </dialog>
@@ -345,7 +406,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=55"></script>
+<script type="module" src="js/app.js?v=56"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

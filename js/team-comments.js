@@ -52,7 +52,7 @@ export function showTeamComments(section, { groups, code, team, player, signal }
     if (signal.aborted) return;
     list.replaceChildren();
     form.hidden = true;
-    status.textContent = 'Commentaires indisponibles dans ce groupe.';
+    status.textContent = 'Commentaires indisponibles pour ce gouvernement.';
   });
   signal.addEventListener('abort', unsubscribe, { once: true });
 

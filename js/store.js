@@ -2,11 +2,22 @@
    STOCKAGE — même interface en mode essai (localStorage) et en mode partagé (Firebase)
    ===================================================================== */
 import { FIREBASE } from './config.js';
-import { groupsStore } from './groups.js?v=54';
+import { COMMON_GROUP, GROUP_ADMIN, groupsStore } from './groups.js?v=54';
 import { monthKey } from './history.js';
 import { weekOf, clampWeek } from './scoring.js';
 
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
+
+function checkJoin(exists, action) {
+  if (exists && action === 'register') throw new StoreError('exists', 'Ce pseudo est déjà pris. Reconnecte-toi si c’est ton compte.');
+  if (!exists && action === 'login') throw new StoreError('unknown', 'Pseudo introuvable. Vérifie-le ou inscris-toi.');
+}
+
+function cleanRealName(name) {
+  const value = name.trim();
+  if (value.length > 80) throw new StoreError('name', '80 caractères maximum.');
+  return value;
+}
 
 export const normPid = s => String(s || '').trim().toLowerCase()
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -22,16 +33,29 @@ export class StoreError extends Error { constructor(code, msg) { super(msg || co
 /* ---------------- Mode essai ---------------- */
 class LocalStore {
   constructor() { this.mode = 'local'; this.K = 'pdm-v2'; this.db = this.read(); }
-  read() { try { return JSON.parse(localStorage.getItem(this.K)) || { me: null, players: {}, secrets: {}, pronos: {} }; } catch (e) { return { me: null, players: {}, secrets: {}, pronos: {} }; } }
+  read() {
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(this.K)); } catch {}
+    return {
+      me: saved?.me || null,
+      players: Object.assign(Object.create(null), saved?.players),
+      secrets: Object.assign(Object.create(null), saved?.secrets),
+      pronos: Object.assign(Object.create(null), saved?.pronos),
+      privateProfiles: Object.assign(Object.create(null), saved?.privateProfiles)
+    };
+  }
   write() { try { localStorage.setItem(this.K, JSON.stringify(this.db)); } catch (e) { } }
   async init() { return this.me(); }
   me() { const pid = this.db.me; return pid && this.db.players[pid] ? { pid, pseudo: this.db.players[pid].pseudo } : null; }
-  async join(pseudo, pin) {
+  async join(pseudo, pin, action) {
     const pid = normPid(pseudo);
     if (pid.length < 2) throw new StoreError('pseudo', 'Pseudo trop court (2 caractères minimum).');
     if (!/^\d{4}$/.test(pin)) throw new StoreError('pin', 'Le code doit faire 4 chiffres.');
     const h = await sha256(pid + ':' + pin);
-    if (this.db.players[pid]) {
+    this.db = this.read();
+    const exists = Object.hasOwn(this.db.players, pid);
+    checkJoin(exists, action);
+    if (exists) {
       if (this.db.secrets[pid] !== h) throw new StoreError('badpin', 'Ce pseudo existe déjà et le code ne correspond pas.');
     } else {
       this.db.players[pid] = { pseudo: pseudo.trim().slice(0, 24), createdAt: Date.now() };
@@ -42,6 +66,22 @@ class LocalStore {
   }
   async logout() { this.db.me = null; this.write(); }
   async loadAll() { return { players: structuredClone(this.db.players), pronos: structuredClone(this.db.pronos) }; }
+  async getRealName() {
+    if (!this.me()) throw new StoreError('auth', 'Reconnecte-toi.');
+    return this.db.privateProfiles?.[this.me().pid] || '';
+  }
+  async setRealName(name) {
+    if (!this.me()) throw new StoreError('auth', 'Reconnecte-toi.');
+    const profiles = this.db.privateProfiles;
+    const value = cleanRealName(name);
+    if (value) profiles[this.me().pid] = value;
+    else delete profiles[this.me().pid];
+    this.write();
+  }
+  async listRealNames() {
+    if (this.me()?.pid !== GROUP_ADMIN) throw new StoreError('auth', 'Accès réservé à Vince.');
+    return Object.entries(this.db.privateProfiles || {}).map(([pid, name]) => [this.db.players[pid]?.pseudo || pid, name]);
+  }
   async save(patch, gp) {
     const pid = this.db.me; if (!pid) throw new StoreError('auth', 'Choisis d’abord ton pseudo.');
     const p = this.db.pronos[pid] || (this.db.pronos[pid] = { weeks: {} });
@@ -74,12 +114,13 @@ class FirebaseStore {
     return this._me;
   }
   me() { return this._me; }
-  async join(pseudo, pin) {
+  async join(pseudo, pin, action) {
     const { F } = this, pid = normPid(pseudo);
     if (pid.length < 2) throw new StoreError('pseudo', 'Pseudo trop court (2 caractères minimum).');
     if (!/^\d{4}$/.test(pin)) throw new StoreError('pin', 'Le code doit faire 4 chiffres.');
     const h = await sha256(pid + ':' + pin), uid = this.user.uid;
-    const pl = await F.getDoc(F.doc(this.db, 'players', pid));
+    const pl = await F.getDocFromServer(F.doc(this.db, 'players', pid));
+    checkJoin(pl.exists(), action);
     try {
       if (pl.exists()) {
         await F.setDoc(F.doc(this.db, 'devices', uid), { pid, pin: h });
@@ -94,15 +135,19 @@ class FirebaseStore {
         this._me = { pid, pseudo: ps };
       }
     } catch (e) {
-      if (pl.exists()) throw new StoreError('badpin', 'Ce pseudo existe déjà et le code ne correspond pas.');
-      throw new StoreError('net', 'Impossible de créer ton pseudo pour le moment. Réessaie.');
+      if (pl.exists() && e.code === 'permission-denied') throw new StoreError('badpin', 'Ce code ne correspond pas à ce pseudo.');
+      if (!pl.exists() && e.code === 'permission-denied') {
+        const latest = await F.getDocFromServer(F.doc(this.db, 'players', pid));
+        checkJoin(latest.exists(), action);
+      }
+      throw new StoreError('net', 'Connexion impossible pour le moment. Réessaie.');
     }
     this.groups.resetEnrollment();
     this.cache = null; return this._me;
   }
   async logout() {
     const { F } = this;
-    try { await F.deleteDoc(F.doc(this.db, 'devices', this.user.uid)); } catch (e) { }
+    await F.deleteDoc(F.doc(this.db, 'devices', this.user.uid));
     this.groups.resetEnrollment();
     this._me = null; this.cache = null;
   }
@@ -120,22 +165,49 @@ class FirebaseStore {
     } while (cursor);
     return Object.fromEntries(names);
   }
+  async getRealName() {
+    const { F, db } = this;
+    if (!this._me) throw new StoreError('auth', 'Reconnecte-toi.');
+    const profile = await F.getDoc(F.doc(db, 'privateProfiles', this._me.pid));
+    return profile.data()?.realName || '';
+  }
+  async setRealName(name) {
+    const { F, db } = this;
+    if (!this._me) throw new StoreError('auth', 'Reconnecte-toi.');
+    const ref = F.doc(db, 'privateProfiles', this._me.pid);
+    const realName = cleanRealName(name);
+    if (realName) await F.setDoc(ref, { realName });
+    else await F.deleteDoc(ref);
+  }
+  async listRealNames() {
+    const { F, db } = this;
+    if (this._me?.pid !== GROUP_ADMIN) throw new StoreError('auth', 'Accès réservé à Vince.');
+    const [profiles, players] = await Promise.all([
+      F.getDocsFromServer(F.collection(db, 'privateProfiles')), this.registeredPlayers()
+    ]);
+    return profiles.docs.map(doc => [players[doc.id]?.pseudo || doc.id, doc.data().realName]);
+  }
   async loadAll(force) {
     if (!force && this.cache && Date.now() - this.cacheAt < 60e3) return this.cache;
     const { F } = this;
-    const players = {}, pronos = {};
+    const players = Object.create(null), pronos = Object.create(null);
     if (this._me) {
       const { pid, pseudo } = this._me;
       const own = await F.getDoc(F.doc(this.db, 'pronos', pid));
       players[pid] = { pseudo };
-      if (own.exists()) pronos[pid] = own.data();
+      if (own.exists()) {
+        pronos[pid] = own.data();
+        if (!Object.hasOwn(pronos[pid], 'team')) {
+          const legacy = await F.getDoc(F.doc(this.db, 'groups', COMMON_GROUP, 'teams', pid)).catch(() => null);
+          if (legacy?.exists()) pronos[pid].team = legacy.data().value;
+        }
+      }
     }
     this.cache = { players, pronos }; this.cacheAt = Date.now();
     return this.cache;
   }
   async save(patch, gp) {
     const { F } = this; if (!this._me) throw new StoreError('auth', 'Choisis d’abord ton pseudo.');
-    await this.groups.ensureCommonGroup().catch(console.warn);
     const ref = F.doc(this.db, 'pronos', this._me.pid);
     const w0 = clampWeek(weekOf(Date.now()));
     /* l'horloge du téléphone peut différer de celle du serveur autour de lundi minuit */
