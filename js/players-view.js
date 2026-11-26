@@ -23,7 +23,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   root.innerHTML = `<div class="players-toolbar" hidden>
     <label for="players-sort">Trier par</label>
     <select id="players-sort">
-      <option value="random" selected>Au hasard · à voter en premier</option>
+      <option value="random" selected>Tirage aléatoire</option>
       <option value="thumbs">Nombre de pouces levés</option>
       <option value="name">Ordre alphabétique</option>
       <option value="points">Points de pronos</option>
@@ -215,15 +215,16 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     const political = sort.value === 'politics';
     const positions = political ? new Map(rows.map(row =>
       [row.pid, teamPosition(normalizeTeam(display.teams[row.pid])).balance])) : new Map();
+    const others = rows.filter(row => row.pid !== pid);
     const ordered = random
-      ? votingOrder(rows, { pid, teams: display.teams, scores, ready: votesReady })
-      : rows.filter(row => row.pid !== pid);
+      ? votingOrder(others, { pid, teams: display.teams, scores, ready: votesReady })
+      : others;
     if (sort.value === 'name') ordered.sort(alphabetical);
     if (sort.value === 'thumbs') ordered.sort((a, b) =>
       (scores[b.pid]?.points || 0) - (scores[a.pid]?.points || 0) || alphabetical(a, b));
     if (political) ordered.sort((a, b) =>
       (positions.get(a.pid) ?? Infinity) - (positions.get(b.pid) ?? Infinity) || alphabetical(a, b));
-    const own = !random && rows.find(row => row.pid === pid);
+    const own = rows.find(row => row.pid === pid);
     const focus = document.activeElement;
     tableBody.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
       .map(row => rowHTML(row, pid, political, positions)).join('');
