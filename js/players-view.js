@@ -30,7 +30,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   <p class="fine" id="players-vote-status" role="status" hidden></p>
   <div class="players-table-wrap" hidden>
     <table class="players-table">
-      <thead><tr><th scope="col">Joueur</th><th scope="col">Pronos</th><th scope="col" aria-label="Points">Pts</th><th scope="col" aria-label="Gouvernement"><abbr title="Gouvernement">Gouv.</abbr></th><th scope="col" aria-label="Pouces levés">👍</th></tr></thead>
+      <thead><tr><th scope="col">Joueur</th><th scope="col">Pronos</th><th scope="col" aria-label="Points">Pts</th><th scope="col" aria-label="Gouvernement"><abbr title="Gouvernement">Gouve</abbr></th><th scope="col" aria-label="Pouces levés">👍</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -112,12 +112,14 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     const position = balance == null ? 'Sans repère' : balance < 0 ? 'À gauche' : balance > 0 ? 'À droite' : 'À l’équilibre';
     const indicator = political ? `<span class="politics-swatch" ${color ? 'style="--position:' + color + '"' : ''} title="${position}" aria-label="${position}"></span>` : '';
     const label = escape(row.pseudo);
-    const button = (text, type, available, target) => {
+    const button = (labelType, type, available, target) => {
       const className = 'player-action' + (available ? ' available' : '');
-      if (own) return `<a class="${className}" href="#${target}" data-go="${target}" aria-label="${text === 'Pronos' ? 'Mes pronos' : 'Mon gouvernement'}">Ouvrir</a>`;
+      if (own) return `<a class="${className}" href="#${target}" data-go="${target}" aria-label="${type === 'pronos' ? 'Mes pronos' : 'Mon gouvernement'}">Ouvrir</a>`;
+      const action = type === 'team' ? 'Voter' : 'Voir';
+      const actionLabel = type === 'team' ? 'Voter pour le gouvernement de ' : 'Pronos de ';
       return available
-        ? `<button class="${className}" data-player="${escape(row.pid)}" data-detail="${type}" aria-label="${text} de ${label}">Voir</button>`
-        : `<span aria-label="${text} à remplir">—</span>`;
+        ? `<button class="${className}" data-player="${escape(row.pid)}" data-detail="${type}" aria-label="${actionLabel}${label}">${action}</button>`
+        : `<span aria-label="${labelType} à remplir">—</span>`;
     };
     return `<tr class="${hasProno || hasGovernment ? 'participating' : ''}${own ? ' own-player' : ''}">
       <th scope="row">${indicator}${label}${own ? ' <small>toi</small>' : ''}</th>

@@ -1,4 +1,4 @@
-export function accountView({ getStore, onJoin, onLogout, getParticipation, notify }) {
+export function accountView({ getStore, onJoin, onLogout, getParticipation, hasPortrait, notify }) {
   const $ = selector => document.querySelector(selector);
   const accessForm = $('#access-form');
   const accessTitle = $('#access-form-title');
@@ -79,11 +79,26 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, noti
   }
   showPin.onclick = () => setPinVisibility(Boolean(sessionPin) && showPin.getAttribute('aria-pressed') !== 'true');
 
+  function renderSpaceCard(name, value, max, status, count) {
+    const card = $(`[data-space-card="${name}"]`);
+    const progress = card.querySelector('progress');
+    progress.max = max;
+    progress.value = value;
+    card.dataset.complete = String(value === max);
+    card.querySelector('[data-space-status]').textContent = status;
+    if (count) card.querySelector('[data-space-count]').textContent = count;
+  }
+
   function renderParticipation() {
     const { pronos, totalPronos, team, startedTeam, totalTeam } = getParticipation();
     const label = (filled, total, started = filled > 0) => filled === total ? 'Complet' : started ? 'Incomplet' : 'À remplir';
     $('#profile-pronos').textContent = label(pronos, totalPronos) + ' · ' + pronos + '/' + totalPronos;
     $('#profile-team').textContent = label(team, totalTeam, startedTeam) + ' · ' + team + '/' + totalTeam + ' postes';
+    const portrait = hasPortrait();
+    const percent = (value, max) => Math.round(100 * value / max) + ' %';
+    renderSpaceCard('profil', Number(portrait), 1, portrait ? 'Complet' : 'À compléter');
+    renderSpaceCard('pronos', pronos, totalPronos, percent(pronos, totalPronos), `${pronos}/${totalPronos} pronos enregistrés`);
+    renderSpaceCard('gouvernement', team, totalTeam, percent(team, totalTeam), `${team}/${totalTeam} postes pourvus`);
   }
 
   function closeProfile() {
