@@ -413,7 +413,6 @@ h2{font-weight:600;letter-spacing:-.2px}
 #pick .prono-pct { grid-column: 3; margin: 0; }
 #pick .prono-pct input { width: 3.7rem; }
 .final-scores { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; margin-top: 12px; }
-.players-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .team-vote-panel { padding: 0 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
 .vote-score { font-size: var(--text-ui); font-weight: 700; margin: 0 0 8px; }
 .team-rating { display: flex; gap: 6px; margin-bottom: 6px; }
@@ -527,8 +526,9 @@ h2{font-weight:600;letter-spacing:-.2px}
 /* Tableau des joueurs */
 .players-wrap { max-width: 780px; }
 #players-view { display: grid; gap: 10px; }
-.players-toolbar label { font-weight: 600; }
-#players-sort { width: auto; min-height: 44px; padding: 0 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: var(--text-body); }
+.players-toolbar { display: grid; gap: 6px; }
+.players-toolbar label { font-weight: 700; }
+#players-sort { width: 100%; min-height: 54px; padding: 0 12px; border: 1px solid var(--or); border-radius: 10px; background: #1c1913; color: var(--orC); font-size: var(--text-ui); font-weight: 700; }
 .players-table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow: auto; }
 .players-table { width: 100%; table-layout: fixed; }
 .players-table :is(th,td) { padding: 5px 2px; text-align: center; vertical-align: middle; white-space: normal; overflow-wrap: anywhere; }
@@ -551,6 +551,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 #players-status:empty { display: none; }
 
 /* Mon espace et portrait */
+body:has(#v-espace.on) { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 .space-wrap { display: grid; gap: 12px; padding-block: 12px; max-width: 810px; }
 .space-wrap > .page-back { margin-bottom: 0; }
 .space-identity { display: flex; align-items: center; gap: 15px; padding: 12px 14px; border: 1px solid #4c3e27; border-radius: 14px; background: radial-gradient(ellipse at top left, #2b2317, #141310 70%); }
@@ -570,6 +571,11 @@ h2{font-weight:600;letter-spacing:-.2px}
 .space-card-line [data-space-status]::after { content: ""; width: 6px; height: 6px; margin-right: 2px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); }
 .space-card[data-complete="true"] [data-space-status] { color: #a5eecf; }
 .space-card small { color: var(--mut); line-height: 1.15; }
+.space-summary { display: flex; align-items: center; gap: 9px; line-height: 1.2; }
+.space-summary [data-space-photo] { flex: none; }
+.space-choices { display: grid; gap: 3px; }
+.space-choice { color: var(--mut); overflow-wrap: anywhere; }
+.space-choice b { color: var(--ink); font-weight: 700; }
 .space-card progress { appearance: none; display: block; width: 100%; height: 5px; border: 0; border-radius: 5px; background: #3d3a31; color: var(--space-accent); overflow: hidden; }
 .space-card progress::-webkit-progress-bar { background: #3d3a31; border-radius: 5px; }
 .space-card progress::-webkit-progress-value { background: var(--space-accent); border-radius: 5px; }
@@ -596,12 +602,17 @@ h2{font-weight:600;letter-spacing:-.2px}
 .portrait-help { margin-top: 7px; }
 #portrait-upload { border-color: var(--or); color: var(--orC); }
 @media (max-height: 550px) {
-  body:has(#v-espace.on) { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
   .space-wrap { gap: 8px; padding-block: 8px; }
   .space-identity { padding-block: 8px; }
   .space-portrait img { width: 56px; height: 56px; }
   .space-cards { gap: 7px; }
   .space-card { padding-block: 8px; }
+}
+@media (max-height: 490px) and (max-width: 539px) {
+  .space-wrap { grid-template-columns: 44px minmax(0, 1fr); }
+  .space-wrap > .page-back { width: 44px; justify-content: center; align-self: center; padding: 0; }
+  .space-wrap > .page-back span { display: none; }
+  .space-cards { grid-column: 1 / -1; }
 }
 @media (orientation: landscape) and (max-height: 440px) and (min-width: 540px) {
   .space-wrap { grid-template-columns: auto minmax(0, 1fr); }

@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=57">
+<link rel="stylesheet" href="css/app.css?v=58">
 </head>
 <body>
 <main>
@@ -68,7 +68,7 @@
         <div><dt>En tête des pronos</dt><dd data-points-leader>Chargement…</dd></div>
         <div><dt>En tête des gouvernements</dt><dd data-votes-leader>Chargement…</dd></div>
       </dl>
-      <div class="page-links"><a href="#joueurs" data-go="joueurs">Voir tous les joueurs</a></div>
+      <div class="page-links"><a href="#classement" data-go="classement">Voir tous les joueurs</a></div>
     </article>
     <article class="card dashboard-card">
       <h2>Les infos de la campagne</h2>
@@ -85,7 +85,7 @@
 
 <section class="view" id="v-espace" aria-labelledby="space-title">
   <div class="wrap space-wrap">
-    <a class="page-back" href="#accueil" data-back>Accueil</a>
+    <a class="page-back" href="#accueil" data-back aria-label="Accueil"><span>Accueil</span></a>
     <div class="space-identity">
       <button type="button" class="space-portrait" id="edit-portrait" aria-label="Personnaliser mon portrait" aria-haspopup="dialog">
         <img id="space-portrait" src="img/portraits/vieux-bouc.webp" alt="" width="76" height="76">
@@ -105,11 +105,24 @@
         <div class="space-card-line"><strong>Mes pronos</strong><span data-space-status>0 %</span></div>
         <progress max="3" value="0" aria-label="Progression des pronostics"></progress>
         <small data-space-count></small>
+        <div class="space-summary" data-space-summary hidden>
+          <span data-space-photo aria-hidden="true" hidden></span>
+          <div class="space-choices">
+            <span class="space-choice" data-space-president hidden><span>Vainqueur</span> <b></b></span>
+          </div>
+        </div>
       </a>
       <a class="space-card" href="#team" data-go="team" data-space-card="gouvernement">
         <div class="space-card-line"><strong>Mon gouvernement</strong><span data-space-status>0 %</span></div>
         <progress max="12" value="0" aria-label="Progression du gouvernement"></progress>
         <small data-space-count></small>
+        <div class="space-summary" data-space-summary hidden>
+          <span data-space-photo aria-hidden="true" hidden></span>
+          <div class="space-choices">
+            <span class="space-choice" data-space-president hidden><span>Président</span> <b></b></span>
+            <span class="space-choice" data-space-pm hidden><span>Premier ministre</span> <b></b></span>
+          </div>
+        </div>
       </a>
     </div>
   </div>
@@ -343,19 +356,13 @@
 </section>
 
 <!-- ===================== CLASSEMENT ===================== -->
-<section class="view" id="v-classement">
-  <div class="wrap stack">
+<section class="view" id="v-classement" aria-labelledby="players-title">
+  <div class="wrap stack players-wrap">
     <a class="page-back" href="#accueil" data-back>Accueil</a>
-    <h1 class="page-title">Classements</h1>
-    <article class="card dashboard-card">
-      <dl class="leaders">
-        <div><dt>En tête des pronos</dt><dd data-points-leader>Chargement…</dd></div>
-        <div><dt>En tête des gouvernements</dt><dd data-votes-leader>Chargement…</dd></div>
-      </dl>
-      <div class="page-links"><a href="#joueurs" data-go="joueurs">Voir tous les joueurs</a></div>
-    </article>
+    <h1 class="page-title" id="players-title">Classements</h1>
+    <div id="players-view"></div>
     <details class="card rules campaign-fold">
-      <summary>Comment on marque</summary>
+      <summary>Calcul hyper compliqué des points 😂</summary>
       <p><b>Gouvernements : donne 1, 2 ou 3 👍.</b> Le classement additionne tous les pouces reçus. Un seul choix par joueur et par gouvernement, modifiable ou retirable, sans vote pour soi. Sans vote : 0 👍. Les gouvernements et les pronostics ont chacun leur classement.</p>
       <ul class="pts">
         <li><b>1 à 5</b><span><b>« Qui sera là ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
@@ -367,13 +374,6 @@
       <p class="help"><b>Les photos du lundi :</b> chaque lundi, ton pronostic est enregistré pour le calcul des points. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
       <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
     </details>
-  </div>
-</section>
-<section class="view" id="v-joueurs" aria-labelledby="players-title">
-  <div class="wrap stack players-wrap">
-    <a class="page-back" href="#classement" data-back>Retour</a>
-    <h1 class="page-title" id="players-title">Joueurs</h1>
-    <div id="players-view"></div>
   </div>
 </section>
 </main>
@@ -449,7 +449,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=57"></script>
+<script type="module" src="js/app.js?v=58"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
