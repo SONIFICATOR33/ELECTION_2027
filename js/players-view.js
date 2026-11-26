@@ -7,6 +7,8 @@ import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=60';
 import { teamPosition } from './team-gauge.js?v=66';
 import { createVotingOrder } from './voting-order.js?v=89';
+import { firstRoundForecast } from './community-forecast.js?v=91';
+import { portraitThumb } from './fiches.js?v=51';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -84,6 +86,26 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     leaderStatus.textContent = !display ? status.textContent || 'Chargement…'
       : !votesReady ? voteError || 'Chargement des votes…' : '';
     leaderStatus.hidden = !leaderStatus.textContent;
+  }
+
+  function renderCommunityForecast() {
+    const podium = document.querySelector('#community-podium');
+    const summary = document.querySelector('#community-podium-status');
+    if (!display) {
+      podium.replaceChildren();
+      summary.textContent = status.textContent || 'Chargement des pronostics…';
+      return;
+    }
+    const { participants, rows: forecast } = firstRoundForecast(display.pronos, by);
+    summary.textContent = participants
+      ? `1er tour · Moyenne de ${participants} prono${participants > 1 ? 's' : ''}`
+      : 'Le podium apparaîtra dès le premier top 5 enregistré.';
+    podium.innerHTML = forecast.slice(0, 3).map(({ id, pct, rank }) => {
+      const candidate = by[id], label = candidate.p + ' ' + candidate.n;
+      return `<button type="button" class="home-poll-row" data-fiche="${escape(id)}" aria-label="${escape(label)}, ${fmt(pct)} %, ouvrir la fiche">
+        <span class="home-rank">${rank}</span><span class="av" style="--s:32px;--c:${candidate.col}" aria-hidden="true">${portraitThumb(candidate)}</span><span class="home-candidate">${escape(label)}</span><strong>${fmt(pct)} %</strong>
+      </button>`;
+    }).join('');
   }
 
   function clearDialog() {
@@ -204,6 +226,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
         scores = teamVoteScores(display.teams, votes, getStore().me().pid);
       }
       renderLeaders();
+      renderCommunityForecast();
       if (visible) renderTable();
       refreshVotePanel();
     });
