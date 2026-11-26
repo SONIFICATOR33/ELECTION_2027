@@ -615,8 +615,13 @@ body:has(#v-espace.on) { padding-bottom: calc(64px + env(safe-area-inset-bottom)
   .space-cards { grid-column: 1 / -1; }
 }
 @media (orientation: landscape) and (max-height: 440px) and (min-width: 540px) {
-  .space-wrap { grid-template-columns: auto minmax(0, 1fr); }
+  .space-wrap { grid-template-columns: auto minmax(0, 1fr); gap: 6px; padding-block: 5px; }
   .space-wrap > .page-back { align-self: center; }
+  .space-identity { padding-block: 4px; }
+  .space-portrait img { width: 42px; height: 42px; }
   .space-cards { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .space-card { gap: 5px; padding-inline: 8px; }
   .space-card-line { flex-wrap: wrap; }
+  .space-summary { gap: 5px; }
+  .space-summary .av { width: 25px; height: 25px; }
 }
