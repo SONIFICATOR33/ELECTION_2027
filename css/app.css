@@ -690,8 +690,8 @@ body:has(#v-espace.on) {
 .leaders dt, .leaders dd { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .leaders dt { color: var(--mut); }
 .leaders dd { text-align: left; font-weight: 600; overflow-wrap: anywhere; }
-.leaders dd[data-points-leader], .leaders dd[data-votes-leader] { padding-left: 12px; }
-.leaders dd:last-child { text-align: right; white-space: nowrap; color: var(--orC); }
+.leaders .leader-name { padding-left: 12px; }
+.leaders .leader-score { text-align: right; white-space: nowrap; color: var(--orC); }
 
 /* Theme choice is local to the device and applies throughout the game. */
 .theme-picker { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 8px 12px 12px; border: 1px solid var(--line); border-radius: 10px; }
@@ -746,3 +746,5 @@ body:has(#v-espace.on) {
 body { background: var(--bg); color: var(--ink); font: var(--w) 16px/1.6 "Manrope",system-ui,sans-serif; }
 h1,h2 { font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
 .secondaire { color: var(--ink-2); }
+
+.player-eye { display: block; width: 20px; height: 20px; margin: auto; }
