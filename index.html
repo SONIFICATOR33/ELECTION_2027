@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=70">
+<link rel="stylesheet" href="css/app.css?v=71">
 </head>
 <body>
 <main>
@@ -75,10 +75,20 @@
       </div>
     </article>
     <article class="card dashboard-card">
-      <h2>Classements</h2>
-      <dl class="leaders">
-        <div><dt>En tête des pronos</dt><dd data-points-leader>Chargement…</dd></div>
-        <div><dt>En tête des gouvernements</dt><dd data-votes-leader>Chargement…</dd></div>
+      <div class="leaders-heading">
+        <h2>Classements</h2>
+        <details class="leaders-info">
+          <summary aria-label="Comprendre les classements"><span aria-hidden="true">i</span></summary>
+          <div class="leaders-bubble">
+            <p>Les joueurs en tête : le plus de points aux pronos et le plus de 👍 reçus pour un gouvernement.</p>
+            <p>Les premiers noms apparaissent dès qu’un point ou un pouce est gagné. À égalité, le premier pseudo par ordre alphabétique est affiché.</p>
+            <p data-leaders-status hidden></p>
+          </div>
+        </details>
+      </div>
+      <dl class="leaders" aria-label="Joueurs en tête">
+        <div><dt>Pronos</dt><dd data-points-leader>—</dd><dd data-points-leader-score>—</dd></div>
+        <div><dt>Gouvernement</dt><dd data-votes-leader>—</dd><dd data-votes-leader-score>—</dd></div>
       </dl>
       <div class="page-links"><a href="#classement" data-go="classement">Voir tous les joueurs</a></div>
     </article>
@@ -465,7 +475,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=70"></script>
+<script type="module" src="js/app.js?v=71"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

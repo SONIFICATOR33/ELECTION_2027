@@ -70,18 +70,20 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
       : !votesReady ? voteError || 'Chargement des pouces…' : '';
     scoreStatus.hidden = !scoreStatus.textContent;
     const first = rows[0];
-    setLeader(pointsLeaders, display
-      ? first?.total > 0 ? first.pseudo + ' · ' + fmt(first.total) + ' pts' : 'Actif dès les premiers points'
-      : status.textContent || 'Chargement…');
+    setLeader(pointsLeaders, display && first?.total > 0 ? first.pseudo : '—');
+    document.querySelector('[data-points-leader-score]').textContent = display ? fmt(first?.total || 0) + ' pts' : '—';
     const leader = votesReady
       ? rows.reduce((best, row) => {
         const points = scores[row.pid]?.points || 0;
         return points > 0 && (!best || points > best.points ||
           (points === best.points && alphabetical(row, best) < 0)) ? { ...row, points } : best;
       }, null) : null;
-    setLeader(votesLeaders, votesReady
-      ? leader ? leader.pseudo + ' · ' + leader.points + ' 👍' : 'Actif dès les premiers pouces'
-      : voteError || (!display && status.textContent) || 'Chargement…');
+    setLeader(votesLeaders, votesReady && leader ? leader.pseudo : '—');
+    document.querySelector('[data-votes-leader-score]').textContent = votesReady ? fmt(leader?.points || 0) + ' 👍' : '—';
+    const leaderStatus = document.querySelector('[data-leaders-status]');
+    leaderStatus.textContent = !display ? status.textContent || 'Chargement…'
+      : !votesReady ? voteError || 'Chargement des votes…' : '';
+    leaderStatus.hidden = !leaderStatus.textContent;
   }
 
   function clearDialog() {
