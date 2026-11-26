@@ -596,6 +596,10 @@ body:has(#v-espace.on) {
 .space-card-line strong { font-size: var(--text-ui); font-weight: 700; }
 .space-card-line [data-space-status] { display: inline-flex; align-items: center; flex: none; gap: 8px; color: var(--space-accent); font-weight: 700; }
 .space-card-line [data-space-status]::after { content: ""; width: 6px; height: 6px; margin-right: 2px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); }
+.space-card[data-complete="false"] .space-card-line { color: #ff9696; }
+.space-card[data-complete="false"] [data-space-status] { color: #ff9696; }
+.space-card[data-space-card="profil"][data-complete="false"] .space-card-line,
+.space-card[data-space-card="profil"][data-complete="false"] [data-space-status] { color: #f2b36d; }
 .space-card[data-complete="true"] [data-space-status] { color: #a5eecf; }
 .space-card small { color: var(--mut); line-height: 1.15; }
 .space-summary {

@@ -1,6 +1,6 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=66';
 import { playersView } from './players-view.js?v=66';
-import { accountView } from './account-view.js?v=65';
+import { accountView } from './account-view.js?v=69';
 import { portraitView } from './portrait-view.js?v=59';
 import { GROUP_ADMIN } from './groups.js?v=60';
 import { normalizeTeam, hasTeam } from './team-state.js';
@@ -774,7 +774,6 @@ const players = playersView($('#players-view'), {
 const portrait = portraitView({ getPlayer: () => ME, onUpdate: () => account.renderParticipation() });
 const account = accountView({
   getStore: () => store,
-  hasPortrait: portrait.hasSelection,
   getParticipation: () => {
     const team = draft.team;
     const predicted = by[S.current(mine())?.pres];
