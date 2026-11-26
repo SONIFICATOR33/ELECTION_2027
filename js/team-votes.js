@@ -42,7 +42,7 @@ export function teamVotesStore({ F, db, me }) {
   };
 }
 
-// Une modification de composition rend les anciens bulletins caducs.
+// Les soutiens suivent le président : les autres postes peuvent changer.
 export function teamVoteScores(teams, votes, viewer) {
   const scores = Object.create(null), seen = new Set();
   for (const vote of votes) {
@@ -51,7 +51,7 @@ export function teamVoteScores(teams, votes, viewer) {
     const key = vote.team + '~' + vote.voter;
     if (!Number.isInteger(rating) || rating < 0 || rating > 3
       || vote.team === vote.voter || seen.has(key) || !hasTeam(teams[vote.team])
-      || !sameTeam(teams[vote.team], vote.composition)) continue;
+      || normalizeTeam(teams[vote.team]).coeur !== normalizeTeam(vote.composition).coeur) continue;
     seen.add(key);
     const score = scores[vote.team] ||= { points: 0, voters: 0, rating: null };
     score.points += rating;

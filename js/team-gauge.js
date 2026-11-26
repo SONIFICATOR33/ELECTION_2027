@@ -1,4 +1,4 @@
-import { PEOPLE_GROUPS, POSTES } from './data.js?v=98';
+import { PEOPLE_GROUPS, POSTES } from './data.js?v=99';
 
 const bands = [
   ['Extrême gauche', '#EF7272'], ['Gauche', '#FFAD83'], ['Centre gauche', '#F4BF91'],
@@ -21,12 +21,12 @@ for (const [family, names] of PEOPLE_GROUPS) {
 }
 const profiles = [
   [-3, ['Nathalie Arthaud']],
-  [-2, ['Delphine Batho']],
+  [-2, ['Delphine Batho', 'Gabriel Zucman', 'Thomas Piketty']],
   [-1, ['Élisabeth Borne']],
   [0, ['Thierry Breton', 'François Bayrou', 'Gabriel Attal', 'Jean-Noël Barrot', 'Yaël Braun-Pivet', 'Olivier Becht']],
   // Horizons : https://horizonsleparti.fr/organisation/
   [1, ['Édouard Philippe', 'Christophe Béchu', 'Christelle Morançais', 'Jean-Louis Borloo', 'Dominique de Villepin']],
-  [2, ['Gérald Darmanin', 'Bruno Le Maire', 'Sébastien Lecornu', 'Jean Castex', 'Nicolas Dupont-Aignan']],
+  [2, ['Gérald Darmanin', 'Bruno Le Maire', 'Sébastien Lecornu', 'Jean Castex', 'Nicolas Dupont-Aignan', 'Nicolas Bouzou', 'Jean-Marc Daniel']],
   [3, ['Florian Philippot']]
 ];
 for (const [value, names] of profiles) {

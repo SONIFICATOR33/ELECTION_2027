@@ -41,12 +41,13 @@ test('pas de vote pour soi, une composition disparue ou une fiche périmée', as
   assert.equal(votes().length, 0);
 });
 
-test('un changement de composition rend les anciens soutiens caducs jusqu’au nouveau vote', async () => {
+test('les votes existants restent comptés après modification des autres postes', async () => {
   const { client, data, votes } = setup();
   await client('bob').setTeamVote('alice', composition, 1);
-  const next = normalizeTeam({ ...composition, pm: 'Autre ministre' });
+  const next = normalizeTeam({ ...composition, pm: 'Autre ministre', min: { Justice: 'Autre personne' }, jl: 'Joker', jn: 'Nouveau joker' });
   data.set('pronos/alice', { team: next });
-  assert.equal(teamVoteScores({ alice: next }, votes(), 'bob').alice, undefined);
+  assert.deepEqual(teamVoteScores({ alice: next }, votes(), 'bob').alice, { points: 1, voters: 1, rating: 1 });
+  await assert.rejects(client('claire').setTeamVote('alice', composition, 3), /changé/);
   await client('bob').setTeamVote('alice', next, 1);
   assert.equal(votes().length, 1);
   assert.equal(teamVoteScores({ alice: next }, votes(), 'bob').alice.points, 1);
@@ -97,4 +98,13 @@ test('un ancien like garde son pouce ; les valeurs invalides sont exclues du cla
   const invalid = [-1, 4, null, '3', 1.5].map((rating, i) => ({ ...legacy, voter: 'invalid' + i, rating }));
   assert.deepEqual(teamVoteScores({ alice: composition }, [legacy, ...invalid], 'bob').alice,
     { points: 1, voters: 1, rating: 1 });
+});
+
+ test('changer de président exclut les soutiens du précédent, même avec les mêmes ministres', async () => {
+  const { client, votes } = setup();
+  await client('bob').setTeamVote('alice', composition, 3);
+  for (const coeur of ['Autre président', '']) {
+    assert.equal(teamVoteScores({ alice: { ...composition, coeur } }, votes(), 'bob').alice, undefined);
+  }
+  assert.equal(teamVoteScores({ alice: composition }, votes(), 'bob').alice.points, 3);
 });
