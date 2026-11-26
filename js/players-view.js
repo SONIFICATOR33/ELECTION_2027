@@ -184,9 +184,9 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
         const status = { empty: 'Pas commencé', started: 'En cours', complete: 'Complet' }[state];
         return `<a class="player-action" data-progress="${state}" href="#${target}" data-go="${target}" title="${status}" aria-label="Ouvrir ${isProno ? 'mes pronos' : 'mon gouvernement'} · ${status}">Ouvrir</a>`;
       }
-      const action = type === 'team' ? (voted ? 'A voté' : 'Voter') : '<svg class="player-eye" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+      const action = type === 'team' ? (voted ? 'Voté' : 'Voter') : '<svg class="player-eye" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
       const actionLabel = type === 'team'
-        ? (voted ? 'A voté · Voir le gouvernement de ' : 'Voter pour le gouvernement de ')
+        ? (voted ? 'Voté · Voir le gouvernement de ' : 'Voter pour le gouvernement de ')
         : 'Pronos de ';
       return available
         ? `<button class="${className}" data-player="${escape(row.pid)}" data-detail="${type}" aria-label="${actionLabel}${label}">${action}</button>`
