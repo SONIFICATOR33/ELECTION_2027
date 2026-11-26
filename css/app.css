@@ -547,7 +547,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .players-table td { font-variant-numeric: tabular-nums; }
 .player-action { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; max-width: 100%; padding: 0 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: var(--text-body); font-weight: 600; text-decoration: none; line-height: 1.2; }
 .player-action.available { color: #a5eecf; background: var(--vertbg); border-color: #407c65; }
-.player-action.voted { color: #f4f8ff; background: #234d88; border-color: #4978bb; }
+.player-action.voted { color: #fff; background: #18784c; border-color: #55ad79; }
 .player-action:hover { border-color: currentColor; }
 .politics-legend { display: flex; align-items: center; justify-content: flex-end; gap: 8px; color: var(--mut); }
 .politics-legend i { width: min(30%, 128px); height: 8px; border-radius: 9px; background: linear-gradient(90deg, #8b142d, #726a71, #173968); }
