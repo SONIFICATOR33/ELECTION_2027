@@ -482,6 +482,14 @@ h2{font-weight:600;letter-spacing:-.2px}
 .access-options .big:disabled, .access-card form .big:disabled { background: var(--line); color: var(--mut); }
 .access-card .form { margin-top: 16px; }
 .access-card #access-status, .access-card form .fine { margin: 0; }
+.access-loading{display:flex;align-items:center;gap:12px}
+.access-spinner{display:inline-block;flex:none;width:24px;height:24px;border:3px solid var(--line);border-top-color:var(--orC);border-radius:50%;animation:access-spin .85s linear infinite}
+.access-pending{display:grid;justify-items:center;gap:14px;min-height:220px;align-content:center;text-align:center}
+.access-pending .access-spinner{width:44px;height:44px;border-width:4px}
+.access-pending #access-status{font-size:var(--text-ui);font-weight:600;color:var(--orC)}
+.access-pending .fine{margin:0;max-width:32ch}
+@keyframes access-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.access-spinner{animation:none}}
 @media (min-width: 760px) {
   .access { grid-template-columns: 200px minmax(0, 1fr); max-width: 710px; gap: 28px; }
   .access-portrait { width: 100%; border-radius: 92px 92px 8px 8px; }

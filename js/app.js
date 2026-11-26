@@ -1,6 +1,6 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=55';
 import { playersView } from './players-view.js?v=60';
-import { accountView } from './account-view.js?v=58';
+import { accountView } from './account-view.js?v=65';
 import { portraitView } from './portrait-view.js?v=59';
 import { GROUP_ADMIN } from './groups.js?v=60';
 import { normalizeTeam, hasTeam } from './team-state.js';
