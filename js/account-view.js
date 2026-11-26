@@ -1,4 +1,4 @@
-export function accountView({ getStore, onJoin, onLogout, getParticipation, hasPortrait, notify }) {
+export function accountView({ getStore, onJoin, onLogout, getParticipation, notify }) {
   const $ = selector => document.querySelector(selector);
   const accessForm = $('#access-form');
   const accessTitle = $('#access-form-title');
@@ -115,6 +115,33 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
     }
   }
 
+  let nameState = null;
+
+  function renderProfileCompletion() {
+    const store = getStore();
+    const pid = store.me()?.pid;
+    if (!pid) { nameState = null; return; }
+    if (!nameState || nameState.store !== store || nameState.pid !== pid) {
+      const state = nameState = { store, pid, filled: null };
+      store.getRealName().then(name => {
+        if (nameState !== state || store.me()?.pid !== pid || state.filled !== null) return;
+        state.filled = Boolean(name.trim());
+        renderProfileCompletion();
+      }).catch(() => {
+        if (nameState !== state) return;
+        nameState = null;
+        renderSpaceCard('profil', 0, 1, 'Indisponible');
+      });
+    }
+    const filled = nameState.filled;
+    renderSpaceCard('profil', Number(filled), 1, filled === null ? 'Chargement…' : filled ? 'Complet' : 'Facultatif');
+  }
+
+  function updateProfileCompletion(name) {
+    nameState = { store: getStore(), pid: getStore().me()?.pid, filled: Boolean(name.trim()) };
+    renderProfileCompletion();
+  }
+
   function renderParticipation() {
     const {
       pronos, totalPronos, team, startedTeam, totalTeam,
@@ -123,9 +150,8 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
     const label = (filled, total, started = filled > 0) => filled === total ? 'Complet' : started ? 'Incomplet' : 'À remplir';
     $('#profile-pronos').textContent = label(pronos, totalPronos) + ' · ' + pronos + '/' + totalPronos;
     $('#profile-team').textContent = label(team, totalTeam, startedTeam) + ' · ' + team + '/' + totalTeam + ' postes';
-    const portrait = hasPortrait();
     const percent = (value, max) => Math.round(100 * value / max) + ' %';
-    renderSpaceCard('profil', Number(portrait), 1, portrait ? 'Complet' : 'À compléter');
+    renderProfileCompletion();
     renderSpaceCard('pronos', pronos, totalPronos, percent(pronos, totalPronos), `${pronos}/${totalPronos} pronos enregistrés`, {
       president: predictedName, photo: predictedPortrait
     });
@@ -155,6 +181,7 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
     try {
       const name = await getStore().getRealName();
       if (request !== profileRequest) return;
+      updateProfileCompletion(name);
       nameField.value = name;
       nameField.disabled = nameSubmit.disabled = false;
       nameStatus.textContent = '';
@@ -171,7 +198,10 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
     nameField.disabled = nameSubmit.disabled = true;
     nameStatus.textContent = 'Enregistrement…';
     try {
-      await getStore().setRealName(value);
+      const store = getStore();
+      const pid = store.me()?.pid;
+      await store.setRealName(value);
+      if (getStore() === store && store.me()?.pid === pid) updateProfileCompletion(value);
       if (request !== profileRequest) return;
       nameField.value = value;
       nameStatus.textContent = value ? 'Nom enregistré.' : 'Nom retiré.';
