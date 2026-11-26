@@ -88,6 +88,7 @@ export const PEOPLE_GROUPS = [
   ['Gauche', ['Jean-Luc Mélenchon', 'Fabien Roussel', 'Marine Tondelier', 'François Hollande', 'Bernard Cazeneuve', 'Karim Bouamrane', 'Olivier Faure', 'Boris Vallaud', 'Carole Delga', 'Ségolène Royal', 'Manuel Bompard', 'Mathilde Panot', 'David Guiraud', 'Manon Aubry', 'Clémence Guetté', 'Clémentine Autain', 'François Ruffin', 'Yannick Jadot', 'Benoît Hamon', 'Arnaud Montebourg', 'Alain Bauer']],
   ['Centre gauche · Place publique', ['Raphaël Glucksmann']],
   ['Centre', ['Thierry Breton', 'Gabriel Attal', 'Édouard Philippe', 'Jean-Louis Borloo', 'François Bayrou', 'Dominique de Villepin', 'Gérald Darmanin', 'Élisabeth Borne', 'Bruno Le Maire', 'Sébastien Lecornu', 'Yaël Braun-Pivet', 'Jean-Noël Barrot', 'Christophe Béchu', 'Christelle Morançais', 'Jean Castex', 'Édouard Geffray']],
+  ['Résistons !', ['Jean Lassalle']],
   ['Droite', ['Christine Lagarde', 'Bruno Retailleau', 'David Lisnard', 'Xavier Bertrand', 'Laurent Wauquiez', 'Valérie Pécresse', 'Michel Barnier', 'Rachida Dati', 'François Baroin', 'Annie Genevard', 'Othman Nasrou', 'Philippe Juvin', 'Michèle Tabarot', 'Patrick Hetzel', 'Robert Ménard']],
   ['RN, UDR et Reconquête', ['Marine Le Pen', 'Jordan Bardella', 'Sébastien Chenu', 'Éric Ciotti', 'Éric Zemmour', 'Sarah Knafo', 'Jean-Philippe Tanguy', 'Laure Lavalette', 'Edwige Diaz', 'Thomas Ménagé']],
   ['Candidatures hors axe', ['Teddy Riner', 'Natacha Polony']],
