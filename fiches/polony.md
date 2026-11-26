@@ -10,6 +10,7 @@ Photo [Natacha Polony Cannes 2015.jpg](https://commons.wikimedia.org/wiki/File:N
 
 - **Statut** : Candidature annoncée le 14 octobre 2026
 - **Présidentielles passées** : aucune
+- **Promesses de parrainage** : Sur BFMTV le 24 novembre 2026, Natacha Polony dit avoir recueilli environ la moitié des 500 promesses recherchées. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.
 
 ## Aujourd’hui
 
@@ -31,5 +32,6 @@ Présidente du mouvement Nous sommes la France (2026)
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/Natacha_Polony)
 - [LCP, 14 oct. 2026](https://lcp.fr/actualites/natacha-polony-annonce-sa-candidature-a-l-election-presidentielle-443808)
+- [LCP, 25 nov. 2026](https://lcp.fr/actualites/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-recolte-des-500-parrainages)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 26 novembre 2026. Le repère sondages suit `js/data.js`.*

@@ -1,6 +1,6 @@
 # Les fiches des candidats
 
-24 candidats, de gauche à droite puis hors axe, comme dans l’appli. Dernière mise à jour le 25 novembre 2026.
+24 candidats, de gauche à droite puis hors axe, comme dans l’appli. Dernière mise à jour le 26 novembre 2026.
 
 | Candidat | Parti | Âge au 1er tour | Statut |
 |---|---|---|---|
