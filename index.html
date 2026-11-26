@@ -126,7 +126,7 @@
       </a>
       <a class="space-card" href="#paris" data-go="paris" data-space-card="pronos">
         <div class="space-card-line"><strong>Mes pronos</strong><span data-space-status>0 %</span></div>
-        <progress max="3" value="0" aria-label="Progression des pronostics"></progress>
+        <progress max="4" value="0" aria-label="Progression des pronostics"></progress>
         <small data-space-count></small>
         <div class="space-summary" data-space-summary hidden>
           <span data-space-photo aria-hidden="true" hidden></span>
@@ -248,28 +248,30 @@
     </article>
 
     <article class="card stage" id="st3">
-      <div class="shead"><span class="tag">Étapes 3 et 4</span><span class="dl" id="dl3"></span></div>
-      <h2>La présidentielle</h2>
-      <p class="pick-instruction">Ton top 5 et ton vainqueur.</p>
+      <div class="shead"><span class="tag">Étape 3</span><span class="dl" id="dl3"></span></div>
+      <h2>1er tour : mon top 5</h2>
       <div id="photo"></div>
       <p class="ssum" id="sum3"></p>
       <button class="tog" data-sb="3" aria-controls="sb3"></button>
+      <div class="sbody" id="sb3">
+        <p class="pick-instruction">Choisis 5 candidats et indique leur score.</p>
+        <div class="pick" id="pick"></div>
+        <div class="total" id="total"></div>
+        <a class="linkbtn" href="#paris" data-go="paris#st4">Passer à ma finale →</a>
+      </div>
     </article>
-    <div class="sbody stack" id="sb3" style="padding:0">
-    <article class="card">
-      <h2>1er tour : mon top 5</h2>
-      <p class="pick-instruction">Choisis 5 candidats et indique leur score.</p>
-      <div class="pick" id="pick"></div>
-      <div class="total" id="total"></div>
+    <article class="card stage" id="st4">
+      <div class="shead"><span class="tag">Étape 4</span><span class="dl" id="dl4"></span></div>
+      <h2>2e tour : ma finale</h2>
+      <p class="ssum" id="sum4"></p>
+      <button class="tog" data-sb="4" aria-controls="sb4"></button>
+      <div class="sbody" id="sb4">
+        <div id="duel"></div>
+        <p class="warn" id="coh" hidden></p>
+        <div class="warn errs" id="errs" role="alert"></div>
+        <button class="big" id="saveGP">Enregistrer les deux tours</button>
+      </div>
     </article>
-    <article class="card">
-      <h2>2nd tour : ma finale</h2>
-      <div id="duel"></div>
-      <p class="warn" id="coh" hidden></p>
-    </article>
-    <div class="warn errs" id="errs" role="alert"></div>
-    <button class="big" id="saveGP">Enregistrer mon prono</button>
-    </div>
   </div>
 </section>
 
@@ -485,7 +487,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=78"></script>
+<script type="module" src="js/app.js?v=80"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

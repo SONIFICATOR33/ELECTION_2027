@@ -134,7 +134,7 @@ function renderPollsOverview() {
 
 /* ===================== MES PARIS ===================== */
 function renderParisSummary() {
-  const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
+  const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', '1er tour : mon top 5', 'st3'], ['gp', '2e tour : ma finale', 'st4']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k);
     return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
@@ -189,19 +189,24 @@ $('#pre1').onclick = () => { draft.l1 = D.U1.filter(id => !by[id].und); dirty.l1
 $('#pre2').onclick = () => { if (!draft.l1.length) { toast('Fais d’abord ton étape 1'); return; } draft.l2 = draft.l1.slice(); dirty.l2 = true; renderStage('l2'); snd.sweep(draft.l2.map(AXIS)); toast('Repris de ton étape 1 : décoche ceux qui n’auront pas leurs signatures'); };
 
 /* ---- Repli des étapes ---- */
-const SB = { 1: false, 2: false, 3: false }, SBK = { 1: 'l1', 2: 'l2', 3: 'gp' };
+const SB = { 1: false, 2: false, 3: false, 4: false }, SBK = { 1: 'l1', 2: 'l2', 3: 'gp', 4: 'gp' };
 function initSB() {
-  const first = [1, 2, 3].find(i => isOpen(SBK[i]) && !done(SBK[i]));
-  [1, 2, 3].forEach(i => SB[i] = i === (first || 3));
+  const first = [1, 2, 3, 4].find(i => isOpen(SBK[i]) && !done(SBK[i]));
+  [1, 2, 3, 4].forEach(i => SB[i] = i === (first || 3));
 }
 function renderSB() {
-  [1, 2, 3].forEach(i => {
+  [1, 2, 3, 4].forEach(i => {
     const b = $(`.tog[data-sb="${i}"]`), body = $('#sb' + i), k = SBK[i];
     body.hidden = !SB[i]; b.setAttribute('aria-expanded', SB[i]);
     b.textContent = SB[i] ? 'Replier' : isOpen(k) ? (done(k) ? 'Modifier mon pari' : 'Faire ce pari') : 'Voir mon pari';
     const p = mine();
     let t;
-    if (k === 'gp') { const c = S.current(p); t = c ? `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
+    if (k === 'gp') {
+      const c = S.current(p);
+      t = c ? (i === 3 ? 'Ton top 5 : ' + c.top.map(candidate => by[candidate.id].n).join(', ')
+        : `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · ${fmt(c.win)} %`)
+        : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
+    }
     else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 décembre' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     $('#sum' + i).textContent = t;
   });
@@ -212,7 +217,7 @@ $$('.tog').forEach(b => b.onclick = () => { const i = +b.dataset.sb; SB[i] = !SB
 const gp = () => draft.gp;
 function renderPhoto() {
   const el = $('#photo'), w = S.weekOf(now()), dl = deadline('gp');
-  const e = $('#dl3'); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot);
+  for (const id of ['dl3', 'dl4']) { const e = $('#' + id); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot); }
   if (!isOpen('gp')) { el.innerHTML = '<p class="okbar">Pronostic clos.</p>'; return; }
   const cw = S.clampWeek(w);
   el.innerHTML = done('gp')
@@ -300,7 +305,7 @@ $('#duel').addEventListener('input', e => {
 });
 function renderGPBtn() {
   const b = $('#saveGP'); b.hidden = !isOpen('gp');
-  b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Prono enregistré') : 'Enregistrer mon prono';
+  b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Deux tours enregistrés') : 'Enregistrer les deux tours';
 }
 $('#saveGP').onclick = () => withMe(async () => {
   const g = gp(), er = [], s = g.top.reduce((a, t) => a + t.pct, 0);
@@ -740,7 +745,7 @@ document.addEventListener('click', event => {
   const [view, anchor] = link.dataset.go.split('#');
   if (link.dataset.t && view !== currentView) playEntrySound();
   go(view);
-  if (anchor && /^st[123]$/.test(anchor)) {
+  if (anchor && /^st[1234]$/.test(anchor)) {
     SB[+anchor[2]] = true;
     renderSB();
     requestAnimationFrame(() => document.getElementById(anchor)?.scrollIntoView({ block: 'start' }));
@@ -784,8 +789,8 @@ const account = accountView({
       presidentName: team.coeur,
       presidentPortrait: av(president, 32),
       primeMinister: team.pm,
-      pronos: ['l1', 'l2', 'gp'].filter(done).length,
-      totalPronos: 3,
+      pronos: ['l1', 'l2', 'gp', 'gp'].filter(done).length,
+      totalPronos: 4,
       team: countTeamRoles(team),
       startedTeam: hasTeam(team),
       totalTeam: D.POSTES.length + 2
