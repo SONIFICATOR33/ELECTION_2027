@@ -12,12 +12,14 @@ function setup() {
   return { ...db, client, votes };
 }
 
-test('un soutien reste unique entre deux appareils et peut être retiré', async () => {
+test('un vote à zéro compte comme une participation unique et peut être annulé', async () => {
   const { client, votes } = setup();
-  await Promise.all([client('bob').setTeamVote('alice', composition, 1), client('bob').setTeamVote('alice', composition, 1)]);
+  await Promise.all([client('bob').setTeamVote('alice', composition, 0), client('bob').setTeamVote('alice', composition, 0)]);
   assert.equal(votes().length, 1);
-  assert.deepEqual(teamVoteScores({ alice: composition }, votes(), 'bob').alice, { points: 1, voters: 1, rating: 1 });
-  await client('bob').setTeamVote('alice', composition, 0);
+  assert.equal(votes()[0].rating, 0);
+  assert.deepEqual(teamVoteScores({ alice: composition }, votes(), 'bob').alice, { points: 0, voters: 1, rating: 0 });
+  assert.deepEqual(teamVoteScores({ alice: composition }, votes(), 'alice').alice, { points: 0, voters: 1, rating: null });
+  await client('bob').removeTeamVote('alice');
   assert.deepEqual(votes(), []);
 });
 
@@ -78,7 +80,7 @@ test('les pouces s’additionnent, changer son choix remplace le précédent', a
     { points: 4, voters: 3, rating: 1 });
   await client('bob').setTeamVote('alice', composition, 0);
   assert.deepEqual(teamVoteScores({ alice: composition }, votes(), 'bob').alice,
-    { points: 2, voters: 2, rating: 0 });
+    { points: 2, voters: 3, rating: 0 });
 });
 
 test('les valeurs hors barème ne peuvent pas modifier le soutien enregistré', async () => {
@@ -92,7 +94,7 @@ test('les valeurs hors barème ne peuvent pas modifier le soutien enregistré', 
 
 test('un ancien like garde son pouce ; les valeurs invalides sont exclues du classement', () => {
   const legacy = { team: 'alice', voter: 'bob', composition };
-  const invalid = [0, -1, 4, null, '3', 1.5].map((rating, i) => ({ ...legacy, voter: 'invalid' + i, rating }));
+  const invalid = [-1, 4, null, '3', 1.5].map((rating, i) => ({ ...legacy, voter: 'invalid' + i, rating }));
   assert.deepEqual(teamVoteScores({ alice: composition }, [legacy, ...invalid], 'bob').alice,
     { points: 1, voters: 1, rating: 1 });
 });

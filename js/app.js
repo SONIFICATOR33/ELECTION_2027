@@ -1,15 +1,15 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=55';
-import { playersView } from './players-view.js?v=58';
+import { playersView } from './players-view.js?v=60';
 import { accountView } from './account-view.js?v=58';
 import { portraitView } from './portrait-view.js?v=59';
-import { GROUP_ADMIN } from './groups.js?v=54';
+import { GROUP_ADMIN } from './groups.js?v=60';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=50';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=56';
+import { openStore } from './store.js?v=60';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=50';
@@ -539,7 +539,7 @@ $('#teamShare').onclick = async event => {
   }
 };
 async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
-  try { await Promise.all([document.fonts.load('600 60px "Manrope"'), document.fonts.load('700 36px "Manrope"'), document.fonts.load('500 26px "Manrope"')]); } catch {}
+  try { await Promise.all([document.fonts.load('600 60px "Manrope"'), document.fonts.load('700 54px "Manrope"'), document.fonts.load('500 26px "Manrope"')]); } catch {}
   const position = teamPosition(t);
   const gaugeWidth = 912;
   const gaugeBottom = 1010 + gaugeHeight(position) * gaugeWidth / 640;
@@ -552,7 +552,8 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
   const colors = ['#F4D078', '#F5AE96', '#C9D9FF', '#9ED8D2', '#D9BBFF'];
   const title = castingTitle(pseudo);
 
-  function card(label, name, left, top, width, height, accent, primary = false) {
+  function card(label, name, left, top, width, height, accent, role = 'ministre') {
+    const primary = role !== 'ministre', president = role === 'président';
     x.fillStyle = black;
     x.beginPath();
     x.roundRect(left, top, width, height, 15);
@@ -565,11 +566,16 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
       x.fillRect(left + 13, top + 15, 4, height - 30);
     }
     x.fillStyle = accent;
-    x.font = '700 ' + (primary ? 26 : 24) + 'px ' + font;
-    x.fillText(fit(x, label, width - 58), left + 28, top + 36);
+    const textWidth = width - 58;
+    x.font = '700 ' + (president ? 34 : 29) + 'px ' + font;
+    x.fillText(fit(x, label, textWidth), left + 28, top + 36);
     x.fillStyle = cream;
-    x.font = '700 ' + (primary ? 43 : 36) + 'px ' + font;
-    x.fillText(fit(x, name || 'Poste libre', width - 58), left + 28, top + (primary ? 90 : 78));
+    const person = name || 'Poste libre';
+    const baseSize = president ? 54 : primary ? 46 : 41;
+    x.font = '700 ' + baseSize + 'px ' + font;
+    const size = Math.max(30, Math.min(baseSize, Math.floor(baseSize * textWidth / x.measureText(person).width)));
+    x.font = '700 ' + size + 'px ' + font;
+    x.fillText(fit(x, person, textWidth), left + 28, top + (primary ? 94 : 80));
   }
 
   x.fillStyle = black;
@@ -583,8 +589,8 @@ async function drawTeam(t = draft.team, pseudo = ME?.pseudo || '') {
   const titleSize = Math.min(60, Math.floor(60 * (W - 2 * margin) / x.measureText(title).width));
   x.font = '600 ' + titleSize + 'px ' + font;
   x.fillText(title, margin, 140);
-  card('Président', t.coeur, margin, 188, cardWidth, 120, colors[0], true);
-  card('Premier ministre', t.pm, margin + cardWidth + gap, 188, cardWidth, 120, colors[3], true);
+  card('Président', t.coeur, margin, 188, cardWidth, 120, colors[0], 'président');
+  card('Premier ministre', t.pm, margin + cardWidth + gap, 188, cardWidth, 120, colors[3], 'premier ministre');
   D.POSTES.forEach((post, index) => {
     const left = margin + (index % 2) * (cardWidth + gap);
     const top = 329 + Math.floor(index / 2) * 107;

@@ -159,7 +159,7 @@ service cloud.firestore {
       function validVote() {
         let v = request.resource.data;
         return v.keys().hasOnly(['team', 'voter', 'rating', 'composition', 'createdAt'])
-          && v.rating is int && v.rating >= 1 && v.rating <= 3
+          && v.rating is int && v.rating >= 0 && v.rating <= 3
           && v.team is string && validPid(v.team) && v.voter is string && owner(v.voter)
           && v.team != v.voter && ballot == v.team + '~' + v.voter
           && exists(/databases/$(db)/documents/players/$(v.team))
