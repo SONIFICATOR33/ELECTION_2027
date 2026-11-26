@@ -139,7 +139,7 @@ function renderParisSummary() {
   const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', '1er tour : mon top 5', 'st3'], ['gp', '2e tour : ma finale', 'st4']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k);
-    return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
+    return `<div class="ms${ok ? ' done' : ''}${k === 'l1' && !ok && isOpen(k) ? ' needs-prono' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
   }).join('');
 }
 
@@ -158,6 +158,7 @@ function tilesHTML(key) {
 function renderStage(key) {
   const n = key === 'l1' ? 1 : 2, open = isOpen(key), dl = deadline(key);
   $('#st' + n).classList.toggle('closed', !open);
+  $('#st' + n).classList.toggle('needs-prono', key === 'l1' && open && !done(key));
   const e = $('#dl' + n); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot);
   $('#tiles' + n).innerHTML = tilesHTML(key);
   $('#n' + n).textContent = draft[key].length;
