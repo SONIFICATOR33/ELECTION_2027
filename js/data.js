@@ -91,6 +91,7 @@ export const PEOPLE_GROUPS = [
   ['Droite', ['Christine Lagarde', 'Bruno Retailleau', 'David Lisnard', 'Xavier Bertrand', 'Laurent Wauquiez', 'Valérie Pécresse', 'Michel Barnier', 'Rachida Dati', 'François Baroin', 'Annie Genevard', 'Othman Nasrou', 'Philippe Juvin', 'Michèle Tabarot', 'Patrick Hetzel', 'Robert Ménard']],
   ['RN, UDR et Reconquête', ['Marine Le Pen', 'Jordan Bardella', 'Sébastien Chenu', 'Éric Ciotti', 'Éric Zemmour', 'Sarah Knafo', 'Jean-Philippe Tanguy', 'Laure Lavalette', 'Edwige Diaz', 'Thomas Ménagé']],
   ['Candidatures hors axe', ['Teddy Riner', 'Natacha Polony']],
+  ['Société civile · Économistes', ['Gabriel Zucman', 'Thomas Piketty', 'Nicolas Bouzou', 'Jean-Marc Daniel']],
   ['Syndicalisme', ['Laurent Berger']]
 ];
 export const POSTES = ['Intérieur', 'Économie et Finances', 'Affaires étrangères', 'Armées', 'Justice', 'Éducation nationale', 'Santé', 'Travail et Emploi', 'Écologie et Énergie', 'Agriculture'];

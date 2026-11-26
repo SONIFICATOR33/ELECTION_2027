@@ -64,11 +64,13 @@ Les autres joueurs restent visibles à la suite, y compris ceux sans gouvernemen
 zéro compte comme un vote déjà effectué. La liste reste visible pendant le
 chargement des votes ou en cas d’échec. Les autres tris (pseudo, points, pouces ou
 position politique) gardent ta ligne en tête. Ouvre le
-gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **A voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
+gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **Voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
 
-Les votes portent sur une composition précise. Une composition différente ne
-bénéficie pas des anciens soutiens. Retrouver exactement la composition soutenue
-retrouve ses votes. Aucun vainqueur n’est désigné à zéro.
+Les votes sont conservés quand les ministres, le Premier ministre ou le joker changent.
+Ils sont comptabilisés pour le président soutenu : changer de président remet le
+total affiché à zéro pour ce nouveau président (ou retrouve ses soutiens antérieurs).
+Les bulletins déjà enregistrés sont conservés, y compris ceux masqués auparavant
+après une modification des ministres. Aucun vainqueur n’est désigné à zéro.
 
 ## Repères politiques
 
