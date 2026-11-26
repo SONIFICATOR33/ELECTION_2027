@@ -488,6 +488,9 @@ h2{font-weight:600;letter-spacing:-.2px}
 .page-back::before { content: ""; display: block; width: 8px; height: 8px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
 .dashboard-card { background: #121211; }
 .dashboard-card h2 { margin-bottom: 10px; }
+.home-space-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.home-space-heading h2 { margin: 0; }
+.home-space-heading img { display: block; flex: none; width: 46px; height: 46px; object-fit: cover; border: 1px solid var(--or); border-radius: 50%; }
 .page-links { gap: 0; }
 .page-links a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 8px 2px; color: var(--orC); text-decoration: none; font-weight: 600; }
 .page-links a::after, .campaign-fold > summary::after { content: ""; flex: none; width: 7px; height: 7px; margin-right: 4px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); }
