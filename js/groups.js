@@ -1,7 +1,7 @@
 import { LOCK1, LOCK2, LOCKGP } from './data.js?v=50';
 import { monthKey } from './history.js';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
-import { teamVotesStore } from './team-votes.js?v=53';
+import { teamVotesStore } from './team-votes.js?v=54';
 
 export const GROUP_CODE = /^[a-f0-9]{32}$/;
 export const GROUP_ADMIN = 'vince';

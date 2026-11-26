@@ -11,14 +11,14 @@
 <meta property="og:image" content="https://sonificator33.github.io/ELECTION_2027/img/habit.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="apple-mobile-web-app-title" content="Prone ton President">
-<meta name="description" content="Pronostique la présidentielle 2027, compose ton gouvernement et vote pour les meilleurs. Un vote reçu = un point gouvernement.">
+<meta name="description" content="Pronostique la présidentielle 2027, compose ton gouvernement et vote pour les meilleurs. Donne 1, 2 ou 3 pouces aux gouvernements et compare les totaux.">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="preload" href="img/habit.jpg" as="image">
 <link rel="preload" href="fonts/manrope-variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=53">
+<link rel="stylesheet" href="css/app.css?v=54">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -87,7 +87,7 @@
   <div class="wrap stack">
     <article class="card">
       <h2>Jouer entre amis</h2>
-      <p>Pronostique la présidentielle, compose ton gouvernement et vote pour ceux des autres. <strong>Chaque vote reçu rapporte 1 point gouvernement.</strong></p>
+      <p>Pronostique la présidentielle, compose ton gouvernement et vote pour ceux des autres. <strong>Donne 1, 2 ou 3 👍 aux gouvernements. Le total reçu fait le classement.</strong></p>
       <p>Tous les pronos et gouvernements enregistrés sont visibles par tous les joueurs. Tu participes aux rubriques qui te plaisent.</p>
       <button class="ghost" data-go="classement">Joueurs et Groupes</button>
     </article>
@@ -176,8 +176,8 @@
     <article class="card">
       <h2>Mon gouvernement</h2>
       <p class="pick-instruction">Choisis ton président, ton Premier ministre et tes ministres.</p>
-      <p>Convaincs les autres joueurs : <strong>1 vote reçu = 1 point gouvernement.</strong> Découvre les compositions et vote dans <a href="#classement">Joueurs et Groupes</a>.</p>
-      <p class="fine">Tout est visible par tous. Tu peux aussi participer uniquement aux pronostics. Les votes comptent pour la composition soutenue.</p>
+      <p>Convaincs les autres joueurs : <strong>1, 2 ou 3 👍 par joueur : tous les pouces reçus comptent.</strong> Découvre les compositions et vote dans <a href="#classement">Joueurs et Groupes</a>.</p>
+      <p class="fine">Tout est visible par tous. Tu peux aussi participer uniquement aux pronostics. Les pouces comptent pour la composition soutenue.</p>
     </article>
     <article class="card team-gauge" id="team-gauge" hidden>
       <h2>Répartition politique</h2>
@@ -285,7 +285,7 @@
     </article>
     <details class="card rules">
       <summary><h2>Comment on marque</h2></summary>
-      <p><b>Gouvernements : 1 vote reçu = 1 point.</b> Un vote par joueur et par composition, retirable, sans vote pour soi. Tu peux soutenir plusieurs gouvernements. Les points gouvernement et les points pronostics ont chacun leur classement.</p>
+      <p><b>Gouvernements : donne 1, 2 ou 3 👍.</b> Le classement additionne tous les pouces reçus. Un seul choix par joueur et par gouvernement, modifiable ou retirable, sans vote pour soi. Sans vote : 0 👍. Les gouvernements et les pronostics ont chacun leur classement.</p>
       <ul class="pts">
         <li><b>1 à 5</b><span><b>« Qui sera là ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
         <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
@@ -355,7 +355,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=53"></script>
+<script type="module" src="js/app.js?v=54"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>

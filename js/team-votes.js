@@ -10,12 +10,13 @@ export function teamVotesStore({ F, db, me }) {
         }
       }, fail);
     },
-    async setTeamVote(team, composition, supported) {
+    async setTeamVote(team, composition, rating) {
       const voter = me()?.pid;
       if (!voter) throw new Error('Connecte-toi pour voter.');
       if (team === voter) throw new Error('Tu peux voter pour les gouvernements des autres joueurs.');
+      if (!Number.isInteger(rating) || rating < 0 || rating > 3) throw new Error('Choisis 1, 2 ou 3 pouces.');
       const ref = F.doc(db, 'teamVotes', team + '~' + voter);
-      if (!supported) { await F.deleteDoc(ref); return; }
+      if (rating === 0) { await F.deleteDoc(ref); return; }
       await F.runTransaction(db, async tx => {
         const saved = await tx.get(F.doc(db, 'pronos', team));
         let current = saved.data()?.team;
@@ -26,7 +27,7 @@ export function teamVotesStore({ F, db, me }) {
         if (!hasTeam(current) || !sameTeam(current, composition)) {
           throw new Error('Ce gouvernement a changé. Rouvre sa fiche avant de voter.');
         }
-        tx.set(ref, { team, voter, composition: normalizeTeam(current), createdAt: F.serverTimestamp() });
+        tx.set(ref, { team, voter, rating, composition: normalizeTeam(current), createdAt: F.serverTimestamp() });
       });
     }
   };
@@ -36,13 +37,17 @@ export function teamVotesStore({ F, db, me }) {
 export function teamVoteScores(teams, votes, viewer) {
   const scores = Object.create(null), seen = new Set();
   for (const vote of votes) {
+    // Les premiers likes, s'il y en a, conservent leur point.
+    const rating = Object.hasOwn(vote, 'rating') ? vote.rating : 1;
     const key = vote.team + '~' + vote.voter;
-    if (vote.team === vote.voter || seen.has(key) || !hasTeam(teams[vote.team])
+    if (!Number.isInteger(rating) || rating < 1 || rating > 3
+      || vote.team === vote.voter || seen.has(key) || !hasTeam(teams[vote.team])
       || !sameTeam(teams[vote.team], vote.composition)) continue;
     seen.add(key);
-    const score = scores[vote.team] ||= { points: 0, supported: false };
-    score.points++;
-    if (vote.voter === viewer) score.supported = true;
+    const score = scores[vote.team] ||= { points: 0, voters: 0, rating: 0 };
+    score.points += rating;
+    score.voters++;
+    if (vote.voter === viewer) score.rating = rating;
   }
   return scores;
 }
