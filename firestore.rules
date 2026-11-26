@@ -137,9 +137,13 @@ service cloud.firestore {
     }
 
     function validCode(code) { return code.matches('^[a-f0-9]{32}$'); }
+    function commonGroup() { return 'e1ec7100202700000000000000000001'; }
     function inside(code) {
       return request.auth != null && exists(dev())
         && exists(/databases/$(db)/documents/groups/$(code)/members/$(get(dev()).data.pid));
+    }
+    function canReadGroup(code) {
+      return code == commonGroup() ? registered() : inside(code);
     }
     function groupDoc(code) { return /databases/$(db)/documents/groups/$(code); }
 
@@ -148,7 +152,7 @@ service cloud.firestore {
     match /teamVotes/{ballot} {
       function currentTeam(team) {
         let saved = /databases/$(db)/documents/pronos/$(team);
-        let legacy = /databases/$(db)/documents/groups/e1ec7100202700000000000000000001/teams/$(team);
+        let legacy = /databases/$(db)/documents/groups/$(commonGroup())/teams/$(team);
         return exists(saved) && get(saved).data.keys().hasAny(['team'])
           ? get(saved).data.team : (exists(legacy) ? get(legacy).data.value : null);
       }
@@ -179,7 +183,7 @@ service cloud.firestore {
     match /groups/{code} {
       allow get: if request.auth != null && validCode(code);
       allow create: if validCode(code) && owner(request.resource.data.creator)
-        && (code == 'e1ec7100202700000000000000000001' || owner('vince'))
+        && (code == commonGroup() || owner('vince'))
         && request.resource.data.keys().hasOnly(['name', 'creator'])
         && request.resource.data.name is string
         && request.resource.data.name.size() >= 2 && request.resource.data.name.size() <= 48;
@@ -192,7 +196,7 @@ service cloud.firestore {
             && v.submitted.hasOnly(['l1', 'l2', 'weeks'])
             && (v.shared || v.submitted.size() == 0);
         }
-        allow read: if registered();
+        allow read: if canReadGroup(code);
         allow create: if owner(pid) && validCode(code) && existsAfter(groupDoc(code))
           && validMember() && !request.resource.data.shared
           && request.resource.data.pseudo == get(/databases/$(db)/documents/players/$(pid)).data.pseudo;
@@ -201,8 +205,8 @@ service cloud.firestore {
 
       match /teams/{team}/comments/{comment} {
         function canSeeTeam() {
-          return registered() && (exists(/databases/$(db)/documents/groups/$(code)/teams/$(team))
-            || (exists(/databases/$(db)/documents/pronos/$(team))
+          return canReadGroup(code) && (exists(/databases/$(db)/documents/groups/$(code)/teams/$(team))
+            || (code == commonGroup() && exists(/databases/$(db)/documents/pronos/$(team))
               && validTeam(get(/databases/$(db)/documents/pronos/$(team)).data.get('team', null))));
         }
         function validComment() {
@@ -229,7 +233,7 @@ service cloud.firestore {
             && (!copy.keys().hasAny(['history']) || copy.history == canonical.get('history', {}).get(stage, null))
             && (!copy.keys().hasAny(['at']) || copy.at == canonical.get(stage + 'at', null));
         }
-        allow read: if registered() && (stage == 'teams' || isProno());
+        allow read: if canReadGroup(code) && (stage == 'teams' || isProno());
         allow create, update: if owner(pid) && inside(code)
           && ((isProno() && matchingProno()) || (stage == 'teams'
               && request.resource.data.keys().hasOnly(['value']) && validTeam(request.resource.data.value)));
