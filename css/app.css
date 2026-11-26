@@ -14,7 +14,7 @@
 --sans:"Manrope",sans-serif;--cond:var(--sans)}
 *{box-sizing:border-box;min-width:0}
 html{scroll-padding-top:16px;background:var(--bg)}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--text-body)/1.55 var(--sans);letter-spacing:0em;font-optical-sizing:auto;overflow-x:clip;padding-bottom:96px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 var(--text-body)/1.55 var(--sans);letter-spacing:0em;font-optical-sizing:auto;overflow-x:clip;padding-bottom:calc(80px + env(safe-area-inset-bottom, 0px))}
 button,input,select,textarea{font:inherit;color:inherit;font-size:var(--text-ui)}
 small{font-size:var(--text-body)}
 h1,h2{font-size:var(--text-title)}
@@ -148,7 +148,9 @@ th:first-child,td:first-child{text-align:left}
 .tm{padding:10px 0;border-bottom:1px solid var(--line)}.tm b{font-weight:700}.tm p{margin:2px 0 0;font-size:var(--text-body);color:var(--mut)}
 .pts{margin:8px 0;padding:0;list-style:none}.pts li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
 .pts b{font:600 var(--text-ui)/1.1 var(--cond);color:var(--bleuT)}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom)}
+/* Anchor from the viewport top: iOS can retain a stale bottom during scrolling. */
+.tabs{--nav-viewport-bottom:100vh;position:fixed;left:0;right:0;top:var(--nav-viewport-bottom);bottom:auto;transform:translateY(-100%);z-index:20;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom)}
+@supports(height:100dvh){.tabs{--nav-viewport-bottom:100dvh}}
 .tabs a{display:grid;grid-template-rows:24px auto;align-content:start;justify-items:center;gap:2px;padding:8px 0 10px;color:var(--orC);font-weight:600;font-size:8pt;text-decoration:none;min-height:56px}
 .tabs a span{max-width:100%;white-space:nowrap;text-align:center;line-height:1.2}
 @media(max-width:360px){.tabs{grid-template-columns:.8fr 1.1fr 1.2fr .9fr}}
