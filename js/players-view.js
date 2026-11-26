@@ -172,7 +172,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     focusPlayerAction(focus);
     find('.politics-legend').hidden = !political;
     more.hidden = ordered.length <= limit;
-    voteStatus.textContent = votesReady ? 'Ouvre un gouvernement pour voter de 0 à 3 👍.' : voteError || 'Chargement des votes…';
+    voteStatus.textContent = votesReady ? 'Vote pour un gouvernement de 0 à 3 👍 en cliquant sur « Voter » pour chaque joueur.' : voteError || 'Chargement des votes…';
   }
 
   function refresh() {

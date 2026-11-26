@@ -551,14 +551,14 @@ h2{font-weight:600;letter-spacing:-.2px}
 #players-view { display: grid; gap: 10px; }
 .players-toolbar { display: grid; gap: 6px; }
 .players-toolbar label { font-weight: 700; }
-#players-sort { width: 100%; min-height: 54px; padding: 0 12px; border: 1px solid var(--or); border-radius: 10px; background: #1c1913; color: var(--orC); font-size: var(--text-ui); font-weight: 700; }
+#players-sort { width: 100%; height: 60px; min-height: 60px; padding: 10px 12px; border: 1px solid var(--or); border-radius: 10px; background: #1c1913; color: var(--orC); font-size: var(--text-ui); font-weight: 700; }
 .players-table-wrap { border: 1px solid var(--line); border-radius: 10px; overflow: auto; }
 .players-table { width: 100%; table-layout: fixed; }
 .players-table :is(th,td) { padding: 5px 2px; text-align: center; vertical-align: middle; white-space: normal; overflow-wrap: anywhere; }
 .players-table :is(th,td):first-child { width: auto; padding-left: 8px; text-align: left; overflow-wrap: anywhere; }
 .players-table :is(th,td):is(:nth-child(2),:nth-child(4)) { width: 20%; }
 .players-table :is(th,td):is(:nth-child(3),:nth-child(5)) { width: 12%; }
-.players-table thead { background: #191918; color: var(--mut); }
+.players-table thead { background: #173968; color: #fff; }
 .players-table thead abbr { text-decoration: none; }
 .players-table tbody tr { border-top: 1px solid var(--line); }
 .players-table tbody tr.participating { background: #10231c; }
@@ -722,8 +722,7 @@ body:has(#v-espace.on) {
 [data-theme="light"] .space-card[data-complete="true"] [data-space-status] { color: #146b48; }
 [data-theme="light"] .space-card progress,
 [data-theme="light"] .space-card progress::-webkit-progress-bar { background: #ddd9d0; }
-[data-theme="light"] #players-sort,
-[data-theme="light"] .players-table thead { background: #f2f0eb; }
+[data-theme="light"] #players-sort { background: #f2f0eb; }
 [data-theme="light"] .players-table tbody tr.participating { background: #edf6f0; }
 [data-theme="light"] .player-action.available { color: #146b48; border-color: #407c65; }
 [data-theme="light"] .player-action.voted { color: #fff; background: #18784c; }
