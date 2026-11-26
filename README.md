@@ -43,14 +43,13 @@ dans Mon profil ou le menu du navigateur.
    vainqueur de ta finale. Un prono enregistré continue de compter après le
    lundi suivant. Les semaines avant ton premier prono valent zéro et le
    coefficient descend de ×2 à ×1.
-4. **Mon gouvernement.** Président, Premier ministre et ministres : chaque joueur donne 1, 2 ou 3 👍 ; le classement additionne tous les pouces reçus, séparément des points de pronostics.
+4. **Mon gouvernement.** Compose ton équipe et vote de 0 à 3 👍 pour les autres gouvernements. Le classement additionne tous les pouces reçus, séparément des points de pronostics.
 
 ### Votes des gouvernements
 
 La page **Joueurs** peut être triée par pseudo, points, pouces ou selon la position
 du gouvernement sur la jauge politique. Ta ligne reste en tête du tableau. Ouvre le
-gouvernement d’un autre joueur pour lui donner **1, 2 ou 3 👍**. Le total des pouces
-reçus fait le classement. Tu peux modifier ou retirer ton soutien sur chaque gouvernement.
+gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **A voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
 
 Les votes portent sur une composition précise. Une composition différente ne
 bénéficie pas des anciens soutiens. Retrouver exactement la composition soutenue
@@ -94,7 +93,7 @@ lecture du vrai nom par son auteur et par le compte Vince. L’écriture et
 la suppression sont réservées à l’auteur. Le nom ne figure jamais dans
 la liste publique des joueurs.
 
-Les règles `/teamVotes` vérifient l’auteur, la composition et le barème de 1 à 3
+Les règles `/teamVotes` vérifient l’auteur, la composition et le barème de 0 à 3
 pouces. Les bulletins ont un identifiant unique `gouvernement~votant`. Les anciens
 likes sans barème conservent un pouce. Les anciens documents de groupe restent
 disponibles pour les sauvegardes antérieures.

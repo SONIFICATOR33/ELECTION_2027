@@ -2,9 +2,9 @@ import { showTeamComments } from './team-comments.js?v=56';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js?v=50';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=54';
+import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
-import { teamVoteScores } from './team-votes.js?v=54';
+import { teamVoteScores } from './team-votes.js?v=60';
 import { teamPosition } from './team-gauge.js?v=55';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -85,9 +85,15 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     details.replaceChildren();
   }
 
+  function focusPlayerAction(button) {
+    if (!button?.dataset.player) return;
+    const { player, detail } = button.dataset;
+    tableBody.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`)?.focus({ preventScroll: true });
+  }
+
   dialog.addEventListener('close', () => {
     clearDialog();
-    if (visible) opener?.focus({ preventScroll: true });
+    if (visible) focusPlayerAction(opener);
     opener = null;
   });
 
@@ -113,10 +119,13 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     const indicator = political ? `<span class="politics-swatch" ${color ? 'style="--position:' + color + '"' : ''} title="${position}" aria-label="${position}"></span>` : '';
     const label = escape(row.pseudo);
     const button = (labelType, type, available, target) => {
-      const className = 'player-action' + (available ? ' available' : '');
+      const voted = type === 'team' && scores[row.pid]?.rating != null;
+      const className = 'player-action' + (available ? ' available' : '') + (voted ? ' voted' : '');
       if (own) return `<a class="${className}" href="#${target}" data-go="${target}" aria-label="${type === 'pronos' ? 'Mes pronos' : 'Mon gouvernement'}">Ouvrir</a>`;
-      const action = type === 'team' ? 'Voter' : 'Voir';
-      const actionLabel = type === 'team' ? 'Voter pour le gouvernement de ' : 'Pronos de ';
+      const action = type === 'team' ? (voted ? 'A voté' : 'Voter') : 'Voir';
+      const actionLabel = type === 'team'
+        ? (voted ? 'A voté · Voir le gouvernement de ' : 'Voter pour le gouvernement de ')
+        : 'Pronos de ';
       return available
         ? `<button class="${className}" data-player="${escape(row.pid)}" data-detail="${type}" aria-label="${actionLabel}${label}">${action}</button>`
         : `<span aria-label="${labelType} à remplir">—</span>`;
@@ -151,16 +160,12 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
       (positions.get(a.pid) ?? Infinity) - (positions.get(b.pid) ?? Infinity) || alphabetical(a, b));
     const own = rows.find(row => row.pid === pid);
     const focus = document.activeElement;
-    const focusedPlayer = focus?.dataset.player;
     tableBody.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
       .map(row => rowHTML(row, pid, political, positions)).join('');
-    if (focusedPlayer) {
-      const next = tableBody.querySelector(`[data-player="${CSS.escape(focusedPlayer)}"][data-detail="${focus.dataset.detail}"]`);
-      next?.focus({ preventScroll: true });
-    }
+    focusPlayerAction(focus);
     find('.politics-legend').hidden = !political;
     more.hidden = ordered.length <= limit;
-    voteStatus.textContent = votesReady ? 'Ouvre un gouvernement pour lui donner de 1 à 3 👍.' : voteError || 'Chargement des votes…';
+    voteStatus.textContent = votesReady ? 'Ouvre un gouvernement pour voter de 0 à 3 👍.' : voteError || 'Chargement des votes…';
   }
 
   function refresh() {
@@ -186,32 +191,50 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     const disabled = !votesReady || changed || pending;
     const focused = panel.contains(document.activeElement) ? document.activeElement.dataset.rating : undefined;
     panel.innerHTML = '<p class="vote-score">' + (votesReady ? points + ' 👍 · ' + voters + ' votant' + (voters === 1 ? '' : 's') : escape(voteError || 'Chargement des votes…')) + '</p>' +
-      '<p id="team-rating-label">Ton soutien à ce gouvernement</p><div class="team-rating" role="group" aria-labelledby="team-rating-label">' +
-      [1, 2, 3].map(rating => '<button data-rating="' + rating + '" aria-label="' + rating + (rating === 1 ? ' pouce' : ' pouces') + '" aria-pressed="' + (score?.rating === rating) + '"' +
-        (disabled ? ' disabled' : '') + '>' + rating + ' 👍</button>').join('') + '</div>' +
-      (score?.rating ? '<button class="linkbtn" data-rating="0"' + (disabled ? ' disabled' : '') + '>Retirer mes pouces</button>' : '') +
+      '<p id="team-rating-label">Ton vote pour ce gouvernement</p><div class="team-rating" role="group" aria-labelledby="team-rating-label">' +
+      [0, 1, 2, 3].map(rating => {
+        const label = rating === 0 ? '0 · Non' : rating + ' 👍';
+        const ariaLabel = rating === 0 ? '0 · Non, sans pouce' : rating + (rating === 1 ? ' pouce' : ' pouces');
+        return `<button data-rating="${rating}" aria-label="${ariaLabel}" aria-pressed="${score?.rating === rating}"${disabled ? ' disabled' : ''}>${label}</button>`;
+      }).join('') + '</div>' +
+      (score?.rating != null ? '<button class="linkbtn" data-vote-withdraw' + (disabled ? ' disabled' : '') + '>Annuler mon vote</button>' : '') +
       (pending ? '<p role="status">Enregistrement…</p>' : '') +
       (changed ? '<p role="status">Ce gouvernement a changé. Rouvre sa fiche pour voir sa nouvelle composition.</p>' : '');
     if (focused != null && !disabled) panel.querySelector('[data-rating="' + focused + '"]')?.focus({ preventScroll: true });
   }
 
   details.addEventListener('click', async event => {
-    const button = event.target.closest('[data-rating]');
+    const button = event.target.closest('[data-rating], [data-vote-withdraw]');
     if (!button || button.disabled || !openTeam || votePending || !votesReady) return;
     const target = openTeam;
-    const rating = Number(button.dataset.rating);
-    if (rating === (scores[target.id]?.rating || 0)) return;
+    const withdrawing = button.hasAttribute('data-vote-withdraw');
+    const rating = withdrawing ? null : Number(button.dataset.rating);
+    if (rating === scores[target.id]?.rating) return;
+    const store = getStore(), voter = store.me().pid, voteGeneration = generation;
     votePending = target;
     refreshVotePanel();
     try {
-      await getStore().groups.setTeamVote(target.id, target.composition, rating);
-      if (openTeam === target) notify(rating ? rating + ' 👍 enregistré' + (rating === 1 ? '' : 's') + ' !' : 'Pouces retirés.');
+      let ballot;
+      if (withdrawing) await store.groups.removeTeamVote(target.id);
+      else ballot = await store.groups.setTeamVote(target.id, target.composition, rating);
+
+      if (voteGeneration !== generation) return;
+      votes = votes.filter(vote => vote.voter !== voter || vote.team !== target.id);
+      if (ballot) votes.push(ballot);
+      refresh();
+      if (openTeam === target) {
+        dialog.close();
+        notify(withdrawing ? 'Vote annulé.' : 'A voté !');
+      }
     } catch (error) {
       if (openTeam === target) notify(error.code === 'permission-denied' ? 'Le vote n’est pas encore disponible.' : error.message || 'Vote non enregistré. Vérifie ta connexion.');
     } finally {
       votePending = null;
-      refreshVotePanel();
-      if (openTeam === target) details.querySelector('[data-rating="' + (rating || 1) + '"]')?.focus({ preventScroll: true });
+      if (dialog.open) refreshVotePanel();
+      if (dialog.open && openTeam === target) {
+        const selector = withdrawing ? '[data-vote-withdraw]' : `[data-rating="${rating}"]`;
+        details.querySelector(selector)?.focus({ preventScroll: true });
+      }
     }
   });
 
