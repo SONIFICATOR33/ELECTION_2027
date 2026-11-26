@@ -33,7 +33,7 @@ const daysTo = t => Math.round((mid(t) - mid(now())) / 864e5);
 const dateFr = (t, o = { weekday: 'short', day: 'numeric', month: 'short' }) => new Date(t).toLocaleDateString('fr-FR', { ...o, timeZone: 'Europe/Paris' });
 
 const toastEl = $('#toast'); let tt;
-const toast = m => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), 2400); };
+const toast = (m, duration = 2400) => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), duration); };
 
 /* ---------- état ---------- */
 let store, ME = null, ALL = { players: {}, pronos: {} };
@@ -248,7 +248,7 @@ $('#pick').addEventListener('click', e => {
     snd.rank(gp().top.length - 1, AXIS(id));
   } else {
     snd.error();
-    toast('Top 5 complet : retire d’abord un nom');
+    toast('Top 5 complet : retire d’abord un nom en cliquant sur le candidat que tu veux supprimer.', 6000);
     return;
   }
   dirty.gp = true;
