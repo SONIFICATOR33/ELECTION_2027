@@ -2,17 +2,19 @@
 (() => {
   const key = 'pdm-theme';
   const normalize = value => value === 'light' ? 'light' : 'dark';
+  let preference = 'dark';
   function apply(value) {
-    const theme = normalize(value);
+    preference = normalize(value);
+    const theme = preference;
     document.documentElement.dataset.theme = theme;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#0a0a0a');
-    for (const input of document.querySelectorAll('[name="game-theme"]')) input.checked = input.value === theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#ffffff' : '#121212');
+    for (const input of document.querySelectorAll('[name="game-theme"]')) input.checked = input.value === preference;
   }
   let saved;
   try { saved = localStorage.getItem(key); } catch {}
   apply(saved);
   document.addEventListener('DOMContentLoaded', () => {
-    apply(document.documentElement.dataset.theme);
+    apply(preference);
     for (const input of document.querySelectorAll('[name="game-theme"]')) {
       input.addEventListener('change', () => {
         if (!input.checked) return;
