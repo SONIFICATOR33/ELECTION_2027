@@ -40,13 +40,15 @@ dans Joueurs et Groupes ou le menu du navigateur.
    vainqueur de ta finale. Un prono enregistré continue de compter après le
    lundi suivant. Les semaines avant ton premier prono valent zéro et le
    coefficient descend de ×2 à ×1.
-4. **Mon gouvernement.** Président, Premier ministre et ministres : chaque vote reçu rapporte un point au classement des gouvernements, distinct du classement des pronostics.
+4. **Mon gouvernement.** Président, Premier ministre et ministres : chaque joueur donne 1, 2 ou 3 👍 ; le classement additionne tous les pouces reçus, séparément des points de pronostics.
 
 ### Votes des gouvernements
 
 Dans **Joueurs et Groupes**, la liste s’affiche directement, avec deux classements :
-Gouvernements et Pronos. Sur une fiche gouvernement, **J’aime** ajoute un vote ;
-un second appui le retire. Aucun vote pour soi, un seul soutien par joueur et par
+Gouvernements et Pronos. Sur une fiche gouvernement, on choisit **1, 2 ou 3 👍**.
+Le total des pouces reçus fait le classement, et le nombre de votants est indiqué
+sur la fiche. Modifier son choix le remplace, sans cumuler. **Retirer mes pouces**
+supprime son soutien ; sans vote : 0 👍. Aucun veto, aucun vote pour soi, un seul soutien par joueur et par
 gouvernement, commun à tous les groupes et appareils. On peut soutenir plusieurs
 gouvernements, même sans en composer un soi-même.
 
@@ -59,7 +61,8 @@ Les égalités positives partagent le même rang ; aucun vainqueur n’est dési
 la console Firebase. Avant cette publication, la liste reste disponible et annonce
 que les votes arrivent bientôt. Les bulletins sont stockés sous un identifiant
 unique `gouvernement~votant` ; les règles vérifient l’auteur et la composition.
-Le client n’écrit aucun compteur de points. Ces votes mesurent les préférences des
+Chaque bulletin contient une valeur entière `rating` entre 1 et 3, vérifiée par les règles.
+Le client n’écrit aucun compteur de points. Les premiers likes sans `rating` conservent leur pouce. Ces votes mesurent les préférences des
 comptes inscrits ; le jeu n’impose pas de vérification d’identité humaine unique.
 
 ## Repères politiques

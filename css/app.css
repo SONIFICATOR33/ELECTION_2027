@@ -522,9 +522,10 @@ h2{font-weight:600;letter-spacing:-.2px}
 .government-points, .player-rank { color: var(--or); }
 .team-vote-panel { padding: 0 0 12px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
 .vote-score { font-size: var(--text-ui); font-weight: 700; margin: 0 0 8px; }
-.team-vote-button { min-height: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--or); background: transparent; color: var(--or); font: inherit; cursor: pointer; }
-.team-vote-button[aria-pressed="true"] { background: var(--or); color: #0a0a0a; }
-.team-vote-button:disabled { opacity: .5; cursor: default; }
+.team-rating { display: flex; gap: 6px; margin-bottom: 6px; }
+.team-rating button { flex: 1; min-width: 0; max-width: 84px; min-height: 44px; padding: 6px; border-radius: 6px; border: 1px solid var(--or); background: transparent; color: var(--or); font: inherit; cursor: pointer; }
+.team-rating button[aria-pressed="true"] { background: var(--or); color: #0a0a0a; font-weight: 700; }
+.team-rating button:disabled { opacity: .5; cursor: default; }
 #v-classement .rules { border: 0; padding: 0; }
 #v-classement .rules h2 { font-size: var(--text-body); }
 .player-groups { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 4px; }

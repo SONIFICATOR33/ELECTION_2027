@@ -1,12 +1,12 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=51';
-import { groupView } from './group-view.js?v=53';
+import { groupView } from './group-view.js?v=54';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
 import * as D from './data.js?v=50';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=53';
+import { openStore } from './store.js?v=54';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=50';

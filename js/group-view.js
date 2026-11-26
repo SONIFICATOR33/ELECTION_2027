@@ -2,9 +2,9 @@ import { showTeamComments } from './team-comments.js';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js';
 import { classement, current } from './scoring.js';
-import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES, visibleGameData } from './groups.js?v=53';
+import { COMMON_GROUP, GROUP_ADMIN, GROUP_CODE, STAGES, visibleGameData } from './groups.js?v=54';
 import { hasTeam, sameTeam } from './team-state.js';
-import { teamVoteScores } from './team-votes.js?v=53';
+import { teamVoteScores } from './team-votes.js?v=54';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -61,7 +61,7 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
       previous = points;
       return `<li><strong>${ranking === 'team' && votesReady && points > 0 ? '<span class="player-rank">' + rank + '.</span> ' : ''}${escape(row.pseudo)}${row.pid === pid ? ' <small>(toi)</small>' : ''}</strong>
         <span class="player-points">${ranking === 'team'
-          ? available ? '<span class="government-points" aria-label="' + (votesReady ? points + ' points gouvernement' : 'Votes indisponibles') + '">♥ ' + (votesReady ? points + ' pts' : '—') + '</span>' : 'À composer'
+          ? available ? '<span class="government-points" aria-label="' + (votesReady ? points + ' pouces reçus' : 'Votes indisponibles') + '">' + (votesReady ? points + ' 👍' : '— 👍') + '</span>' : 'À composer'
           : fmt(row.total) + ' pts pronos'}</span>
         <div class="group-actions">
           <button class="player-action" data-player="${escape(row.pid)}" data-detail="pronos">Pronos</button>
@@ -74,7 +74,7 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
     const target = root.querySelector('[data-player-roster]');
     if (target && display) target.innerHTML = roster(display, getStore().me().pid);
     const status = root.querySelector('[data-vote-status]');
-    if (status) status.textContent = votesReady ? '1 vote = 1 point gouvernement. Ouvre une composition pour voter.' : voteError || 'Chargement des votes…';
+    if (status) status.textContent = votesReady ? 'Donne 1, 2 ou 3 👍 aux gouvernements. On additionne les pouces !' : voteError || 'Chargement des votes…';
     refreshVotePanel();
   }
 
@@ -83,30 +83,39 @@ export function groupView(root, { getStore, withUser, drawTeam, syncExistingTeam
     if (!panel || !openTeam || !display) return;
     const score = teamVoteScores(display.teams, votes, getStore().me().pid)[openTeam.id];
     const points = score?.points || 0;
+    const voters = score?.voters || 0;
     const changed = !sameTeam(openTeam.composition, display.teams[openTeam.id]);
-    panel.innerHTML = '<p class="vote-score">' + (votesReady ? points + ' vote' + (points === 1 ? '' : 's') + ' · ' + points + ' point' + (points === 1 ? '' : 's') : voteError || 'Chargement des votes…') + '</p>' +
+    panel.innerHTML = '<p class="vote-score">' + (votesReady ? points + ' 👍' + ' · ' + voters + ' votant' + (voters === 1 ? '' : 's') : voteError || 'Chargement des votes…') + '</p>' +
       (openTeam.id === getStore().me().pid ? '<p class="fine">C’est ton gouvernement : à toi de convaincre les autres !</p>' :
-        '<button class="team-vote-button" data-vote aria-pressed="' + Boolean(score?.supported) + '"' +
-        (!votesReady || changed || voting ? ' disabled' : '') + '>' + (voting ? 'Enregistrement…' : score?.supported ? '♥ J’aime · Retirer mon vote' : '♡ J’aime ce gouvernement') + '</button>') +
+        '<p id="team-rating-label">Ton soutien à ce gouvernement</p><div class="team-rating" role="group" aria-labelledby="team-rating-label">' +
+        [1, 2, 3].map(rating => '<button data-rating="' + rating + '" aria-label="' + rating + (rating === 1 ? ' pouce' : ' pouces') + '" aria-pressed="' + (score?.rating === rating) + '"' +
+          (!votesReady || changed || voting ? ' disabled' : '') + '>' + rating + ' 👍</button>').join('') + '</div>' +
+        (score?.rating ? '<button class="linkbtn" data-rating="0"' + (!votesReady || voting ? ' disabled' : '') + '>Retirer mes pouces</button>' : '')) +
+      (voting ? '<p role="status">Enregistrement…</p>' : '') +
       (changed ? '<p role="status">Ce gouvernement a changé. Ferme puis rouvre sa fiche pour le découvrir.</p>' : '') +
-      '<p class="fine">Un vote par joueur et par gouvernement. Tu peux soutenir plusieurs compositions et retirer ton vote. Les votes comptent uniquement pour la composition soutenue.</p>';
+      '<p class="fine">Pour l’ensemble du gouvernement. Tu peux changer ou retirer ton soutien.</p>';
   }
 
   details.addEventListener('click', async event => {
-    if (!event.target.closest('[data-vote]') || voting || !votesReady || !openTeam) return;
+    const button = event.target.closest('[data-rating]');
+    if (!button || button.disabled || voting || !votesReady || !openTeam) return;
     const target = openTeam;
     const store = getStore(), request = generation;
-    const supported = teamVoteScores(display.teams, votes, store.me().pid)[target.id]?.supported;
+    const rating = Number(button.dataset.rating);
+    if (rating === (teamVoteScores(display.teams, votes, store.me().pid)[target.id]?.rating || 0)) return;
     voting = true;
     refreshVotePanel();
     try {
-      await store.groups.setTeamVote(target.id, target.composition, !supported);
-      if (request === generation) notify(supported ? 'Vote retiré.' : 'Vote enregistré : +1 point !');
+      await store.groups.setTeamVote(target.id, target.composition, rating);
+      if (request === generation) notify(rating ? rating + ' 👍 enregistré' + (rating === 1 ? '' : 's') + ' !' : 'Pouces retirés.');
     } catch (error) {
       if (request === generation) notify(error.code === 'permission-denied' ? 'Le vote n’est pas encore disponible. Réessaie plus tard.' : error.message || 'Vote non enregistré. Vérifie ta connexion.');
     } finally {
       voting = false;
-      if (request === generation) refreshVotePanel();
+      if (request === generation) {
+        refreshVotePanel();
+        if (openTeam === target) details.querySelector('[data-rating="' + (rating || 1) + '"]')?.focus({ preventScroll: true });
+      }
     }
   });
 
