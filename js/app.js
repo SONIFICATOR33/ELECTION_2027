@@ -7,12 +7,12 @@ import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=66';
+import * as D from './data.js?v=67';
 import * as S from './scoring.js';
 import { openStore } from './store.js?v=60';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
-import { initFiches, portraitThumb } from './fiches.js?v=50';
+import { initFiches, portraitThumb } from './fiches.js?v=51';
 
 const { C, by } = D;
 
@@ -129,7 +129,9 @@ function renderPollsOverview() {
   $('#moves').innerHTML = D.MOVES.map(([h, l]) => `<div><h3>${h}</h3>${l.map(([id, u, t]) => `<div class="mv" data-fiche="${id}" role="button" tabindex="0"><span class="ar ${u ? 'up' : 'dn'}">${u ? UP : DN}</span>${av(by[id], 40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
   $('#lastSrc').textContent = D.LAST_SRC;
   $('#lastLink').href = D.LAST_LINK;
-  $('#last').innerHTML = D.LAST.map(([id, v]) => `<div class="bar" data-fiche="${id}" role="button" tabindex="0">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr"><i style="width:${v / 35 * 100}%;--c:${by[id].col}"></i></div><span class="v">${v} %</span></div>`).join('');
+  $('#lastQuestion').textContent = D.LAST_QUESTION;
+  $('#duelQuestion').textContent = D.DUEL_QUESTION;
+  $('#last').innerHTML = D.LAST.map(([id, v]) => `<div class="bar" data-fiche="${id}" role="button" tabindex="0">${av(by[id], 28)}<span class="nm">${by[id].n}</span><div class="tr">${typeof v === 'number' ? `<i style="width:${v / 35 * 100}%;--c:${by[id].col}"></i>` : ''}</div><span class="v">${esc(v)} %</span></div>`).join('');
 }
 
 /* ===================== MES PARIS ===================== */

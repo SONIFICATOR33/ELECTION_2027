@@ -10,6 +10,7 @@ Photo [Marine Le Pen 2025 (cropped).jpg](https://commons.wikimedia.org/wiki/File
 
 - **Statut** : Candidate déclarée le 7 juillet 2026, jour de l’arrêt d’appel qui la laisse éligible ; pourvoi en cassation en attente
 - **Présidentielles passées** : 2012 : 17,90 % · 2017 : 21,30 %, 2nd tour : 33,90 % · 2022 : 23,15 %, 2nd tour : 41,45 %
+- **Promesses de parrainage** : Edwige Diaz, chargée du dossier pour le RN, indique à l’AFP disposer de 400 promesses de soutien, selon LCP le 25 novembre 2026. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.
 
 ## Aujourd’hui
 
@@ -31,5 +32,6 @@ Présidente du groupe RN à l’Assemblée depuis 2022, députée du Pas-de-Cala
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/Marine_Le_Pen)
 - [LCP, 7 juil. 2026](https://lcp.fr/actualites/ce-soir-je-suis-candidate-a-l-election-presidentielle-annonce-marine-le-pen-438886)
+- [LCP, 25 nov. 2026](https://lcp.fr/actualites/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-recolte-des-500-parrainages)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 26 novembre 2026. Le repère sondages suit `js/data.js`.*

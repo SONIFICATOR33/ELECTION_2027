@@ -790,6 +790,10 @@
         [
           "LCP, 9 nov. 2026",
           "https://lcp.fr/actualites/le-judoka-teddy-riner-annonce-sa-candidature-a-l-election-presidentielle-de-2027-444920"
+        ],
+        [
+          "RCI, 25 nov. 2026",
+          "https://rci.fm/deuxiles/infos/Politique/Au-Congres-des-Maires-Teddy-Riner-en-quete-de-parrainages-ultramarins"
         ]
       ],
       "portrait": {
@@ -799,7 +803,9 @@
         "licenceUrl": "https://creativecommons.org/licenses/by-sa/3.0",
         "source": "https://commons.wikimedia.org/wiki/File:Teddy_Riner_Cannes_2016.jpg",
         "titre": "Teddy Riner Cannes 2016.jpg"
-      }
+      },
+      "parrainages": "Au Congrès des maires le 25 novembre 2026, Teddy Riner annonce avoir dépassé 100 promesses. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.",
+      "maj": "2026-11-26"
     },
     "villepin": {
       "naissance": "1953-11-14",
@@ -838,6 +844,10 @@
         [
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ],
+        [
+          "RTL, 26 nov. 2026",
+          "https://www.rtl.fr/actu/politique/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-quete-des-500-parrainages-necessaires-pour-s-aligner-au-premier-tour-7900700448"
         ]
       ],
       "portrait": {
@@ -853,7 +863,9 @@
         "label": "Programme",
         "detail": "Projet France 2027",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "parrainages": "L’équipe de Dominique de Villepin revendique plus de 330 promesses, selon RTL le 26 novembre 2026. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.",
+      "maj": "2026-11-26"
     },
     "retailleau": {
       "naissance": "1960-11-20",
@@ -912,11 +924,11 @@
     "lisnard": {
       "naissance": "1969-02-02",
       "statut": "Candidature annoncée en janvier 2025",
-      "aujourdhui": "Maire de Cannes depuis 2014, réélu en 2026, président de l’Association des maires de France",
+      "aujourdhui": "Maire de Cannes depuis 2014, réélu en 2026. Président de l’Association des maires de France depuis 2021, réélu le 25 novembre 2026 avec 72,06 % des voix.",
       "parcours": [
         [
           "2021",
-          "Président de l’Association des maires de France",
+          "Président de l’Association des maires de France, réélu le 25 novembre 2026 avec 72,06 % des voix",
           "élu"
         ],
         [
@@ -946,6 +958,14 @@
         [
           "France-Vote",
           "https://www.france-vote.fr/candidats"
+        ],
+        [
+          "RTL, 26 nov. 2026",
+          "https://www.rtl.fr/actu/politique/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-quete-des-500-parrainages-necessaires-pour-s-aligner-au-premier-tour-7900700448"
+        ],
+        [
+          "AMF, 25 nov. 2026",
+          "https://www.amf.asso.fr/documents-application/43426"
         ]
       ],
       "portrait": {
@@ -961,7 +981,9 @@
         "label": "Programme",
         "detail": "Programme 2027 de Nouvelle Énergie",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "parrainages": "David Lisnard dit avoir déjà dépassé les 500 promesses, selon RTL le 26 novembre 2026. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.",
+      "maj": "2026-11-26"
     },
     "nda": {
       "naissance": "1961-03-07",
@@ -1180,6 +1202,10 @@
         [
           "LCP, 7 juil. 2026",
           "https://lcp.fr/actualites/ce-soir-je-suis-candidate-a-l-election-presidentielle-annonce-marine-le-pen-438886"
+        ],
+        [
+          "LCP, 25 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-recolte-des-500-parrainages"
         ]
       ],
       "portrait": {
@@ -1189,7 +1215,9 @@
         "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
         "source": "https://commons.wikimedia.org/wiki/File:Marine_Le_Pen_2025_(cropped).jpg",
         "titre": "Marine Le Pen 2025 (cropped).jpg"
-      }
+      },
+      "parrainages": "Edwige Diaz, chargée du dossier pour le RN, indique à l’AFP disposer de 400 promesses de soutien, selon LCP le 25 novembre 2026. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.",
+      "maj": "2026-11-26"
     },
     "zemmour": {
       "naissance": "1958-08-31",
@@ -1353,6 +1381,10 @@
         [
           "LCP, 14 oct. 2026",
           "https://lcp.fr/actualites/natacha-polony-annonce-sa-candidature-a-l-election-presidentielle-443808"
+        ],
+        [
+          "LCP, 25 nov. 2026",
+          "https://lcp.fr/actualites/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-recolte-des-500-parrainages"
         ]
       ],
       "portrait": {
@@ -1368,7 +1400,9 @@
         "label": "Convictions",
         "detail": "Principes et convictions de la candidate",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "parrainages": "Sur BFMTV le 24 novembre 2026, Natacha Polony dit avoir recueilli environ la moitié des 500 promesses recherchées. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.",
+      "maj": "2026-11-26"
     }
   },
   "programmesCheckedAt": "2026-11-25"

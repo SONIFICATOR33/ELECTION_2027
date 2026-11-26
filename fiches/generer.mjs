@@ -37,6 +37,7 @@ for (const c of D.C) {
   L.push('## Dans la course', '');
   L.push(`- **Statut** : ${f.statut}`);
   L.push(`- **Présidentielles passées** : ${f.pres.length ? f.pres.map(([y, v, n]) => `${y} : ${[pct(v), n].filter(Boolean).join(', ')}`).join(' · ') : 'aucune'}`);
+  if (f.parrainages) L.push(`- **Promesses de parrainage** : ${f.parrainages}`);
   if (f.autre) L.push(`- ${f.autre}`);
   L.push('', '## Aujourd’hui', '', f.aujourdhui, '');
   L.push('## Parcours', '');

@@ -104,6 +104,7 @@ disponibles pour les sauvegardes antérieures.
   `firestore.rules`. Pour une modification de l’univers des pronostics, mettre
   à jour la liste autorisée par les règles et conserver les identifiants utilisés
   par les pronos existants.
+- Le [calendrier du Gouvernement](https://www.info.gouv.fr/grand-dossier/chacun-pour-tous/election-presidentielle-2027-comment-participer-au-vote), publié le 24 novembre 2026, indique la clôture des parrainages le 12 mars 2027 à 18 h et la publication de la liste officielle au plus tard le 26 mars. Les résultats des deux tours saisis pour le classement sont ceux proclamés par le Conseil constitutionnel.
 - `js/scoring.js` calcule les points, les classements et les titres.
 - `js/store.js` et `js/groups.js` gèrent le stockage et la synchronisation.
 - `manifest.webmanifest` et `icons/` définissent l’installation mobile.

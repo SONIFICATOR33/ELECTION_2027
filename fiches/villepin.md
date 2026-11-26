@@ -10,6 +10,7 @@ Photo [Dominique de Villepin 20100330 Salon du livre de Paris 2 cropped.jpg](htt
 
 - **Statut** : Candidature officialisée le 20 novembre 2026
 - **Présidentielles passées** : aucune
+- **Promesses de parrainage** : L’équipe de Dominique de Villepin revendique plus de 330 promesses, selon RTL le 26 novembre 2026. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.
 
 ## Aujourd’hui
 
@@ -31,5 +32,6 @@ Fondateur de La France humaniste (juin 2025), avocat
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/Dominique_de_Villepin)
 - [LCP, 23 nov. 2026](https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932)
+- [RTL, 26 nov. 2026](https://www.rtl.fr/actu/politique/presidentielle-2027-ou-en-sont-les-candidats-dans-leur-quete-des-500-parrainages-necessaires-pour-s-aligner-au-premier-tour-7900700448)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 26 novembre 2026. Le repère sondages suit `js/data.js`.*

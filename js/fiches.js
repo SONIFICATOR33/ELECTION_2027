@@ -87,6 +87,7 @@ function body(id) {
   <section class="fsec">
     <h3>Dans la course</h3>
     <p class="fstat">${esc(f.statut || '')}</p>
+    ${f.parrainages ? `<div class="frow"><span class="fl">Promesses de parrainage</span><p class="fv">${esc(f.parrainages)}</p></div>` : ''}
     <div class="frow"><span class="fl">Présidentielles passées</span><div class="fv">${pres}${f.autre ? `<p class="mut">${esc(f.autre)}</p>` : ''}</div></div>
   </section>
   <section class="fsec"><h3>Parcours</h3><ol class="ftl">${tl}</ol></section>

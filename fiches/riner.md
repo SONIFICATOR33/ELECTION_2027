@@ -10,6 +10,7 @@ Photo [Teddy Riner Cannes 2016.jpg](https://commons.wikimedia.org/wiki/File:Tedd
 
 - **Statut** : Candidature annoncée le 9 novembre 2026
 - **Présidentielles passées** : aucune
+- **Promesses de parrainage** : Au Congrès des maires le 25 novembre 2026, Teddy Riner annonce avoir dépassé 100 promesses. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.
 
 ## Aujourd’hui
 
@@ -31,5 +32,6 @@ Judoka, ambassadeur de l’Unicef depuis 2018
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/Teddy_Riner)
 - [LCP, 9 nov. 2026](https://lcp.fr/actualites/le-judoka-teddy-riner-annonce-sa-candidature-a-l-election-presidentielle-de-2027-444920)
+- [RCI, 25 nov. 2026](https://rci.fm/deuxiles/infos/Politique/Au-Congres-des-Maires-Teddy-Riner-en-quete-de-parrainages-ultramarins)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 26 novembre 2026. Le repère sondages suit `js/data.js`.*
