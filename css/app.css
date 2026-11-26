@@ -637,6 +637,7 @@ body:has(#v-espace.on) {
 .portrait-options button { display: grid; align-content: start; justify-items: center; gap: 8px; padding: 9px 4px; min-height: 116px; border: 1px solid var(--line); border-radius: 10px; background: #201d17; color: var(--ink); font-size: var(--text-body); }
 .portrait-options button[aria-pressed="true"], .portrait-options button:hover { border-color: var(--or); }
 .portrait-options img { display: block; border-radius: 50%; border: 1px solid #62533a; }
+.portrait-options button > span { font-size: 12px; line-height: 1.25; font-weight: 400; }
 .portrait-help { margin-top: 7px; }
 #portrait-upload { border-color: var(--or); color: var(--orC); }
 @media (max-height: 550px) {
