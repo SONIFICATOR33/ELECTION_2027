@@ -748,3 +748,14 @@ h1,h2 { font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
 .secondaire { color: var(--ink-2); }
 
 .player-eye { display: block; width: 20px; height: 20px; margin: auto; }
+
+/* Mes pronos: two text sizes, with gold for navigation and disclosure. */
+#v-paris :is(a, .tog, .linkbtn, .tile-fiche, .prono-rules > summary),
+#prono-recap, #recap-dialog :is(button, a) { color: var(--orC); }
+#v-paris :is(p, small, button, input, select, .ssum, .shead, .shead .tag, .shead .dl, .tiles .grp, .count b, .photo b, .ms i, .ms small, .pn) { font-size: var(--text-ui); }
+#v-paris h2 { font-size: var(--text-title); line-height: 1.25; }
+#v-paris .shead .tag, #v-paris .tiles .grp { text-transform: none; letter-spacing: 0; }
+#v-paris .pick-instruction strong { font-weight: 600; }
+#v-paris .prono-rules { margin-block: 12px; }
+#v-paris .prono-rules > summary { cursor: pointer; min-height: 44px; padding-block: 10px; font-weight: 600; }
+#v-paris .prono-rules .fine { margin-block: 8px; }

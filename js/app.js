@@ -96,8 +96,8 @@ function renderHero() {
 function deadline(k) {
   const t = { l1: D.LOCK1, l2: D.LOCK2, gp: D.LOCKGP }[k], d = daysTo(t);
   if (!isOpen(k)) return { txt: 'Pari clos', hot: false };
-  if (d <= 0) return { txt: 'Clôture ce soir à 23 h 59 (Paris)', hot: true };
-  return { txt: `Clôture dans ${d} j, ${dateFr(t)} à 23 h 59 (Paris)`, hot: d <= 3 };
+  if (d <= 0) return { txt: 'Clôture ce soir', hot: true };
+  return { txt: `Clôture le ${dateFr(t, { day: 'numeric', month: 'short' })}`, hot: d <= 3 };
 }
 const done = k => { const p = mine(); return k === 'gp' ? !!S.current(p) : !!(p[k] && p[k].length); };
 
@@ -136,8 +136,8 @@ function renderPollsOverview() {
 function renderParisSummary() {
   const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
-    const ok = done(k), dl = deadline(k);
-    return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'} · ${dl.txt}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
+    const ok = done(k);
+    return `<div class="ms${ok ? ' done' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
   }).join('');
 }
 
@@ -160,12 +160,12 @@ function renderStage(key) {
   $('#tiles' + n).innerHTML = tilesHTML(key);
   $('#n' + n).textContent = draft[key].length;
   const b = $('#save' + n); b.hidden = !open;
-  b.textContent = done(key) ? (dirty[key] ? 'Enregistrer mes changements' : 'Pari validé, modifiable jusqu’à la clôture') : 'Valider mon pari';
+  b.textContent = done(key) ? (dirty[key] ? 'Enregistrer mes changements' : 'Pari enregistré') : 'Valider mon pari';
   $('#pre' + n).hidden = !open;
 }
 function renderStages() {
   $('#retires').innerHTML = D.RETIRES.length ? 'Déjà retirés : ' + D.RETIRES.map(r => `<s>${esc(r.nom)}</s> (${esc(r.quand)})`).join(', ') : '';
-  $('#lock2note').textContent = D.LOCK2_PROVISOIRE ? 'La date de clôture du jeu est provisoire. Elle sera confirmée avant la première publication des parrainages.' : '';
+  $('#lock2note').textContent = D.LOCK2_PROVISOIRE ? 'Date provisoire, à confirmer avant les premiers parrainages.' : '';
   renderStage('l1'); renderStage('l2');
 }
 ['1', '2'].forEach(n => {
@@ -198,7 +198,7 @@ function renderSB() {
   [1, 2, 3].forEach(i => {
     const b = $(`.tog[data-sb="${i}"]`), body = $('#sb' + i), k = SBK[i];
     body.hidden = !SB[i]; b.setAttribute('aria-expanded', SB[i]);
-    b.textContent = SB[i] ? 'Replier' : isOpen(k) ? (done(k) ? 'Voir et modifier mon pari' : 'Faire ce pari') : 'Voir mon pari';
+    b.textContent = SB[i] ? 'Replier' : isOpen(k) ? (done(k) ? 'Modifier mon pari' : 'Faire ce pari') : 'Voir mon pari';
     const p = mine();
     let t;
     if (k === 'gp') { const c = S.current(p); t = c ? `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · finale contre ${by[c.top[0].id === c.pres ? c.top[1].id : c.top[0].id].n}` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.'); }
