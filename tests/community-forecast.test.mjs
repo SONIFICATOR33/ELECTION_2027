@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { firstRoundForecast } from '../js/community-forecast.js';
+import { firstRoundForecast, closedForecastWeeks, forecastPhotoDate } from '../js/community-forecast.js';
+import { NWEEKS, paris } from '../js/data.js';
 
 const candidates = Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f'].map(id => [id, { p: 'Candidat', n: id }]));
 const ballot = (scores, pres = 'a') => ({ pres, top: Object.entries(scores).map(([id, pct]) => ({ id, pct })), win: 52 });
@@ -46,4 +47,36 @@ test('initially empty state and updates use only actual saved values', () => {
   pronos.one.weeks[1] = second;
   assert.equal(firstRoundForecast(pronos, candidates).rows[0].id, 'b');
   assert.equal(firstRoundForecast(pronos, candidates).participants, 1);
+});
+
+test('first weekly photo appears only after Sunday ends in Paris', () => {
+  const midnight = paris(2026, 11, 30);
+  assert.equal(forecastPhotoDate(0).toISOString(), '2026-11-29T23:00:00.000Z');
+  assert.deepEqual(closedForecastWeeks(+midnight - 1), []);
+  assert.deepEqual(closedForecastWeeks(midnight), [{ week: 0, date: midnight }]);
+  assert.deepEqual(closedForecastWeeks(paris(2026, 12, 7)).map(p => p.week), [1, 0]);
+});
+
+test('new edits and new players do not alter the previous week, unchanged pronos carry forward', () => {
+  const pronos = { one: saved(first), two: saved(second) };
+  const original = firstRoundForecast(pronos, candidates, 0);
+  pronos.one.weeks[1] = second;
+  pronos.late = { weeks: { 1: second } };
+  assert.deepEqual(firstRoundForecast(pronos, candidates, 0), original);
+  const next = firstRoundForecast(pronos, candidates, 1);
+  assert.equal(next.participants, 3);
+  assert.equal(next.rows[0].id, 'b');
+  assert.equal(next.rows[0].pct, 30);
+  assert.deepEqual(firstRoundForecast(pronos, candidates, 2), next);
+  assert.deepEqual(firstRoundForecast({ late: pronos.late }, candidates, 0), { participants: 0, rows: [] });
+});
+
+test('weekly photos respect the spring clock change and stop at the last game week', () => {
+  assert.equal(forecastPhotoDate(17).toISOString(), '2027-03-28T22:00:00.000Z');
+  const before = +paris(2027, 3, 29) - 1;
+  assert.equal(closedForecastWeeks(before)[0].week, 16);
+  assert.equal(closedForecastWeeks(before + 1)[0].week, 17);
+  const finished = closedForecastWeeks(paris(2028, 1, 1));
+  assert.equal(finished.length, NWEEKS);
+  assert.equal(finished[0].date.toISOString(), '2027-04-18T22:00:00.000Z');
 });

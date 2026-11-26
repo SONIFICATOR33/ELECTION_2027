@@ -530,6 +530,8 @@ h2{font-weight:600;letter-spacing:-.2px}
 .profile-actions button { flex: 1 1 auto; width: auto; min-height: 44px; padding-inline: 10px; font-size: var(--text-body); }
 #vince-names-list { padding-left: 22px; overflow-wrap: anywhere; }
 .home-podium { display: grid; margin: 4px 0; }
+#community-period { width: 100%; min-height: 44px; color: var(--orC); font-size: var(--text-body); }
+#community-history-note { margin-bottom: 0; }
 .home-poll-row { display: grid; grid-template-columns: 18px 32px minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 44px; padding: 5px 2px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; font-size: var(--text-body); }
 .home-rank { color: var(--orC); font-weight: 700; }
 .home-poll-row strong { font-variant-numeric: tabular-nums; white-space: nowrap; }

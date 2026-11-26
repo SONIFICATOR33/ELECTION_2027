@@ -1,12 +1,25 @@
-import { current } from './scoring.js';
+import { photo } from './scoring.js';
+import { T0, NWEEKS, paris } from './data.js';
+
+// Close each saved week at midnight in Paris, including the March DST change.
+// Past weeks are already immutable in Firestore; no extra snapshot writes.
+export function forecastPhotoDate(week) {
+  const start = new Date(+T0 + 12 * 3600e3);
+  return paris(start.getUTCFullYear(), start.getUTCMonth() + 1, start.getUTCDate() + 7 * (week + 1));
+}
+
+export function closedForecastWeeks(now = Date.now()) {
+  return Array.from({ length: NWEEKS }, (_, week) => ({ week, date: forecastPhotoDate(week) }))
+    .filter(({ date }) => +date <= +now).reverse();
+}
 
 // One latest saved top 5 per player. An omitted candidate contributes zero to
 // that player's top 5; never average only over players who selected a candidate.
-export function firstRoundForecast(pronos, candidates) {
+export function firstRoundForecast(pronos, candidates, week = 999) {
   let participants = 0;
   const totals = new Map();
   for (const prono of Object.values(pronos || {})) {
-    const top = current(prono)?.top;
+    const top = photo(prono, week)?.top;
     if (!Array.isArray(top) || top.length !== 5
       || new Set(top.map(choice => choice?.id)).size !== 5
       || top.some(choice => !choice || !Object.hasOwn(candidates, choice.id)

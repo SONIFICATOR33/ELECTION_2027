@@ -7,7 +7,7 @@ import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=60';
 import { teamPosition } from './team-gauge.js?v=66';
 import { createVotingOrder } from './voting-order.js?v=89';
-import { firstRoundForecast } from './community-forecast.js?v=91';
+import { firstRoundForecast, closedForecastWeeks, forecastPhotoDate } from './community-forecast.js?v=92';
 import { portraitThumb } from './fiches.js?v=51';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
@@ -52,6 +52,8 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   const retry = find('#players-retry');
   const syncStatus = find('#players-sync');
   const leaders = document.querySelector('[data-home-leaders]');
+  const forecastPeriod = document.querySelector('#community-period');
+  forecastPeriod.addEventListener('change', renderCommunityForecast);
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
   const details = document.querySelector('#player-detail');
@@ -91,15 +93,32 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   function renderCommunityForecast() {
     const podium = document.querySelector('#community-podium');
     const summary = document.querySelector('#community-podium-status');
+    const note = document.querySelector('#community-history-note');
     if (!display) {
       podium.replaceChildren();
+      forecastPeriod.disabled = true;
+      forecastPeriod.value = 'live';
+      note.textContent = '';
       summary.textContent = status.textContent || 'Chargement des pronostics…';
       return;
     }
-    const { participants, rows: forecast } = firstRoundForecast(display.pronos, by);
+    const photos = closedForecastWeeks();
+    const dateLabel = date => date.toLocaleDateString('fr-FR', {
+      timeZone: 'Europe/Paris', day: 'numeric', month: 'short', year: 'numeric'
+    });
+    const selected = forecastPeriod.value;
+    const options = '<option value="live">Aujourd’hui</option>' + photos.map(({ week, date }) =>
+      `<option value="${week}">Photo du ${dateLabel(date)}</option>`).join('');
+    if (forecastPeriod.innerHTML !== options) forecastPeriod.innerHTML = options;
+    const archived = photos.find(({ week }) => String(week) === selected);
+    forecastPeriod.value = archived ? selected : 'live';
+    forecastPeriod.disabled = false;
+    note.textContent = photos.length ? 'Une photo chaque lundi.'
+      : 'Première photo le ' + dateLabel(forecastPhotoDate(0)) + '.';
+    const { participants, rows: forecast } = firstRoundForecast(display.pronos, by, archived?.week);
     summary.textContent = participants
-      ? `1er tour · Moyenne de ${participants} prono${participants > 1 ? 's' : ''}`
-      : 'Le podium apparaîtra dès le premier top 5 enregistré.';
+      ? `${archived ? 'Photo hebdo' : '1er tour'} · Moyenne de ${participants} prono${participants > 1 ? 's' : ''}`
+      : archived ? 'Aucun top 5 enregistré à cette date.' : 'Le podium apparaîtra dès le premier top 5 enregistré.';
     podium.innerHTML = forecast.slice(0, 3).map(({ id, pct, rank }) => {
       const candidate = by[id], label = candidate.p + ' ' + candidate.n;
       return `<button type="button" class="home-poll-row" data-fiche="${escape(id)}" aria-label="${escape(label)}, ${fmt(pct)} %, ouvrir la fiche">
@@ -318,6 +337,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     visible = showTable;
     if (!visible && dialog.open) dialog.close();
     if (active) {
+      renderCommunityForecast();
       if (visible) renderTable();
       return;
     }
