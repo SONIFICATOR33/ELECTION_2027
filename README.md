@@ -5,12 +5,15 @@ Jeu de pronostics sans argent sur la présidentielle 2027.
 
 ## Jouer entre amis
 
-Le pseudo et le PIN à quatre chiffres permettent de retrouver le compte sur un
-autre appareil. Vincent crée les groupes dans **Joueurs et Groupes**, puis
-envoie le lien d’invitation. Les invités peuvent s’inscrire en ouvrant le lien.
-Chaque joueur peut consulter les pronos et les gouvernements, même partiels, dans
-**Joueurs et Groupes → Tous les joueurs**. Le bonus de rareté et le classement sont
-calculés par groupe. Chacun participe aux rubriques de son choix, le gouvernement est facultatif.
+Inscris-toi avec un pseudo et un code à quatre chiffres. Choisis **Se reconnecter**
+sur un autre appareil pour retrouver le même compte. Sur un appareil déjà connecté,
+le jeu s’ouvre sur **Accueil**. **Mon espace** donne accès au profil, aux pronos et au
+gouvernement. Le vrai nom dans le profil est facultatif. Il est stocké séparément et
+seuls le joueur concerné et Vince peuvent le consulter.
+
+**Classements → Voir tous les joueurs** réunit les pronostics et gouvernements
+enregistrés, même partiels. Chacun participe aux rubriques de son choix.
+Les points et le bonus de rareté sont calculés sur l’ensemble des joueurs.
 
 Une **photo mensuelle** dans la fiche de chaque joueur reprend le dernier
 prono enregistré pour chaque étape à la fin du mois, ou le prono précédent
@@ -28,7 +31,7 @@ la liste des membres, sans recharger la page.
 
 Sur iPhone, ouvre le site dans Safari et utilise **Partager → Sur l’écran
 d’accueil → Ouvrir comme app web**. Sur Android, utilise **Installer l’app**
-dans Joueurs et Groupes ou le menu du navigateur.
+dans Mon profil ou le menu du navigateur.
 
 ## Le jeu
 
@@ -44,26 +47,14 @@ dans Joueurs et Groupes ou le menu du navigateur.
 
 ### Votes des gouvernements
 
-Dans **Joueurs et Groupes**, la liste s’affiche directement, avec deux classements :
-Gouvernements et Pronos. Sur une fiche gouvernement, on choisit **1, 2 ou 3 👍**.
-Le total des pouces reçus fait le classement, et le nombre de votants est indiqué
-sur la fiche. Modifier son choix le remplace, sans cumuler. **Retirer mes pouces**
-supprime son soutien ; sans vote : 0 👍. Aucun veto, aucun vote pour soi, un seul soutien par joueur et par
-gouvernement, commun à tous les groupes et appareils. On peut soutenir plusieurs
-gouvernements, même sans en composer un soi-même.
+La page **Joueurs** peut être triée par pseudo, points, pouces ou selon la position
+du gouvernement sur la jauge politique. Ta ligne reste en tête du tableau. Ouvre le
+gouvernement d’un autre joueur pour lui donner **1, 2 ou 3 👍**. Le total des pouces
+reçus fait le classement. Tu peux modifier ou retirer ton soutien sur chaque gouvernement.
 
 Les votes portent sur une composition précise. Une composition différente ne
-bénéficie pas des anciens soutiens ; retrouver exactement la composition soutenue
-retrouve ses votes. Effacer son gouvernement le retire du classement des votes.
-Les égalités positives partagent le même rang ; aucun vainqueur n’est désigné à zéro.
-
-**Activation :** publier la version de `firestore.rules` contenant `/teamVotes` dans
-la console Firebase. Avant cette publication, la liste reste disponible et annonce
-que les votes arrivent bientôt. Les bulletins sont stockés sous un identifiant
-unique `gouvernement~votant` ; les règles vérifient l’auteur et la composition.
-Chaque bulletin contient une valeur entière `rating` entre 1 et 3, vérifiée par les règles.
-Le client n’écrit aucun compteur de points. Les premiers likes sans `rating` conservent leur pouce. Ces votes mesurent les préférences des
-comptes inscrits ; le jeu n’impose pas de vérification d’identité humaine unique.
+bénéficie pas des anciens soutiens. Retrouver exactement la composition soutenue
+retrouve ses votes. Aucun vainqueur n’est désigné à zéro.
 
 ## Repères politiques
 
@@ -97,18 +88,16 @@ et le [parcours d’Élisabeth Borne](https://www.lemonde.fr/politique/article/2
 Le front est servi par GitHub Pages. La base du projet Firebase
 « pronoselection2027 » utilise les règles de `firestore.rules`.
 
-Pour activer la lecture des anciennes sauvegardes par tous les joueurs,
-publier `firestore.rules` dans la console Firebase du projet, sous
-Firestore Database puis Règles. Les pronos enregistrés sont consultables
-directement et les anciens réglages de partage ne déterminent plus leur visibilité.
-Chaque joueur conserve l’écriture de ses propres données et les échéances du jeu
-continuent de s’appliquer. Les codes de connexion et les paramètres des comptes
-gardent leurs protections.
+Publier `firestore.rules` dans la console Firebase du projet, sous
+Firestore Database puis Règles. La collection `privateProfiles` permet la
+lecture du vrai nom par son auteur et par le compte Vince. L’écriture et
+la suppression sont réservées à l’auteur. Le nom ne figure jamais dans
+la liste publique des joueurs.
 
-Tant que ces règles ne sont pas publiées, le front affiche les copies déjà
-disponibles dans les groupes. Il publie automatiquement les sauvegardes à la
-connexion de leur auteur. Les anciennes sauvegardes sans copie publique
-deviennent consultables dès la publication des règles.
+Les règles `/teamVotes` vérifient l’auteur, la composition et le barème de 1 à 3
+pouces. Les bulletins ont un identifiant unique `gouvernement~votant`. Les anciens
+likes sans barème conservent un pouce. Les anciens documents de groupe restent
+disponibles pour les sauvegardes antérieures.
 
 - `js/data.js` contient les échéances, les candidats, les sondages et les résultats.
   En cas de changement de date, mettre aussi à jour les échéances de

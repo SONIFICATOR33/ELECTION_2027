@@ -65,6 +65,17 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    match /privateProfiles/{pid} {
+      allow get: if owner(pid) || owner('vince');
+      allow list: if owner('vince');
+      allow create, update: if owner(pid)
+        && request.resource.data.keys().hasOnly(['realName'])
+        && request.resource.data.realName is string
+        && request.resource.data.realName.size() <= 80
+        && request.resource.data.realName.matches('(?s).*[^\\s].*');
+      allow delete: if owner(pid);
+    }
+
     match /secrets/{pid} {
       allow read: if false;
       allow create: if request.auth != null && validPid(pid)
