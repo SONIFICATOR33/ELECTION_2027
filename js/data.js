@@ -100,7 +100,7 @@ export const POLL_UPDATE_DATE = new Date('2026-11-26T12:00:00Z');
 export const LAST_POLL_DATE = new Date('2026-11-26T12:00:00Z'); // date de publication de la notice
 export const PODIUM_DATE = new Date('2026-11-26T12:00:00Z');
 export const POLL_DATE = 'Moyenne Sondax · 11 sondages';
-export const POD = [['lepen', 32.1], ['melenchon', 17.3], ['lisnard', 9.9]]; // https://sondax.fr/, agrégation du 26/11/2026
+export const POD = [['lepen', 32.1], ['melenchon', 17.3], ['lisnard', 9.9], ['glucksmann', 9.9], ['philippe', 9.4]]; // https://sondax.fr/data/derived/series-t1.json, agrégation du 26/11/2026 ; ordre des valeurs non arrondies
 export const MOVES = [
   ['Ils montent', [['lisnard', 1, '3e de la moyenne Sondax du 26 nov. (9,9 %) et 12 % chez OpinionWay le même jour'], ['riner', 1, 'Candidat depuis le 9 nov., déjà jusqu’à 4,5 % chez Elabe']]],
   ['Ils descendent', [['lepen', 0, '−1,8 point en trois mois dans la moyenne Sondax du 26 nov.'], ['philippe', 0, '−3,6 pts sur 120 jours selon France-Vote']]]
