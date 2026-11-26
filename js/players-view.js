@@ -5,7 +5,7 @@ import { classement, current } from './scoring.js';
 import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=60';
-import { teamPosition } from './team-gauge.js?v=66';
+import { teamPosition } from './team-gauge.js?v=98';
 import { createVotingOrder } from './voting-order.js?v=93';
 import { firstRoundForecast, closedForecastWeeks, forecastPhotoDate } from './community-forecast.js?v=92';
 import { portraitThumb } from './fiches.js?v=51';
