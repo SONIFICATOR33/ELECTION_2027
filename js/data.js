@@ -110,6 +110,9 @@ const IFOP_20 = 'https://www.commission-des-sondages.fr/notices/files/notices/20
 const YOUGOV_19 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10382-pres-iv-yougov-le-huffpost-19-novembre.pdf';
 const IFOP_18 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10384-pres-iv-ifop-18-novembre.pdf';
 const HARRIS_9 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10362-pres-iv-toluna-harris-interactive-9-novembre.pdf';
+const OPINIONWAY_12 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10371-pres-iv-opinionway-cnews-12-novembre.pdf';
+const PRESITRACK_12 = 'https://www.opinion-way.com/wp-content/uploads/2026/11/OpinionWay-pour-Les-Echos-et-Radio-Classique-Barometre-Presitrack-2027-Vague-4-Novembre-2026.pdf';
+const ELABE_14 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10375-pres-iv-elabe-14-novembre.pdf';
 
 const OPINIONWAY_26 = 'https://www.commission-des-sondages.fr/notices/files/notices/2026/novembre/10400-pres-iv-vague-5-opinionway-26-novembre.pdf';
 const OPINIONWAY_LABEL = 'OpinionWay pour CNews';
@@ -125,13 +128,17 @@ export const DUEL_QUESTION = 'Si le second tour de l’élection présidentielle
 
 export const SER = ['lepen', 'melenchon', 'philippe', 'glucksmann', 'lisnard', 'retailleau'];
 export const CV = { lepen: '--c-lp', melenchon: '--c-jlm', philippe: '--c-ep', glucksmann: '--c-rg', lisnard: '--c-dl', retailleau: '--c-br' };
-/* [fin de terrain, institut, Le Pen, Mélenchon, Philippe, Glucksmann, Lisnard, Retailleau] 1re hypothèse */
+/* [fin de terrain, institut, Le Pen, Mélenchon, Philippe, Glucksmann, Lisnard, Retailleau]
+   Un seul scénario cohérent par enquête ; les scénarios de novembre sont précisés dans NOV. */
 export const P = [
   ['07-08', 'Harris', 35, 16, 14, 10, null, 7], ['07-08', 'Ifop', 36, 15, null, 12, null, 10], ['07-09', 'OpinionWay', 35, 13, 18, 9, null, 8], ['07-10', 'Elabe', 35, 16, 16.5, 10.5, null, 8], ['07-10', 'Verian', 37, 15, 17, 11, null, 7], ['07-24', 'Cluster17', 30, 18, 18, 10, null, 8],
   ['08-19', 'Harris', 35, 16, 14, 10, null, 6], ['08-25', 'Ifop', 33, 16, 14.5, 11, null, 6], ['08-28', 'Elabe', 34, 14, 17, 11.5, null, 6.5],
   ['09-01', 'Cluster17', 30, 18, 18, 11.5, null, 7.5], ['09-02', 'Ipsos', 34, 15, 14.5, 11.5, null, 6], ['09-03', 'OpinionWay', 35, 17, null, 13, null, 11], ['09-09', 'OpinionWay', 34, 15, 15, 9, null, 8], ['09-09', 'Ipsos', 33, 15.5, 14, 11.5, null, 7], ['09-10', 'OpinionWay', 32, 16, 16, null, 2, 7], ['09-10', 'Harris', 33, 16, 14, 9, null, 7], ['09-16', 'Cluster17', 31, 19, 19, 12, null, 7.5], ['09-21', 'YouGov', 34, 17, 12, 8, null, 8], ['09-24', 'Harris', 35, 17, 13, 10, null, 7], ['09-29', 'Ifop', 32, 15, 16, 11, null, 7],
   ['10-07', 'Odoxa', 37, 18, 17, 9.5, null, 6.5], ['10-08', 'Harris', 35, 18, 13, 10, null, 7], ['10-14', 'Ifop', 32, 16, 13, 11.5, 6, 5], ['10-14', 'OpinionWay', 35, 15, 12, 13, 4, 6], ['10-15', 'YouGov', 36, 15, 10, 12, null, 6], ['10-15', 'Cluster17', 31, 18, 17, 11, 7, 7], ['10-16', 'Elabe', 32.5, 15, 16.5, 15.5, null, 7],
-  ['11-05', 'Harris', 36, 18, 11, 11, null, 7], ['11-13', 'Elabe', null, null, null, null, 9, null],
+  ['11-05', 'Harris', 36, 18, 11, 11, null, 7],
+  ['11-10', 'OpinionWay · PrésiTrack', 34, 17, 11, 11, 10, 4],
+  ['11-12', 'OpinionWay · CNews', 31, 16, 12, 10, 9, 4],
+  ['11-13', 'Elabe', 31, 17, 9.5, 10.5, 8, 4],
   ['11-16', 'Ifop', 32, 17, 10, 8, 8, 4], ['11-17', 'YouGov', 32, 19, 8, 9, 9, 6], ['11-19', 'Harris', 31, 18, 9, 11, 11, 4],
   ['11-26', 'OpinionWay', 33, 16, 8, 10, 12, 4]
 ];
@@ -142,7 +149,9 @@ export const NOV = [
   ['Ifop-Fiducial pour Sud Radio', 'publié le 20 nov., terrain du 2 au 4 nov.', 'Scénario Philippe seul à droite et au centre : Le Pen 37, Philippe 19, Mélenchon 18, Glucksmann 13', IFOP_20 + '#page=8'],
   ['YouGov pour Le HuffPost', 'publié le 19 nov., terrain du 12 au 17 nov.', 'Hypothèse 1 : Le Pen 32, Mélenchon 19, Glucksmann et Lisnard 9, Philippe 8, Retailleau 6, Tondelier 4', YOUGOV_19 + '#page=20'],
   ['Ifop-Fiducial pour TF1-LCI, Le Figaro et Sud Radio', 'publié le 18 nov., terrain du 13 au 16 nov.', 'Scénario élargi avec Riner : Le Pen 32, Mélenchon 17, Philippe 10, Glucksmann et Lisnard 8, Retailleau et Riner 4', IFOP_18 + '#page=9'],
-  ['Elabe', 'terrain du 12 au 13 nov.', 'Lisnard 9, Riner 4,5 (scores partiels relevés)'],
+  ['Elabe pour BFMTV et La Tribune Dimanche', 'publié le 14 nov., terrain du 12 au 13 nov.', 'Scénario élargi avec Philippe, Attal, Riner et Polony (Q8) : Le Pen 31, Mélenchon 17, Glucksmann 10,5, Philippe 9,5, Lisnard 8, Riner 4,5, Attal et Retailleau 4. Lisnard varie de 8 à 10,5 selon les scénarios où il est testé', ELABE_14 + '#page=9'],
+  ['OpinionWay pour CNews', 'notice du 12 nov., terrain du 10 au 12 nov.', 'Hypothèse 1 avec Riner : Le Pen 31, Mélenchon 16, Philippe 12, Glucksmann 10, Lisnard 9, Riner et Retailleau 4, Attal 3', OPINIONWAY_12 + '#page=13'],
+  ['OpinionWay pour Les Échos et Radio Classique · PrésiTrack', 'rapport du 12 nov., terrain du 9 au 10 nov.', 'Hypothèse 1 avec Philippe et Attal : Le Pen 34, Mélenchon 17, Philippe et Glucksmann 11, Lisnard 10, Attal et Retailleau 4. Lisnard varie de 10 à 12 selon les trois hypothèses', PRESITRACK_12 + '#page=21'],
   ['Cluster17', 'terrain du 9 au 10 nov.', 'Riner 2 (score partiel relevé)'],
   ['Toluna Harris Interactive pour M6 et RTL', 'publié le 9 nov., terrain du 3 au 5 nov.', 'Le Pen 36, Mélenchon 18, Glucksmann 11, Philippe 11, Retailleau 7, Attal 6, Zemmour 4', HARRIS_9]
 ];

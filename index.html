@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
 <script src="js/theme.js?v=74"></script>
-<link rel="stylesheet" href="css/app.css?v=90">
+<link rel="stylesheet" href="css/app.css?v=92">
 </head>
 <body>
 <main>
@@ -102,11 +102,15 @@
             <p>Les trois candidats en tête des pronostics du premier tour. Chaque joueur compte une fois, avec son dernier top 5 enregistré.</p>
             <p>Les pourcentages sont la moyenne des scores saisis. Un candidat absent d’un top 5 compte pour 0 dans cette moyenne. Les scores ne sont pas ramenés à 100 %.</p>
             <p>À égalité, les candidats ont le même rang et sont affichés par ordre alphabétique. Ce sont les pronostics du jeu, pas un sondage.</p>
+            <p>Chaque lundi, une photo reprend les pronostics à la fin de la semaine précédente. Un prono inchangé continue de compter. Les modifications suivantes ne changent pas les anciennes photos.</p>
           </div>
         </details>
       </div>
+      <label for="community-period" class="visually-hidden">Date du podium des joueurs</label>
+      <select id="community-period" disabled><option value="live">Aujourd’hui</option></select>
       <p class="fine" id="community-podium-status" role="status">Chargement des pronostics…</p>
       <div class="home-podium" id="community-podium" aria-label="Candidats en tête des pronostics du premier tour"></div>
+      <p class="fine" id="community-history-note"></p>
       <div class="page-links"><a href="#paris" data-go="paris">Mes pronos</a></div>
     </article>
     <article class="card dashboard-card">
@@ -355,7 +359,7 @@
         <p class="src">Moyenne mensuelle des intentions de vote, juillet à novembre 2026</p>
         <div class="chips" id="lchips"></div>
         <div class="fig" id="fig"><svg id="chart" role="img" aria-label="Évolution mensuelle des intentions de vote au premier tour"></svg><div class="tip" id="tip" hidden></div></div>
-        <p class="fine">Moyenne simple des sondages listés (1re hypothèse, rangés au mois de fin de terrain). Novembre en pointillé : chiffre provisoire.</p>
+        <p class="fine">Moyenne simple des enquêtes retenues, rangées au mois de fin de terrain. Les scénarios peuvent différer ; ceux de novembre sont précisés ci-dessous. Novembre en pointillé : chiffre provisoire.</p>
         <details class="tbl"><summary>Voir les chiffres</summary><div class="scroll"><table id="tbl"></table></div></details>
       </details>
       <details class="card campaign-fold">
@@ -505,7 +509,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=91"></script>
+<script type="module" src="js/app.js?v=92"></script>
 <script type="module" src="js/install.js?v=15"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>

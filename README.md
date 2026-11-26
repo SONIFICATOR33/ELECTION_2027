@@ -21,6 +21,16 @@ s’il est inchangé. Les photos mensuelles restent consultables après l’éle
 Pour les pronos antérieurs à cette version, seul l’historique conservé peut
 être affiché.
 
+Le **Podium des joueurs** sur l’accueil affiche les trois candidats en tête de
+la moyenne des top 5 enregistrés. Le sélecteur permet de consulter **Aujourd’hui**
+ou une **photo hebdomadaire** : chaque lundi à minuit, heure de Paris, la semaine
+précédente est clôturée. Première photo : **30 novembre 2026** ; dernière photo :
+19 avril 2027. Chaque joueur compte une fois, avec son dernier prono connu à cette
+date ; les nouveaux joueurs ne sont pas ajoutés aux anciennes photos. Les pronos
+inchangés sont reconduits. Les semaines passées sont déjà protégées en écriture
+par les règles Firestore : l’historique se calcule à partir des données conservées,
+sans nouvelle collection, lecture réseau supplémentaire ni tâche serveur.
+
 Le gouvernement est sauvegardé avec le compte et retrouvé sur les autres
 appareils. Les modifications hors connexion restent sur l’appareil jusqu’à
 la prochaine synchronisation. Une ancienne composition est partagée avec tous
