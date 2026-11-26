@@ -3,17 +3,18 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 const source = readFileSync(new URL('../js/theme.js', import.meta.url), 'utf8');
-function setup(saved, blocked = false) {
+function setup(saved, blocked = false, dark = true) {
   const events = {}, storageEvents = {}, meta = {}, status = { hidden: true };
   const inputs = ['dark', 'light'].map(value => ({ value, checked: false, addEventListener(type, fn) { this[type] = fn; } }));
+  const system = { matches: dark, addEventListener(type, fn) { this[type] = fn; } };
   const root = { dataset: {} };
   const document = { documentElement: root, querySelector: selector => selector.startsWith('meta') ? { setAttribute: (k, v) => meta[k] = v } : status, querySelectorAll: () => inputs, addEventListener: (type, fn) => events[type] = fn };
   const localStorage = { getItem() { if (blocked) throw Error(); return saved; }, setItem(key, value) { if (blocked) throw Error(); saved = value; } };
-  runInNewContext(source, { document, localStorage, window: { addEventListener: (type, fn) => storageEvents[type] = fn } });
+  runInNewContext(source, { document, localStorage, window: { matchMedia: () => system, addEventListener: (type, fn) => storageEvents[type] = fn } });
   events.DOMContentLoaded();
-  return { root, meta, status, inputs, storageEvents, saved: () => saved };
+  return { root, meta, status, inputs, storageEvents, system, saved: () => saved };
 }
-test('defaults to dark and restores saved light before interaction', () => {
+test('defaults to black and restores saved white before interaction', () => {
   assert.equal(setup().root.dataset.theme, 'dark');
   const state = setup('light');
   assert.equal(state.root.dataset.theme, 'light');
@@ -39,4 +40,11 @@ test('other tabs and cleared preferences update the controls', () => {
   assert.equal(state.inputs[1].checked, true);
   state.storageEvents.storage({ key: null, newValue: null });
   assert.equal(state.root.dataset.theme, 'dark');
+});
+
+test('system light preference never overrides the default black background', () => {
+  const state = setup(null, false, false);
+  assert.equal(state.root.dataset.theme, 'dark');
+  assert.equal(state.inputs[0].checked, true);
+  assert.equal(setup('auto').root.dataset.theme, 'dark');
 });
