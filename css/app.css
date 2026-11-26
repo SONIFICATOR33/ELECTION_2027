@@ -690,7 +690,7 @@ body:has(#v-espace.on) {
 .leaders dt, .leaders dd { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--line); }
 .leaders dt { color: var(--mut); }
 .leaders dd { text-align: left; font-weight: 600; overflow-wrap: anywhere; }
-.leaders .leader-name { padding-left: 12px; }
+.leaders .leader-name { padding-left: 24px; }
 .leaders .leader-score { text-align: right; white-space: nowrap; color: var(--orC); }
 
 /* Theme choice is local to the device and applies throughout the game. */
