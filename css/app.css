@@ -691,3 +691,48 @@ body:has(#v-espace.on) {
 .leaders dt { color: var(--mut); }
 .leaders dd { text-align: left; font-weight: 600; overflow-wrap: anywhere; }
 .leaders dd:last-child { text-align: right; white-space: nowrap; color: var(--orC); }
+
+/* Theme choice is local to the device and applies throughout the game. */
+.theme-picker { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 8px 12px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.theme-picker legend { padding: 0 4px; font-weight: 700; }
+.theme-picker label { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+.theme-picker input { width: 20px; height: 20px; accent-color: var(--orC); }
+.theme-picker .fine { flex-basis: 100%; }
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff; --card: #ffffff; --ink: #242424; --mut: #5c5953; --line: #d3d0c9;
+  --nuit: #f6f4ef; --nuit2: #f6f4ef; --bleu: #353f50;
+  --or: #8a641c; --orC: #775316; --bleuT: #775316;
+  --vert: #146b48; --vertbg: #e5f3eb; --rouge: #b32440; --rougebg: #fce8ec;
+}
+[data-theme="light"] .dashboard-card,
+[data-theme="light"] .space-card,
+[data-theme="light"] .profile-sound { background: #faf9f6; }
+[data-theme="light"] .space-identity { background: #f6f1e6; border-color: var(--line); }
+[data-theme="light"] .space-portrait > span { background: #775316; color: #fff; border-color: #fff; }
+[data-theme="light"] .space-card[data-space-card="pronos"] { --space-accent: #365a8c; }
+[data-theme="light"] .space-card[data-space-card="gouvernement"] { --space-accent: #236746; }
+[data-theme="light"] .space-card[data-complete="false"] .space-card-line,
+[data-theme="light"] .space-card[data-complete="false"] [data-space-status] { color: #b32440; }
+[data-theme="light"] .space-card[data-space-card="profil"][data-complete="false"] .space-card-line,
+[data-theme="light"] .space-card[data-space-card="profil"][data-complete="false"] [data-space-status] { color: #98600b; }
+[data-theme="light"] .space-card[data-complete="true"] [data-space-status] { color: #146b48; }
+[data-theme="light"] .space-card progress,
+[data-theme="light"] .space-card progress::-webkit-progress-bar { background: #ddd9d0; }
+[data-theme="light"] #players-sort,
+[data-theme="light"] .players-table thead { background: #f2f0eb; }
+[data-theme="light"] .players-table tbody tr.participating { background: #edf6f0; }
+[data-theme="light"] .player-action.available { color: #146b48; border-color: #407c65; }
+[data-theme="light"] .player-action.voted { color: #fff; background: #18784c; }
+[data-theme="light"] #portrait-dialog,
+[data-theme="light"] .leaders-bubble { background: #fffdf8; }
+[data-theme="light"] .portrait-options button { background: #f6f4ef; }
+[data-theme="light"] .page-links a:hover { color: #242424; }
+[data-theme="light"] .team-gauge { color: var(--ink); }
+[data-theme="light"] .team-gauge canvas { background: #0a0a0a; border-radius: 12px; }
+[data-theme="light"] .me-card,
+[data-theme="light"] .me-card h2,
+[data-theme="light"] .p2 .blk,
+[data-theme="light"] .p3 .blk { color: var(--ink); }
+[data-theme="light"] .team-rating button[aria-pressed="true"] { color: #fff; }
+[data-theme="light"] .politics-swatch { border-color: #777; }
