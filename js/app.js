@@ -1,5 +1,5 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=66';
-import { playersView } from './players-view.js?v=89';
+import { playersView } from './players-view.js?v=90';
 import { accountView } from './account-view.js?v=69';
 import { portraitView } from './portrait-view.js?v=85';
 import { GROUP_ADMIN } from './groups.js?v=60';
@@ -775,29 +775,32 @@ $('#sndBtn').onclick = () => {
   renderSnd();
 };
 
+function getParticipation() {
+  const team = draft.team;
+  const predicted = by[S.current(mine())?.pres];
+  const president = by[byName[team.coeur]];
+  return {
+    predictedName: predicted ? predicted.p + ' ' + predicted.n : '',
+    predictedPortrait: av(predicted, 32),
+    presidentName: team.coeur,
+    presidentPortrait: av(president, 32),
+    primeMinister: team.pm,
+    pronos: ['l1', 'l2', 'gp', 'gp'].filter(done).length,
+    totalPronos: 4,
+    startedPronos: [draft.l1, draft.l2, draft.gp.top].some(values => values.length > 0) || Boolean(draft.gp.pres),
+    team: countTeamRoles(team),
+    startedTeam: hasTeam(team),
+    totalTeam: D.POSTES.length + 2
+  };
+}
+
 const players = playersView($('#players-view'), {
-  getStore: () => store, drawTeam, syncExistingTeam, notify: toast
+  getStore: () => store, getParticipation, drawTeam, syncExistingTeam, notify: toast
 });
 const portrait = portraitView({ getPlayer: () => ME, onUpdate: () => account.renderParticipation() });
 const account = accountView({
   getStore: () => store,
-  getParticipation: () => {
-    const team = draft.team;
-    const predicted = by[S.current(mine())?.pres];
-    const president = by[byName[team.coeur]];
-    return {
-      predictedName: predicted ? predicted.p + ' ' + predicted.n : '',
-      predictedPortrait: av(predicted, 32),
-      presidentName: team.coeur,
-      presidentPortrait: av(president, 32),
-      primeMinister: team.pm,
-      pronos: ['l1', 'l2', 'gp', 'gp'].filter(done).length,
-      totalPronos: 4,
-      team: countTeamRoles(team),
-      startedTeam: hasTeam(team),
-      totalTeam: D.POSTES.length + 2
-    };
-  },
+  getParticipation,
   notify: toast,
   async onJoin(player) {
     playEntrySound();

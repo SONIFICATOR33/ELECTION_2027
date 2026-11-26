@@ -17,7 +17,7 @@ const PAGE_SIZE = 50;
 const alphabetical = (a, b) => a.pseudo.localeCompare(b.pseudo, 'fr') || a.pid.localeCompare(b.pid);
 const politicalColors = ['#8B142D', '#A1394E', '#A15665', '#726A71', '#486996', '#29517E', '#173968'];
 
-export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify }) {
+export function playersView(root, { getStore, getParticipation, drawTeam, syncExistingTeam, notify }) {
   root.innerHTML = `<div class="players-toolbar" hidden>
     <label for="players-sort">Trier par</label>
     <select id="players-sort">
@@ -133,7 +133,16 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     const button = (labelType, type, available, target) => {
       const voted = type === 'team' && scores[row.pid]?.rating != null;
       const className = 'player-action' + (available ? ' available' : '') + (voted ? ' voted' : '');
-      if (own) return `<a class="${className}" href="#${target}" data-go="${target}" aria-label="${type === 'pronos' ? 'Mes pronos' : 'Mon gouvernement'}">Ouvrir</a>`;
+      if (own) {
+        const progress = getParticipation();
+        const isProno = type === 'pronos';
+        const count = isProno ? progress.pronos : progress.team;
+        const total = isProno ? progress.totalPronos : progress.totalTeam;
+        const started = count > 0 || (isProno ? progress.startedPronos : progress.startedTeam);
+        const state = count === total ? 'complete' : started ? 'started' : 'empty';
+        const status = { empty: 'Pas commencé', started: 'En cours', complete: 'Complet' }[state];
+        return `<a class="player-action" data-progress="${state}" href="#${target}" data-go="${target}" title="${status}" aria-label="Ouvrir ${isProno ? 'mes pronos' : 'mon gouvernement'} · ${status}">Ouvrir</a>`;
+      }
       const action = type === 'team' ? (voted ? 'A voté' : 'Voter') : '<svg class="player-eye" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
       const actionLabel = type === 'team'
         ? (voted ? 'A voté · Voir le gouvernement de ' : 'Voter pour le gouvernement de ')

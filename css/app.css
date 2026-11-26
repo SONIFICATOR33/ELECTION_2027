@@ -742,6 +742,17 @@ body:has(#v-espace.on) {
 [data-theme="light"] .team-rating button[aria-pressed="true"] { color: #fff; }
 [data-theme="light"] .politics-swatch { border-color: #777; }
 
+/* Progression des deux boutons Ouvrir du joueur connecté. */
+.player-action[data-progress="empty"] { --progress-bg: #421b23; --progress-ink: #ffb3bd; --progress-border: #a94759; }
+.player-action[data-progress="started"] { --progress-bg: #412b0d; --progress-ink: #ffd59b; --progress-border: #b98736; }
+.player-action[data-progress="complete"] { --progress-bg: #174d8c; --progress-ink: #d8eaff; --progress-border: #679dde; }
+[data-theme="light"] .player-action[data-progress="empty"] { --progress-bg: #fce8ec; --progress-ink: #9b2035; --progress-border: #c46b7b; }
+[data-theme="light"] .player-action[data-progress="started"] { --progress-bg: #fff0d9; --progress-ink: #7d4a00; --progress-border: #b88430; }
+[data-theme="light"] .player-action[data-progress="complete"] { --progress-bg: #e4efff; --progress-ink: #144e91; --progress-border: #5d86bd; }
+.players-table .player-action[data-progress] { background: var(--progress-bg); color: var(--progress-ink); border-color: var(--progress-border); }
+.players-table .player-action[data-progress]:hover { border-color: currentColor; }
+
+
 /* Typography: black by default, white only when selected in the profile. */
 :root { color-scheme: dark; --bg: #121212; --nuit: #121212; --nuit2: #121212; --text-body: 16px; --w: 400; --ink-2: rgba(255,255,255,.6); --mut: var(--ink-2); }
 :root[data-theme="dark"] { color-scheme: dark; --bg: #121212; --nuit: #121212; --nuit2: #121212; --ink: rgba(255,255,255,.87); }
