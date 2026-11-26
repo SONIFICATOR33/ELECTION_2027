@@ -30,7 +30,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   <p class="fine" id="players-vote-status" role="status" hidden></p>
   <div class="players-table-wrap" hidden>
     <table class="players-table">
-      <thead><tr><th scope="col">Joueur</th><th scope="col">Pronos</th><th scope="col" aria-label="Points">Pts</th><th scope="col" aria-label="Gouvernement"><abbr title="Gouvernement">Gouve</abbr></th><th scope="col" aria-label="Pouces levés">👍</th></tr></thead>
+      <thead><tr><th scope="col">Joueur</th><th scope="col">Pronos</th><th scope="col" aria-label="Points">Pts</th><th scope="col" aria-label="Gouvernement"><abbr title="Gouvernements">Gouves</abbr></th><th scope="col" aria-label="Pouces levés">👍</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -76,7 +76,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     const topVotes = votesReady ? rows.map(row => ({ ...row, value: scores[row.pid]?.points || 0 }))
       .filter(row => row.value > 0).sort((a, b) => b.value - a.value || alphabetical(a, b)) : [];
     leaders.innerHTML = leaderRows('Pronos', topPoints, Boolean(display), 'pts')
-      + leaderRows('Gouvernement', topVotes, votesReady, '👍');
+      + leaderRows('Gouves', topVotes, votesReady, '👍');
     const leaderStatus = document.querySelector('[data-leaders-status]');
     leaderStatus.textContent = !display ? status.textContent || 'Chargement…'
       : !votesReady ? voteError || 'Chargement des votes…' : '';
