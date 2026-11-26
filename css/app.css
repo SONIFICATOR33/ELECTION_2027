@@ -503,7 +503,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .dashboard-card h2 { margin-bottom: 10px; }
 .home-space-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
 .home-space-heading h2 { margin: 0; }
-.home-space-heading img { display: block; flex: none; width: 46px; height: 46px; object-fit: cover; border: 1px solid var(--or); border-radius: 50%; }
+.home-space-heading img { display: block; flex: none; width: 60px; height: 60px; object-fit: cover; border: 1px solid var(--or); border-radius: 50%; }
 /* Personal scores use the same live totals as the players table. */
 .home-player-scores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 16px 0 12px; }
 .home-player-scores > div { display: flex; flex-direction: column; gap: 5px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
