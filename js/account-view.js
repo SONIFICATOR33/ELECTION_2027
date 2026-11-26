@@ -6,6 +6,8 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
   const options = $('#access-options');
   const accessError = $('#access-error');
   const accessStatus = $('#access-status');
+  const accessPending = $('#access-pending');
+  const accessWait = $('#access-wait');
   const accessSubmit = $('#access-submit');
   const codeField = accessForm.elements.pin;
   const profileForm = $('#profile-name-form');
@@ -23,7 +25,7 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
     mode = action;
     const registration = mode === 'register';
     accessForm.reset();
-    accessError.hidden = accessStatus.hidden = true;
+    accessError.hidden = accessPending.hidden = true;
     accessForm.hidden = !mode;
     options.hidden = Boolean(mode);
     accessTitle.textContent = registration ? 'Créer mon compte' : 'Retrouver mon compte';
@@ -45,19 +47,24 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
     if (accessSubmit.disabled) return;
     const store = getStore();
     accessError.hidden = true;
-    accessStatus.hidden = false;
-    accessStatus.textContent = mode === 'register' ? 'Création du compte…' : 'Connexion…';
+    accessStatus.textContent = mode === 'register' ? 'Création de ton compte…' : 'Connexion en cours…';
+    accessWait.textContent = 'Patiente un instant…';
+    accessForm.hidden = true;
+    accessPending.hidden = false;
     accessForm.setAttribute('aria-busy', 'true');
     accessSubmit.disabled = true;
     accessForm.querySelector('[data-access]').disabled = true;
-    const slow = setTimeout(() => { accessStatus.textContent = 'La connexion prend plus de temps que prévu…'; }, 8000);
+    const slow = setTimeout(() => { accessWait.textContent = 'La connexion prend un peu de temps. La vérification continue…'; }, 8000);
     try {
       if (store.fallback) throw new Error('La connexion au jeu a échoué. Recharge la page pour réessayer.');
       const pin = codeField.value;
       const player = await store.join(accessForm.elements.pseudo.value, pin, mode);
       sessionPin = pin;
-      accessForm.reset();
+      clearTimeout(slow);
+      accessStatus.textContent = 'Accès validé. Chargement de ton espace…';
+      accessWait.textContent = 'Tu vas entrer dans le jeu automatiquement.';
       await onJoin(player);
+      accessForm.reset();
     } catch (error) {
       accessError.textContent = error.code ? (
         error.code === 'unavailable' ? 'La connexion au jeu est momentanément indisponible.' : error.message
@@ -65,10 +72,12 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, hasP
       accessError.hidden = false;
     } finally {
       clearTimeout(slow);
-      accessStatus.hidden = true;
+      accessPending.hidden = true;
+      accessForm.hidden = false;
       accessSubmit.disabled = false;
       accessForm.querySelector('[data-access]').disabled = false;
       accessForm.removeAttribute('aria-busy');
+      if (!accessError.hidden) codeField.focus();
     }
   });
 

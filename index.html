@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=64">
+<link rel="stylesheet" href="css/app.css?v=65">
 </head>
 <body>
 <main>
@@ -29,7 +29,7 @@
     <article class="card access-card">
       <h1 id="access-title">Prône ton Président</h1>
       <p>Devine qui va gagner la présidentielle. Propose ton gouvernement idéal et reçois des pouces. Vote pour les gouvernements des autres joueurs.</p>
-      <p id="access-loading" role="status">Ouverture du jeu…</p>
+      <p id="access-loading" class="access-loading" role="status"><span class="access-spinner" aria-hidden="true"></span>Ouverture du jeu…</p>
       <div id="access-options" class="access-options" hidden>
         <button class="big" data-access="register">S’inscrire</button>
         <button class="ghost" data-access="login">Se reconnecter</button>
@@ -41,9 +41,13 @@
         <label>Pseudo<input name="pseudo" maxlength="24" autocomplete="username" autocapitalize="words" required></label>
         <label>Mot de passe à 4 chiffres<input name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></label>
         <p class="err" id="access-error" role="alert" hidden></p>
-        <p id="access-status" role="status" hidden></p>
         <button class="big" type="submit" id="access-submit"></button>
       </form>
+      <div id="access-pending" class="access-pending" hidden>
+        <span class="access-spinner" aria-hidden="true"></span>
+        <p id="access-status" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p id="access-wait" class="fine">Patiente un instant…</p>
+      </div>
     </article>
   </div>
 </section>
@@ -452,7 +456,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=60"></script>
+<script type="module" src="js/app.js?v=65"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
