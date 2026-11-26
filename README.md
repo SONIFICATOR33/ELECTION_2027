@@ -21,7 +21,7 @@ s’il est inchangé. Les photos mensuelles restent consultables après l’éle
 Pour les pronos antérieurs à cette version, seul l’historique conservé peut
 être affiché.
 
-Le **Podium des joueurs** sur l’accueil affiche les trois candidats en tête de
+Le **Podium des joueurs**, dans **Sondages** sous **Ça bouge**, affiche les trois candidats en tête de
 la moyenne des top 5 enregistrés. Le sélecteur permet de consulter **Aujourd’hui**
 ou une **photo hebdomadaire** : chaque lundi à minuit, heure de Paris, la semaine
 précédente est clôturée. Première photo : **30 novembre 2026** ; dernière photo :
@@ -57,8 +57,13 @@ dans Mon profil ou le menu du navigateur.
 
 ### Votes des gouvernements
 
-La page **Joueurs** peut être triée par pseudo, points, pouces ou selon la position
-du gouvernement sur la jauge politique. Ta ligne reste en tête du tableau. Ouvre le
+La page **Classements** affiche tous les joueurs. Le tri par défaut **Au hasard ·
+à voter en premier** place d’abord les gouvernements auxquels tu n’as pas encore
+attribué de vote, dans un ordre aléatoire propre à ta session. Les autres joueurs
+restent visibles à la suite, y compris toi et ceux sans gouvernement. Un vote à
+zéro compte comme un vote déjà effectué. La liste reste visible pendant le
+chargement des votes ou en cas d’échec. Les autres tris (pseudo, points, pouces ou
+position politique) gardent ta ligne en tête. Ouvre le
 gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **A voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
 
 Les votes portent sur une composition précise. Une composition différente ne

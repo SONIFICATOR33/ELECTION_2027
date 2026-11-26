@@ -10,41 +10,53 @@ const context = { pid: 'me', teams, scores: {}, ready: true };
 const ids = list => list.map(row => row.pid);
 const draw = values => { let i = 0; return () => values[i++]; };
 
-test('only other governments still awaiting this viewer’s vote, including zero as already voted', () => {
+test('all players remain visible, with unvoted governments first and zero treated as already voted', () => {
   const order = createVotingOrder(() => .5);
   const votes = [{ team: 'alice', voter: 'me', composition: team, rating: 0 },
     { team: 'bob', voter: 'someone-else', composition: team, rating: 3 }];
   const scores = teamVoteScores(teams, votes, 'me');
-  assert.deepEqual(ids(order(rows, { ...context, scores })), ['bob', 'claire']);
-  assert.deepEqual(order(rows, { ...context, ready: false }), []);
+  assert.deepEqual(ids(order(rows, { ...context, scores })), ['bob', 'claire', 'alice', 'empty', 'me']);
+  assert.deepEqual(ids(order(rows, { ...context, ready: false })), ['alice', 'bob', 'claire', 'empty', 'me']);
   assert.deepEqual(ids(rows), ['me', 'alice', 'bob', 'claire', 'empty']);
 });
 
-test('live scores, row ordering and pagination never reshuffle remaining governments', () => {
-  const order = createVotingOrder(draw([.8, .1, .4, .2]));
+test('live scores, row ordering and pagination preserve random order within each priority group', () => {
+  const order = createVotingOrder(draw([.9, .8, .1, .4, .7, .2]));
   const initial = order(rows, context);
-  assert.deepEqual(ids(initial), ['bob', 'claire', 'alice']);
+  assert.deepEqual(ids(initial), ['bob', 'claire', 'alice', 'empty', 'me']);
   assert.deepEqual(ids(order([...rows].reverse(), { ...context, scores: { alice: { points: 999, rating: null } } })), ids(initial));
   assert.deepEqual(ids(order(rows, context).slice(0, 2)), ['bob', 'claire']);
   const afterVote = { ...context, scores: { bob: { rating: 1 } } };
-  assert.deepEqual(ids(order(rows, afterVote)), ['claire', 'alice']);
+  assert.deepEqual(ids(order(rows, afterVote)), ['claire', 'alice', 'bob', 'empty', 'me']);
   assert.deepEqual(ids(order(rows, context)), ids(initial));
   const expanded = order([...rows, { pid: 'new' }], { ...context, teams: { ...teams, new: team } });
-  assert.deepEqual(ids(expanded), ['bob', 'new', 'claire', 'alice']);
+  assert.deepEqual(ids(expanded), ['bob', 'new', 'claire', 'alice', 'empty', 'me']);
   assert.deepEqual(ids(expanded.filter(row => row.pid !== 'new')), ids(initial));
 });
 
 test('separate sessions and account changes draw independently', () => {
-  const first = createVotingOrder(draw([.8, .1, .4]));
-  const second = createVotingOrder(draw([.1, .8, .4]));
+  const first = createVotingOrder(draw([.9, .8, .1, .4, .7]));
+  const second = createVotingOrder(draw([.9, .1, .8, .4, .7]));
   assert.notDeepEqual(ids(first(rows, context)), ids(second(rows, context)));
-  const shared = createVotingOrder(draw([.8, .1, .4, .1, .8, .4]));
+  const shared = createVotingOrder(draw([.8, .1, .4, .7, .1, .8, .4, .7]));
   const candidates = rows.filter(row => row.pid !== 'me');
   assert.notDeepEqual(ids(shared(candidates, context)), ids(shared(candidates, { ...context, pid: 'other' })));
 });
 
-test('empty or exhausted voting lists are empty without falling back to already voted rows', () => {
+test('exhausted votes and no governments still show every player exactly once', () => {
   const order = createVotingOrder(() => .5);
-  assert.deepEqual(order(rows, { ...context, scores: { alice: { rating: 1 }, bob: { rating: 2 }, claire: { rating: 3 } } }), []);
-  assert.deepEqual(order(rows, { ...context, teams: {} }), []);
+  const all = ['alice', 'bob', 'claire', 'empty', 'me'];
+  assert.deepEqual(ids(order(rows, { ...context, scores: { alice: { rating: 1 }, bob: { rating: 2 }, claire: { rating: 3 } } })), all);
+  assert.deepEqual(ids(order(rows, { ...context, teams: {} })), all);
+  assert.deepEqual(order([], context), []);
+  assert.deepEqual(ids(order([rows[0]], context)), ['me']);
+});
+
+test('loading or unavailable votes never blank the list, and loading completion retains all rows', () => {
+  const order = createVotingOrder(draw([.9, .8, .1, .4, .7]));
+  const pending = { ...context, ready: false };
+  assert.deepEqual(ids(order(rows, pending)), ['bob', 'claire', 'empty', 'alice', 'me']);
+  assert.deepEqual(ids(order(rows, context)), ['bob', 'claire', 'alice', 'empty', 'me']);
+  assert.deepEqual(ids(order(rows, pending)), ['bob', 'claire', 'empty', 'alice', 'me']);
+  assert.equal(new Set(ids(order(rows, context))).size, rows.length);
 });

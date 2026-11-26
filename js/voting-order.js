@@ -1,7 +1,8 @@
 import { hasTeam } from './team-state.js';
 
-// One independent draw per viewer and page load. Keep each government's rank
-// across live updates, votes and pagination so the remaining list never reshuffles.
+// One independent draw per viewer and page load. Keep every player visible,
+// putting governments still awaiting this viewer's vote first. Preserve random
+// ranks across live updates, votes and pagination within each group.
 export function createVotingOrder(random = Math.random) {
   let viewer;
   const ranks = new Map();
@@ -10,12 +11,12 @@ export function createVotingOrder(random = Math.random) {
       viewer = pid;
       ranks.clear();
     }
-    if (!ready) return [];
-    const eligible = rows.filter(row => row.pid !== pid
-      && hasTeam(teams[row.pid]) && scores[row.pid]?.rating == null);
-    for (const row of eligible) {
+    for (const row of rows) {
       if (!ranks.has(row.pid)) ranks.set(row.pid, random());
     }
-    return eligible.sort((a, b) => ranks.get(a.pid) - ranks.get(b.pid) || a.pid.localeCompare(b.pid));
+    const priority = row => ready && row.pid !== pid
+      && hasTeam(teams[row.pid]) && scores[row.pid]?.rating == null;
+    return [...rows].sort((a, b) => Number(priority(b)) - Number(priority(a))
+      || ranks.get(a.pid) - ranks.get(b.pid) || a.pid.localeCompare(b.pid));
   };
 }
