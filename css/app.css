@@ -149,8 +149,8 @@ th:first-child,td:first-child{text-align:left}
 .pts{margin:8px 0;padding:0;list-style:none}.pts li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
 .pts b{font:600 var(--text-ui)/1.1 var(--cond);color:var(--bleuT)}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom)}
-.tabs a{display:grid;grid-template-rows:24px auto;align-content:start;justify-items:center;gap:2px;padding:8px 0 10px;color:var(--mut);font-weight:600;font-size:var(--text-body);text-decoration:none;min-height:56px}
-.tabs a span{max-width:100%;overflow-wrap:anywhere;text-align:center;line-height:1.2}
+.tabs a{display:grid;grid-template-rows:24px auto;align-content:start;justify-items:center;gap:2px;padding:8px 0 10px;color:var(--orC);font-weight:600;font-size:8pt;text-decoration:none;min-height:56px}
+.tabs a span{max-width:100%;white-space:nowrap;text-align:center;line-height:1.2}
 @media(max-width:360px){.tabs{grid-template-columns:.8fr 1.1fr 1.2fr .9fr}}
 .tabs a.on{color:var(--bleuT)}
 .tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -424,7 +424,7 @@ h2{font-weight:600;letter-spacing:-.2px}
 .team-rating button { flex: 1; min-width: 0; max-width: 84px; min-height: 44px; padding: 6px; border-radius: 6px; border: 1px solid var(--or); background: transparent; color: var(--or); font: inherit; cursor: pointer; }
 .team-rating button[aria-pressed="true"] { background: var(--or); color: #0a0a0a; font-weight: 700; }
 .team-rating button:disabled { opacity: .5; cursor: default; }
-.tabs a[data-t="classement"] span { text-align: center; line-height: 1.1; }
+.tabs a[data-t="classement"] span { text-align: center; }
 
 .prono-sharing { margin-block: 12px; }
 .choice-control { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--text-body); font-weight: 700; cursor: pointer; }
