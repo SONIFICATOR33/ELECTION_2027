@@ -1,6 +1,7 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=55';
-import { playersView } from './players-view.js?v=56';
-import { accountView } from './account-view.js?v=56';
+import { playersView } from './players-view.js?v=57';
+import { accountView } from './account-view.js?v=57';
+import { portraitView } from './portrait-view.js?v=57';
 import { GROUP_ADMIN } from './groups.js?v=54';
 import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
@@ -67,6 +68,7 @@ async function refresh(force) {
 
 function renderSession() {
   $('#welcome-title').textContent = ME ? 'Bienvenue ' + ME.pseudo : 'Bienvenue';
+  $('#space-pseudo').textContent = ME?.pseudo || '';
   const b = $('#banner');
   b.hidden = store.mode !== 'local';
   if (store.mode === 'local') b.textContent = store.fallback
@@ -427,7 +429,7 @@ function queueTeamSync(onlyMissing) {
       } catch {}
       pendingTeamSync.delete(key);
       renderTeam();
-      if (currentView === 'profil') account.renderParticipation();
+      if (currentView === 'profil' || currentView === 'espace') account.renderParticipation();
     }
   });
   return teamSync;
@@ -693,6 +695,10 @@ function show() {
     requestPollDraw();
   }
   if (view === 'profil') account.openProfile(ME, ME.pid === GROUP_ADMIN);
+  if (view === 'espace') {
+    portrait.render();
+    account.renderParticipation();
+  }
   if (ME) players.resume(view === 'joueurs');
   else players.pause();
 }
@@ -748,18 +754,24 @@ async function withMe(action) {
 
 function renderSnd() {
   const button = $('#sndBtn'), on = snd.isOn();
-  button.textContent = on ? 'Son activé' : 'Son coupé';
+  $('#sound-state').textContent = on ? 'Son activé' : 'Son coupé';
+  $('#sound-action').textContent = on ? 'Couper le son' : 'Activer le son';
   button.setAttribute('aria-pressed', on);
 }
-$('#sndBtn').onclick = () => { snd.toggle(); renderSnd(); };
+$('#sndBtn').onclick = () => {
+  if (!snd.toggle()) entrySound.pause();
+  renderSnd();
+};
 
 const players = playersView($('#players-view'), {
   getStore: () => store, drawTeam, syncExistingTeam, notify: toast
 });
+const portrait = portraitView({ getPlayer: () => ME, onUpdate: () => account.renderParticipation() });
 const account = accountView({
   getStore: () => store,
+  hasPortrait: portrait.hasSelection,
   getParticipation: () => {
-    const team = mine().team ?? (store.mode === 'local' ? readTeam() : null);
+    const team = draft.team;
     return {
       pronos: ['l1', 'l2', 'gp'].filter(done).length,
       totalPronos: 3,
@@ -781,6 +793,7 @@ const account = accountView({
   },
   onLogout() {
     ME = null;
+    portrait.render();
     ALL = { players: {}, pronos: {} };
     loadDraft();
     initSB();
