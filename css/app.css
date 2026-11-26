@@ -558,11 +558,12 @@ h2{font-weight:600;letter-spacing:-.2px}
 .players-table :is(th,td):first-child { width: auto; padding-left: 8px; text-align: left; overflow-wrap: anywhere; }
 .players-table :is(th,td):is(:nth-child(2),:nth-child(4)) { width: 20%; }
 .players-table :is(th,td):is(:nth-child(3),:nth-child(5)) { width: 12%; }
-.players-table thead { background: #173968; color: #fff; }
+.players-table thead { background: #303030; color: #fff; }
+.players-table thead th { padding-top: 10px; padding-bottom: 10px; font-weight: 800; border-bottom: 2px solid var(--mut); }
 .players-table thead abbr { text-decoration: none; }
 .players-table tbody tr { border-top: 1px solid var(--line); }
 .players-table tbody tr.participating { background: #10231c; }
-.players-table tbody tr.own-player { box-shadow: inset 3px 0 var(--or); }
+.players-table tbody tr.own-player { background: #173968; box-shadow: inset 3px 0 var(--or); }
 .players-table tbody small { display: block; font-weight: 400; color: var(--orC); }
 .players-table td { font-variant-numeric: tabular-nums; }
 .player-action { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; max-width: 100%; padding: 0 4px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font-size: var(--text-body); font-weight: 600; text-decoration: none; line-height: 1.2; }
@@ -723,7 +724,9 @@ body:has(#v-espace.on) {
 [data-theme="light"] .space-card progress,
 [data-theme="light"] .space-card progress::-webkit-progress-bar { background: #ddd9d0; }
 [data-theme="light"] #players-sort { background: #f2f0eb; }
+[data-theme="light"] .players-table thead { background: #dedbd4; color: #242424; }
 [data-theme="light"] .players-table tbody tr.participating { background: #edf6f0; }
+[data-theme="light"] .players-table tbody tr.own-player { background: #dceaff; }
 [data-theme="light"] .player-action.available { color: #146b48; border-color: #407c65; }
 [data-theme="light"] .player-action.voted { color: #fff; background: #18784c; }
 [data-theme="light"] #portrait-dialog,
