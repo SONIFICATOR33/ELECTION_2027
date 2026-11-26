@@ -23,7 +23,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   root.innerHTML = `<div class="players-toolbar" hidden>
     <label for="players-sort">Trier par</label>
     <select id="players-sort">
-      <option value="random" selected>Tirage aléatoire</option>
+      <option value="random" selected>Aléatoire</option>
       <option value="thumbs">Nombre de pouces levés</option>
       <option value="name">Ordre alphabétique</option>
       <option value="points">Points de pronos</option>
