@@ -5,7 +5,7 @@ import { classement, current } from './scoring.js';
 import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=60';
-import { teamPosition } from './team-gauge.js?v=55';
+import { teamPosition } from './team-gauge.js?v=66';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
