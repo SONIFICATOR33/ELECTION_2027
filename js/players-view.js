@@ -47,8 +47,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   const more = find('#players-more');
   const retry = find('#players-retry');
   const syncStatus = find('#players-sync');
-  const pointsLeaders = document.querySelectorAll('[data-points-leader]');
-  const votesLeaders = document.querySelectorAll('[data-votes-leader]');
+  const leaders = document.querySelector('[data-home-leaders]');
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
   const details = document.querySelector('#player-detail');
@@ -56,8 +55,12 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
   let active = false, visible = false, unsubscribes = [], generation = 0, frame, limit = PAGE_SIZE;
   let openTeam, votePending, dialogRequest, imageUrl, opener;
 
-  function setLeader(elements, value) {
-    for (const el of elements) el.textContent = value;
+  function leaderRows(label, ranked, ready, unit) {
+    const top = ranked.slice(0, 3);
+    const entries = top.length ? top : [{ pseudo: '—', value: ready ? 0 : null }];
+    return `<div><dt style="grid-row: span ${entries.length}">${label}</dt>` + entries.map(row =>
+      `<dd class="leader-name">${escape(row.pseudo)}</dd><dd class="leader-score">${row.value == null ? '—' : fmt(row.value) + ' ' + unit}</dd>`
+    ).join('') + '</div>';
   }
 
   function renderLeaders() {
@@ -69,17 +72,11 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
     scoreStatus.textContent = !display ? status.textContent || 'Chargement des scores…'
       : !votesReady ? voteError || 'Chargement des pouces…' : '';
     scoreStatus.hidden = !scoreStatus.textContent;
-    const first = rows[0];
-    setLeader(pointsLeaders, display && first?.total > 0 ? first.pseudo : '—');
-    document.querySelector('[data-points-leader-score]').textContent = display ? fmt(first?.total || 0) + ' pts' : '—';
-    const leader = votesReady
-      ? rows.reduce((best, row) => {
-        const points = scores[row.pid]?.points || 0;
-        return points > 0 && (!best || points > best.points ||
-          (points === best.points && alphabetical(row, best) < 0)) ? { ...row, points } : best;
-      }, null) : null;
-    setLeader(votesLeaders, votesReady && leader ? leader.pseudo : '—');
-    document.querySelector('[data-votes-leader-score]').textContent = votesReady ? fmt(leader?.points || 0) + ' 👍' : '—';
+    const topPoints = display ? rows.filter(row => row.total > 0).map(row => ({ ...row, value: row.total })) : [];
+    const topVotes = votesReady ? rows.map(row => ({ ...row, value: scores[row.pid]?.points || 0 }))
+      .filter(row => row.value > 0).sort((a, b) => b.value - a.value || alphabetical(a, b)) : [];
+    leaders.innerHTML = leaderRows('Pronos', topPoints, Boolean(display), 'pts')
+      + leaderRows('Gouvernement', topVotes, votesReady, '👍');
     const leaderStatus = document.querySelector('[data-leaders-status]');
     leaderStatus.textContent = !display ? status.textContent || 'Chargement…'
       : !votesReady ? voteError || 'Chargement des votes…' : '';
@@ -132,7 +129,7 @@ export function playersView(root, { getStore, drawTeam, syncExistingTeam, notify
       const voted = type === 'team' && scores[row.pid]?.rating != null;
       const className = 'player-action' + (available ? ' available' : '') + (voted ? ' voted' : '');
       if (own) return `<a class="${className}" href="#${target}" data-go="${target}" aria-label="${type === 'pronos' ? 'Mes pronos' : 'Mon gouvernement'}">Ouvrir</a>`;
-      const action = type === 'team' ? (voted ? 'A voté' : 'Voter') : 'Voir';
+      const action = type === 'team' ? (voted ? 'A voté' : 'Voter') : '<svg class="player-eye" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
       const actionLabel = type === 'team'
         ? (voted ? 'A voté · Voir le gouvernement de ' : 'Voter pour le gouvernement de ')
         : 'Pronos de ';
