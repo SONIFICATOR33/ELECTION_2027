@@ -31,7 +31,7 @@ async function makePortrait(file) {
 }
 
 export function portraitView({ getPlayer, onUpdate }) {
-  const preview = document.querySelector('#space-portrait');
+  const previews = document.querySelectorAll('[data-player-portrait]');
   const dialog = document.querySelector('#portrait-dialog');
   const picker = document.querySelector('#portrait-file');
   const upload = document.querySelector('#portrait-upload');
@@ -57,7 +57,8 @@ export function portraitView({ getPlayer, onUpdate }) {
 
   function render() {
     load();
-    preview.src = Object.hasOwn(portraits, selected) ? portraits[selected] : selected || portraits.bouc;
+    const src = Object.hasOwn(portraits, selected) ? portraits[selected] : selected || portraits.bouc;
+    for (const preview of previews) preview.src = src;
     for (const option of options) option.setAttribute('aria-pressed', String(option.dataset.portrait === selected));
   }
 

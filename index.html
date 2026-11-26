@@ -18,7 +18,7 @@
 <link rel="manifest" href="manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
-<link rel="stylesheet" href="css/app.css?v=58">
+<link rel="stylesheet" href="css/app.css?v=59">
 </head>
 <body>
 <main>
@@ -55,7 +55,10 @@
       <p>Trouve qui sera élu et récolte le plus de 👍 avec ton gouvernement.</p>
     </div>
     <article class="card dashboard-card">
-      <h2>Mon espace</h2>
+      <div class="home-space-heading">
+        <h2>Mon espace</h2>
+        <img data-player-portrait src="img/portraits/vieux-bouc.webp" alt="" width="46" height="46">
+      </div>
       <div class="page-links">
         <a href="#profil" data-go="profil">Mon profil</a>
         <a href="#paris" data-go="paris">Mes pronos</a>
@@ -88,7 +91,7 @@
     <a class="page-back" href="#accueil" data-back aria-label="Accueil"><span>Accueil</span></a>
     <div class="space-identity">
       <button type="button" class="space-portrait" id="edit-portrait" aria-label="Personnaliser mon portrait" aria-haspopup="dialog">
-        <img id="space-portrait" src="img/portraits/vieux-bouc.webp" alt="" width="76" height="76">
+        <img id="space-portrait" data-player-portrait src="img/portraits/vieux-bouc.webp" alt="" width="76" height="76">
         <span aria-hidden="true">+</span>
       </button>
       <div>
@@ -449,7 +452,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=58"></script>
+<script type="module" src="js/app.js?v=59"></script>
 <script type="module" src="js/install.js?v=15"></script>
 </body>
 </html>
