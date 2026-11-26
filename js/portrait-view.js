@@ -1,5 +1,5 @@
 const portraits = {
-  bouc: 'img/portraits/vieux-bouc.webp',
+  bouc: 'img/portraits/vieux-bouc-echarpe.jpg',
   chatte: 'img/portraits/chatte-noeud-rose.webp'
 };
 const photoPrefix = 'data:image/jpeg;base64,';
