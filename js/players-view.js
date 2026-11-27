@@ -6,7 +6,7 @@ import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=99';
 import { teamPosition } from './team-gauge.js?v=102';
-import { createVotingOrder } from './voting-order.js?v=93';
+import { createVotingOrder, unvotedGovernments } from './voting-order.js?v=104';
 import { firstRoundForecast, closedForecastWeeks, forecastPhotoDate } from './community-forecast.js?v=92';
 import { portraitThumb } from './fiches.js?v=51';
 
@@ -52,6 +52,8 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   const retry = find('#players-retry');
   const syncStatus = find('#players-sync');
   const leaders = document.querySelector('[data-home-leaders]');
+  const homeVote = document.querySelector('#home-vote');
+  const homeVoteStatus = document.querySelector('#home-vote-status');
   const forecastPeriod = document.querySelector('#community-period');
   forecastPeriod.addEventListener('change', renderCommunityForecast);
   const dialog = document.querySelector('#player-dialog');
@@ -61,6 +63,34 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   let active = false, visible = false, unsubscribes = [], generation = 0, frame, limit = PAGE_SIZE;
   let openTeam, votePending, dialogRequest, imageUrl, opener, sortViewer;
   const votingOrder = createVotingOrder();
+
+  function discoveryQueue() {
+    const state = { pid: getStore().me()?.pid, teams: display?.teams || {}, scores, ready: Boolean(display) && votesReady };
+    return unvotedGovernments(votingOrder(rows, state), state);
+  }
+
+  function renderVoteInvitation() {
+    const failed = Boolean(voteError) || (!display && !retry.hidden);
+    const ready = Boolean(display) && votesReady;
+    const available = ready && discoveryQueue().length > 0;
+    homeVote.disabled = !available && !failed;
+    homeVote.textContent = failed ? 'Réessayer' : '👍 Je vote';
+    homeVoteStatus.textContent = failed ? voteError || 'Gouvernements indisponibles pour le moment.'
+      : !ready ? 'Chargement des gouvernements…'
+      : available ? '' : 'Tu as voté pour tous les gouvernements disponibles. Reviens découvrir les prochains !';
+    homeVoteStatus.hidden = !homeVoteStatus.textContent;
+  }
+
+  function nextGovernment() {
+    const next = discoveryQueue()[0];
+    if (!next || votePending) return;
+    showPlayer(homeVote, { id: next.pid, kind: 'team', discovery: true });
+  }
+
+  homeVote.onclick = () => {
+    if (voteError || (!display && !retry.hidden)) { pause(); resume(false); }
+    else nextGovernment();
+  };
 
   function leaderRows(label, ranked, ready, unit) {
     const top = ranked.slice(0, 3);
@@ -146,7 +176,8 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
 
   dialog.addEventListener('close', () => {
     clearDialog();
-    if (visible) focusPlayerAction(opener);
+    if (opener === homeVote) homeVote.focus({ preventScroll: true });
+    else if (visible) focusPlayerAction(opener);
     opener = null;
   });
 
@@ -243,6 +274,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
         rows = classement(display.players, display.pronos, RESULTS, U1, U2);
         scores = teamVoteScores(display.teams, votes, getStore().me().pid);
       }
+      renderVoteInvitation();
       renderLeaders();
       renderCommunityForecast();
       if (visible) renderTable();
@@ -258,7 +290,9 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     const pending = votePending === openTeam;
     const disabled = !votesReady || changed || pending;
     const focused = panel.contains(document.activeElement) ? document.activeElement.dataset.rating : undefined;
-    panel.innerHTML = '<p class="vote-score">' + (votesReady ? points + ' 👍 · ' + voters + ' votant' + (voters === 1 ? '' : 's') : escape(voteError || 'Chargement des votes…')) + '</p>' +
+    const voted = score?.rating != null;
+    const reveal = !openTeam.discovery || voted;
+    panel.innerHTML = (reveal ? '<p class="vote-score">' + (votesReady ? points + ' 👍 · ' + voters + ' votant' + (voters === 1 ? '' : 's') : escape(voteError || 'Chargement des votes…')) + '</p>' : '') +
       '<p id="team-rating-label">Ton vote pour ce gouvernement</p><div class="team-rating" role="group" aria-labelledby="team-rating-label">' +
       [0, 1, 2, 3].map(rating => {
         const label = rating === 0 ? '0 · Non' : rating + ' 👍';
@@ -266,12 +300,16 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
         return `<button data-rating="${rating}" aria-label="${ariaLabel}" aria-pressed="${score?.rating === rating}"${disabled ? ' disabled' : ''}>${label}</button>`;
       }).join('') + '</div>' +
       (score?.rating != null ? '<button class="linkbtn" data-vote-withdraw' + (disabled ? ' disabled' : '') + '>Annuler mon vote</button>' : '') +
+      (openTeam.discovery && voted ? (discoveryQueue().length
+        ? '<button class="big" data-vote-next' + (pending ? ' disabled' : '') + '>Au suivant →</button>'
+        : '<p role="status">Tu as voté pour tous les gouvernements disponibles. Merci !</p>') : '') +
       (pending ? '<p role="status">Enregistrement…</p>' : '') +
       (changed ? '<p role="status">Ce gouvernement a changé. Rouvre sa fiche pour voir sa nouvelle composition.</p>' : '');
     if (focused != null && !disabled) panel.querySelector('[data-rating="' + focused + '"]')?.focus({ preventScroll: true });
   }
 
   details.addEventListener('click', async event => {
+    if (event.target.closest('[data-vote-next]')) { nextGovernment(); return; }
     const button = event.target.closest('[data-rating], [data-vote-withdraw]');
     if (!button || button.disabled || !openTeam || votePending || !votesReady) return;
     const target = openTeam;
@@ -289,10 +327,11 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       if (voteGeneration !== generation) return;
       votes = votes.filter(vote => vote.voter !== voter || vote.team !== target.id);
       if (ballot) votes.push(ballot);
+      scores = teamVoteScores(display.teams, votes, voter);
       refresh();
       if (openTeam === target) {
-        dialog.close();
-        notify(withdrawing ? 'Vote annulé.' : 'A voté !');
+        if (!target.discovery) dialog.close();
+        notify(withdrawing ? 'Vote annulé.' : 'Vote enregistré !');
       }
     } catch (error) {
       if (openTeam === target) notify(error.code === 'permission-denied' ? 'Le vote n’est pas encore disponible.' : error.message || 'Vote non enregistré. Vérifie ta connexion.');
@@ -301,7 +340,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       if (dialog.open) refreshVotePanel();
       if (dialog.open && openTeam === target) {
         const selector = withdrawing ? '[data-vote-withdraw]' : `[data-rating="${rating}"]`;
-        details.querySelector(selector)?.focus({ preventScroll: true });
+        (details.querySelector('[data-vote-next]') || details.querySelector(selector))?.focus({ preventScroll: true });
       }
     }
   });
@@ -437,10 +476,10 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     }
   }
 
-  async function showPlayer(button) {
-    const { player: id, detail: kind } = button.dataset;
+  async function showPlayer(button, choice) {
+    const { id, kind, discovery = false } = choice || { id: button.dataset.player, kind: button.dataset.detail };
     const player = display?.players[id];
-    if (!player || dialog.open) return;
+    if (!player || (dialog.open && !discovery)) return;
     if (kind === 'team' && !hasTeam(display.teams[id])) return;
     clearDialog();
     opener = button;
@@ -448,11 +487,12 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     heading.classList.toggle('visually-hidden', kind === 'team');
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
     else {
-      openTeam = { id, composition: structuredClone(display.teams[id]) };
+      openTeam = { id, discovery, composition: structuredClone(display.teams[id]) };
       details.innerHTML = '<section class="team-vote-panel" data-team-vote></section><div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
       refreshVotePanel();
     }
-    dialog.showModal();
+    if (!dialog.open) dialog.showModal();
+    else details.querySelector('[data-rating]')?.focus({ preventScroll: true });
     if (kind !== 'team') return;
 
     dialogRequest = new AbortController();

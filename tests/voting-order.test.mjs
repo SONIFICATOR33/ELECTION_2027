@@ -60,3 +60,25 @@ test('loading or unavailable votes never blank the list, and loading completion 
   assert.deepEqual(ids(order(rows, pending)), ['bob', 'claire', 'empty', 'alice', 'me']);
   assert.equal(new Set(ids(order(rows, context))).size, rows.length);
 });
+
+test('discovery excludes own, empty and already rated governments including zero', async () => {
+  const { unvotedGovernments } = await import('../js/voting-order.js');
+  const state = { ...context, scores: { alice: { rating: 0 }, bob: { rating: 3 } } };
+  assert.deepEqual(ids(unvotedGovernments(rows, state)), ['claire']);
+  assert.deepEqual(unvotedGovernments(rows, { ...state, ready: false }), []);
+  assert.deepEqual(unvotedGovernments(rows, { ...state, scores: { ...state.scores, claire: { rating: 1 } } }), []);
+});
+
+test('discovery keeps a random stable order and advances once after each recorded vote', async () => {
+  const { unvotedGovernments } = await import('../js/voting-order.js');
+  const order = createVotingOrder(draw([.9, .8, .1, .4, .7]));
+  const state = { ...context, scores: {} };
+  const sequence = [];
+  for (;;) {
+    const next = unvotedGovernments(order(rows, state), state)[0];
+    if (!next) break;
+    sequence.push(next.pid);
+    state.scores[next.pid] = { rating: 0 };
+  }
+  assert.deepEqual(sequence, ['bob', 'claire', 'alice']);
+});

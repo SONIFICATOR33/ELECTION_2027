@@ -59,6 +59,12 @@
       <h1 id="welcome-title">Bienvenue</h1>
       <p>2 jeux indépendants : <b>Mes pronos</b> pour trouver qui sera élu président, <b>Mon gouve</b> pour récolter le plus de 👍 avec ton gouvernement idéal.</p>
     </div>
+    <article class="card dashboard-card" aria-labelledby="home-vote-title">
+      <h2 id="home-vote-title">Qui mérite tes 👍 ?</h2>
+      <p>Découvre les gouvernements des autres joueurs et donne de 0 à 3 👍.</p>
+      <button class="big" id="home-vote" type="button" aria-haspopup="dialog" disabled>👍 Je vote</button>
+      <p class="fine" id="home-vote-status" role="status">Chargement des gouvernements…</p>
+    </article>
     <article class="card dashboard-card">
       <div class="home-space-heading">
         <h2>Mon espace</h2>
@@ -510,7 +516,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=103"></script>
+<script type="module" src="js/app.js?v=104"></script>
 <script type="module" src="js/install.js?v=15"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>

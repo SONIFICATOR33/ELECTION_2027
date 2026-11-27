@@ -20,3 +20,9 @@ export function createVotingOrder(random = Math.random) {
       || ranks.get(a.pid) - ranks.get(b.pid) || a.pid.localeCompare(b.pid));
   };
 }
+
+// Eligible discovery cards: a zero rating is already a vote.
+export function unvotedGovernments(rows, { pid, teams, scores, ready }) {
+  return ready ? rows.filter(row => row.pid !== pid && hasTeam(teams[row.pid])
+    && scores[row.pid]?.rating == null) : [];
+}
