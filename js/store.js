@@ -1,3 +1,4 @@
+import { validPortrait } from './player-portrait.js?v=112';
 /* =====================================================================
    STOCKAGE — même interface en mode essai (localStorage) et en mode partagé (Firebase)
    ===================================================================== */
@@ -66,6 +67,12 @@ class LocalStore {
   }
   async logout() { this.db.me = null; this.write(); }
   async loadAll() { return { players: structuredClone(this.db.players), pronos: structuredClone(this.db.pronos) }; }
+  async getPortrait(pid = this.me()?.pid) { return this.db.players[pid]?.portrait || ''; }
+  async setPortrait(value) {
+    const pid = this.me()?.pid;
+    if (!pid || !validPortrait(value)) throw new StoreError('portrait', 'Portrait invalide.');
+    this.db.players[pid].portrait = value; this.write();
+  }
   async getRealName() {
     if (!this.me()) throw new StoreError('auth', 'Reconnecte-toi.');
     return this.db.privateProfiles?.[this.me().pid] || '';
@@ -164,6 +171,17 @@ class FirebaseStore {
       cursor = page.size === 500 ? page.docs.at(-1) : null;
     } while (cursor);
     return Object.fromEntries(names);
+  }
+  async getPortrait(pid = this.me()?.pid) {
+    if (!this.me()) throw new StoreError('auth', 'Reconnecte-toi.');
+    const doc = await this.F.getDocFromServer(this.F.doc(this.db, 'portraits', pid));
+    const value = doc.data()?.value;
+    return validPortrait(value) ? value : '';
+  }
+  async setPortrait(value) {
+    const pid = this.me()?.pid;
+    if (!pid || !validPortrait(value)) throw new StoreError('portrait', 'Portrait invalide.');
+    await this.F.setDoc(this.F.doc(this.db, 'portraits', pid), { value, updatedAt: this.F.serverTimestamp() });
   }
   async getRealName() {
     const { F, db } = this;

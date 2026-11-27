@@ -65,6 +65,20 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Small public avatars, owner writes only. Fetched per visible player, never en masse.
+    match /portraits/{pid} {
+      allow get: if registered();
+      allow list: if false;
+      allow create, update: if owner(pid)
+        && request.resource.data.keys().hasOnly(['value', 'updatedAt'])
+        && request.resource.data.value is string
+        && request.resource.data.value.size() <= 120000
+        && (request.resource.data.value in ['bouc', 'chatte']
+          || request.resource.data.value.matches('^data:image/jpeg;base64,[A-Za-z0-9+/]+={0,2}$'))
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if owner(pid);
+    }
+
     match /privateProfiles/{pid} {
       allow get: if owner(pid) || owner('vince');
       allow list: if owner('vince');

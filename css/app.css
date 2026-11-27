@@ -806,3 +806,13 @@ h1,h2 { font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
 .podium { display: flex; flex-wrap: wrap; justify-content: center; }
 .podium .pcol { flex: 1 1 100px; }
 .home-rank { font-size: var(--text-body); }
+
+.player-identity { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.player-identity > span { min-width: 0; overflow-wrap: anywhere; }
+.player-avatar, #player-dialog .player-avatar { width: 32px; height: 32px; object-fit: cover; border-radius: 50%; flex: 0 0 32px; }
+.player-owner { margin-bottom: 12px; }
+#player-dialog .player-owner .player-avatar { width: 44px; height: 44px; flex-basis: 44px; }
+.register-avatars { border: 0; padding: 0; margin: 12px 0; }
+.register-avatars > div { display: flex; gap: 16px; }
+.register-avatars label { display: flex; align-items: center; gap: 6px; }
+.register-avatars input { width: auto; }

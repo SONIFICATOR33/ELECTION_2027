@@ -25,6 +25,7 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, noti
     mode = action;
     const registration = mode === 'register';
     accessForm.reset();
+    $('#register-avatars').hidden = !registration;
     accessError.hidden = accessPending.hidden = true;
     accessForm.hidden = !mode;
     options.hidden = Boolean(mode);
@@ -58,12 +59,22 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, noti
     try {
       if (store.fallback) throw new Error('La connexion au jeu a échoué. Recharge la page pour réessayer.');
       const pin = codeField.value;
+      const avatar = mode === 'register' ? accessForm.querySelector('input[name="avatar"]:checked')?.value || 'bouc' : null;
       const player = await store.join(accessForm.elements.pseudo.value, pin, mode);
+      let portraitPending = false;
+      if (avatar) {
+        try { localStorage.setItem('pdm-portrait:' + player.pid, avatar); localStorage.setItem('pdm-portrait:' + player.pid + ':pending', '1'); } catch {}
+        try {
+          await store.setPortrait(avatar);
+          try { localStorage.removeItem('pdm-portrait:' + player.pid + ':pending'); } catch {}
+        } catch { portraitPending = true; }
+      }
       sessionPin = pin;
       clearTimeout(slow);
       accessStatus.textContent = 'Accès validé. Chargement de ton espace…';
       accessWait.textContent = 'Tu vas entrer dans le jeu automatiquement.';
       await onJoin(player);
+      if (portraitPending) notify('Ton avatar est affiché ici. Partage-le depuis Mon profil dès que la connexion est disponible.');
       accessForm.reset();
     } catch (error) {
       accessError.textContent = error.code ? (
