@@ -8,7 +8,7 @@ Photo [Portrait officiel de Raphaël Glucksmann, juillet 2024](https://commons.w
 
 ## Dans la course
 
-- **Statut** : Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre
+- **Statut** : Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre. Son équipe vise 2 500 parrainages, selon Le Monde du 27 novembre 2026.
 - **Présidentielles passées** : aucune
 
 ## Aujourd’hui
@@ -32,5 +32,6 @@ Cofondateur de Place publique et député européen depuis 2019, il siège au gr
 - [Parlement européen](https://www.europarl.europa.eu/meps/fr/197694/RAPHAEL_GLUCKSMANN/home)
 - [Wikipédia](https://fr.wikipedia.org/wiki/Rapha%C3%ABl_Glucksmann)
 - [LCP, 23 nov. 2026](https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932)
+- [Le Monde, 27 nov. 2026](https://www.lemonde.fr/politique/article/2026/11/27/presidentielle-2027-raphael-glucksmann-cherche-a-tisser-un-reseau-d-elus-locaux_6815814_823448.html)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 27 novembre 2026. Le repère sondages suit `js/data.js`.*

@@ -10,6 +10,7 @@ Photo [Portrait d'Éric Zemmour, avril 2022.jpg](https://commons.wikimedia.org/w
 
 - **Statut** : Candidature officialisée le 10 novembre 2026
 - **Présidentielles passées** : 2022 : 7,07 %
+- **Promesses de parrainage** : Le 26 novembre 2026 sur CNews, Éric Zemmour déclare avoir entre 300 et 350 promesses de parrainage. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.
 
 ## Aujourd’hui
 
@@ -31,5 +32,6 @@ Président de Reconquête, fondé en décembre 2021
 
 - [Wikipédia](https://fr.wikipedia.org/wiki/%C3%89ric_Zemmour)
 - [Euronews, 10 nov. 2026](https://fr.euronews.com/2026/11/10/eric-zemmour-annonce-sa-candidature-a-la-presidentielle)
+- [Europe 1, 26 nov. 2026](https://www.europe1.fr/politique/objectif-elysee-2027-cest-ma-derniere-campagne-annonce-eric-zemmour-1245688)
 
-*À jour le 24 novembre 2026. Le repère sondages suit `js/data.js`.*
+*À jour le 27 novembre 2026. Le repère sondages suit `js/data.js`.*
