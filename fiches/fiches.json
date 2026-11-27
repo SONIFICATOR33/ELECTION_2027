@@ -317,7 +317,7 @@
     },
     "glucksmann": {
       "naissance": "1979-10-15",
-      "statut": "Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre",
+      "statut": "Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre. Son équipe vise 2 500 parrainages, selon Le Monde du 27 novembre 2026.",
       "aujourdhui": "Cofondateur de Place publique et député européen depuis 2019, il siège au groupe des Socialistes et Démocrates (S&D).",
       "parcours": [
         [
@@ -356,6 +356,10 @@
         [
           "LCP, 23 nov. 2026",
           "https://lcp.fr/actualites/presidentielle-2027-la-liste-des-candidats-declares-et-potentiels-444932"
+        ],
+        [
+          "Le Monde, 27 nov. 2026",
+          "https://www.lemonde.fr/politique/article/2026/11/27/presidentielle-2027-raphael-glucksmann-cherche-a-tisser-un-reseau-d-elus-locaux_6815814_823448.html"
         ]
       ],
       "portrait": {
@@ -371,7 +375,8 @@
         "label": "Propositions",
         "detail": "Écologie · les 100 premiers jours",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "maj": "2026-11-27"
     },
     "hollande": {
       "naissance": "1954-08-12",
@@ -1261,6 +1266,10 @@
         [
           "Euronews, 10 nov. 2026",
           "https://fr.euronews.com/2026/11/10/eric-zemmour-annonce-sa-candidature-a-la-presidentielle"
+        ],
+        [
+          "Europe 1, 26 nov. 2026",
+          "https://www.europe1.fr/politique/objectif-elysee-2027-cest-ma-derniere-campagne-annonce-eric-zemmour-1245688"
         ]
       ],
       "portrait": {
@@ -1276,7 +1285,9 @@
         "label": "Priorités",
         "detail": "Priorités de campagne",
         "checkedAt": "2026-11-25"
-      }
+      },
+      "parrainages": "Le 26 novembre 2026 sur CNews, Éric Zemmour déclare avoir entre 300 et 350 promesses de parrainage. Le Conseil constitutionnel validera les parrainages après l’ouverture du recueil officiel.",
+      "maj": "2026-11-27"
     },
     "lassalle": {
       "naissance": "1955-05-03",

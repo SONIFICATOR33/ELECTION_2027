@@ -1,6 +1,6 @@
 # Les fiches des candidats
 
-24 candidats, de gauche à droite puis hors axe, comme dans l’appli. Dernière mise à jour le 26 novembre 2026.
+24 candidats, de gauche à droite puis hors axe, comme dans l’appli. Dernière mise à jour le 27 novembre 2026.
 
 | Candidat | Parti | Âge au 1er tour | Statut |
 |---|---|---|---|
@@ -12,7 +12,7 @@
 | [François Hollande](hollande.md) | PS | 72 ans | Pas déclaré : sa décision, d’abord promise pour décembre, est repoussée à janvier |
 | [Karim Bouamrane](bouamrane.md) | PS, hors primaire | 54 ans | Candidature annoncée le 9 juin 2026, hors primaire du PS |
 | [Bernard Cazeneuve](cazeneuve.md) | La Convention | 63 ans | « Lettre aux Français » le 16 juillet 2026, refuse la primaire du PS |
-| [Raphaël Glucksmann](glucksmann.md) | Place publique | 47 ans | Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre |
+| [Raphaël Glucksmann](glucksmann.md) | Place publique | 47 ans | Candidature annoncée le 23 août 2026, vainqueur de la primaire PS-Place publique en octobre. Son équipe vise 2 500 parrainages, selon Le Monde du 27 novembre 2026. |
 | [Gabriel Attal](attal.md) | Renaissance | 38 ans | Candidature annoncée le 22 mai 2026 |
 | [Olivier Becht](becht.md) | Apparenté Ensemble pour la République | 50 ans | Candidature annoncée le 24 septembre 2026 |
 | [Édouard Philippe](philippe.md) | Horizons | 56 ans | Candidature annoncée le 3 septembre 2024 |
