@@ -57,7 +57,7 @@ dans Mon profil ou le menu du navigateur.
 
 ### Votes des gouvernements
 
-Sur l’accueil, **Qui mérite tes 👍 ?** ouvre directement un gouvernement non encore
+Sur l’accueil, **Vote pour les gouvernements des autres** ouvre directement un gouvernement non encore
 noté, choisi dans l’ordre aléatoire propre au joueur. Son propre gouvernement et
 les compositions vides sont exclus. Le total des pouces n’est révélé qu’après le
 vote enregistré, y compris une note de zéro. **Au suivant →** permet de continuer
