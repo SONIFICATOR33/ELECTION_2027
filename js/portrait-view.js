@@ -40,7 +40,7 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
   const profileStatus = document.querySelector('#profile-portrait-status');
   const options = [...dialog.querySelectorAll('[data-portrait]')];
   let player = null, selected = '', request = 0, saving = false, synced = false, syncError = false;
-  let pending = false, stopWatching, session = 0;
+  let pending = false, retriedPending = false, stopWatching, session = 0;
 
   function storageKey() { return 'pdm-portrait:' + player; }
 
@@ -51,7 +51,7 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
     stopWatching = null;
     const currentSession = ++session;
     player = pid;
-    selected = ''; synced = false; syncError = false; saving = false; pending = false;
+    selected = ''; synced = false; syncError = false; saving = false; pending = false; retriedPending = false;
     request++;
     if (dialog.open) dialog.close();
     if (!player) return;
@@ -64,7 +64,13 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
     } catch {}
     stopWatching = getStore().watchPortrait(pid, value => {
       if (currentSession !== session || getPlayer()?.pid !== pid || saving) return;
-      if (pending && value !== selected) return;
+      if (pending && value !== selected) {
+        if (!retriedPending) {
+          retriedPending = true;
+          save(selected);
+        }
+        return;
+      }
       if (!value && !synced) return;
       selected = value; synced = Boolean(value); pending = false; syncError = false;
       try {
@@ -92,6 +98,7 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
     share.disabled = saving || !selected;
     upload.disabled = saving;
     profileStatus.textContent = saving ? 'Enregistrement du portrait…' : synced ? (getStore().mode === 'local' ? 'Portrait conservé sur cet appareil (mode essai).' : 'Portrait partagé avec les autres joueurs.')
+      : pending ? 'Partage de la photo en attente. Ouvre ton portrait pour réessayer.'
       : selected ? 'Ce portrait est sur cet appareil. Ouvre-le pour le partager.'
       : syncError ? 'Portrait du compte indisponible. Réessaie depuis ton profil.' : '';
   }

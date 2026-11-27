@@ -167,6 +167,8 @@ La ligne du joueur reprend immédiatement la photo de son profil. Les autres jou
 Un portrait préexistant conservé uniquement sur un téléphone n’est pas publié
 sans action du joueur : « Partager ce portrait » permet de le synchroniser.
 Un échec de synchronisation conserve la prévisualisation locale et un état en attente.
+Au retour dans le jeu, une photo dont le partage a déjà été demandé est envoyée
+à nouveau si elle manque encore sur le serveur. Une tentative est faite par session.
 Le choix Chatoune / Vieux bouc est proposé à l’inscription et dans Mon profil ;
 aucun genre n’est déduit du pseudo ou de la photo.
 
