@@ -1,3 +1,4 @@
+import { portraitSource } from './player-portrait.js?v=112';
 import { showTeamComments } from './team-comments.js?v=56';
 import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js?v=50';
@@ -66,6 +67,29 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   let active = false, visible = false, unsubscribes = [], generation = 0, frame, limit = PAGE_SIZE;
   let openTeam, votePending, dialogRequest, imageUrl, opener, sortViewer;
   const votingOrder = createVotingOrder();
+  const portraitCache = new Map();
+  function avatar(pid) {
+    return `<img class="player-avatar" data-public-portrait="${escape(pid)}" src="${escape(portraitSource(portraitCache.get(pid)?.value))}" alt="" width="32" height="32" loading="lazy">`;
+  }
+  function updatePortrait(pid, value) {
+    portraitCache.set(pid, { value });
+    for (const image of document.querySelectorAll('[data-public-portrait]')) {
+      if (image.dataset.publicPortrait === pid) image.src = portraitSource(value);
+    }
+  }
+  function loadVisiblePortraits() {
+    if (!active || !getStore().me()) return;
+    const store = getStore(), request = generation;
+    for (const image of document.querySelectorAll('[data-public-portrait]')) {
+      const pid = image.dataset.publicPortrait;
+      if (portraitCache.has(pid)) continue;
+      const entry = { value: '' };
+      portraitCache.set(pid, entry);
+      store.getPortrait(pid).then(value => {
+        if (active && generation === request && getStore() === store && portraitCache.get(pid) === entry) updatePortrait(pid, value);
+      }).catch(() => { if (generation === request && portraitCache.get(pid) === entry) portraitCache.delete(pid); });
+    }
+  }
 
   function discoveryQueue() {
     const state = { pid: getStore().me()?.pid, teams: display?.teams || {}, scores, ready: Boolean(display) && votesReady };
@@ -101,7 +125,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     const top = ranked.slice(0, 3);
     const entries = top.length ? top : [{ pseudo: '—', value: ready ? 0 : null }];
     return `<div><dt style="grid-row: span ${entries.length}">${label}</dt>` + entries.map(row =>
-      `<dd class="leader-name">${escape(row.pseudo)}</dd><dd class="leader-score">${row.value == null ? '—' : fmt(row.value) + ' ' + unit}</dd>`
+      `<dd class="leader-name"><span class="player-identity">${row.pid ? avatar(row.pid) : ''}<span>${escape(row.pseudo)}</span></span></dd><dd class="leader-score">${row.value == null ? '—' : fmt(row.value) + ' ' + unit}</dd>`
     ).join('') + '</div>';
   }
 
@@ -123,6 +147,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     leaderStatus.textContent = !display ? status.textContent || 'Chargement…'
       : !votesReady ? voteError || 'Chargement des votes…' : '';
     leaderStatus.hidden = !leaderStatus.textContent;
+    loadVisiblePortraits();
   }
 
   function renderCommunityForecast() {
@@ -231,7 +256,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
         : `<span aria-label="${labelType} à remplir">—</span>`;
     };
     return `<tr class="${hasProno || hasGovernment ? 'participating' : ''}${own ? ' own-player' : ''}">
-      <th scope="row">${indicator}${label}${own ? ' <small>toi</small>' : ''}</th>
+      <th scope="row">${indicator}<span class="player-identity">${avatar(row.pid)}<span>${label}${own ? ' <small>toi</small>' : ''}</span></span></th>
       <td>${button('Pronos', 'pronos', hasProno, 'paris')}</td>
       <td>${fmt(row.total)}</td>
       <td>${button('Gouvernement', 'team', hasGovernment, 'team')}</td>
@@ -267,6 +292,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     tableBody.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
       .map(row => rowHTML(row, pid, political, positions)).join('');
     focusPlayerAction(focus);
+    loadVisiblePortraits();
     find('.politics-legend').hidden = !political;
     more.hidden = ordered.length <= limit;
     voteStatus.textContent = !votesReady ? voteError || 'Chargement des votes…'
@@ -399,6 +425,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       limit = PAGE_SIZE;
     }
     display = null;
+    portraitCache.clear();
     rows = [];
     scores = {};
     votes = [];
@@ -499,12 +526,13 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
     else {
       openTeam = { id, discovery, composition: structuredClone(display.teams[id]) };
-      details.innerHTML = '<section class="team-vote-panel" data-team-vote></section><div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
+      details.innerHTML = '<div class="player-owner player-identity">' + avatar(id) + '<strong>' + escape(player.pseudo) + '</strong></div><section class="team-vote-panel" data-team-vote></section><div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
       refreshVotePanel();
     }
     if (!dialog.open) dialog.showModal();
     else details.querySelector('[data-rating]')?.focus({ preventScroll: true });
     dialog.scrollTop = 0;
+    loadVisiblePortraits();
     if (kind !== 'team') return;
 
     dialogRequest = new AbortController();
@@ -550,5 +578,5 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     if (button) showPlayer(button);
   });
 
-  return { resume, pause };
+  return { resume, pause, updatePortrait };
 }

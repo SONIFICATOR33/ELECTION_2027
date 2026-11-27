@@ -156,3 +156,21 @@ il ne prédit pas le score et ne change pas le barème. Les anciens pouces sont 
 La règle 12/12 est appliquée dans le parcours et lors des nouveaux votes du client.
 **Déploiement Firebase requis** : publier `firestore.rules` pour appliquer également cette
 restriction côté serveur aux anciennes versions du client. Les règles sont testées localement.
+
+## Portraits des joueurs
+
+Les portraits partagés sont stockés séparément dans `portraits/{pid}` : avatar
+`bouc` / `chatte`, ou JPEG réduit à 240 × 240 pixels et au plus 120 000 caractères.
+Les joueurs connectés peuvent lire un portrait ; seul son propriétaire peut le
+modifier. La lecture de la collection entière est interdite. Les photos sont
+chargées pour les lignes affichées (pagination de 50), les leaders et la fiche ouverte.
+
+Un portrait préexistant conservé uniquement sur un téléphone n’est pas publié
+sans action du joueur : « Partager ce portrait » permet de le synchroniser.
+Un échec de synchronisation conserve la prévisualisation locale et un état en attente.
+Le choix Chatoune / Vieux bouc est proposé à l’inscription et dans Mon profil ;
+aucun genre n’est déduit du pseudo ou de la photo.
+
+**Firebase : republier les règles** pour autoriser la collection `portraits`.
+Sans cette publication, la photo peut s’afficher localement, mais le partage affiche
+une erreur explicite. Les photos déjà partagées sont retrouvées sur les autres appareils.
