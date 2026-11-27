@@ -1,9 +1,9 @@
 import { potentialRemaining, displayedRanks } from './prono-progress.js?v=109';
 import { homeCalendar } from './home-calendar.js?v=109';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
-import { playersView } from './players-view.js?v=114';
+import { playersView } from './players-view.js?v=115';
 import { accountView } from './account-view.js?v=112';
-import { portraitView } from './portrait-view.js?v=112';
+import { portraitView } from './portrait-view.js?v=115';
 import { GROUP_ADMIN } from './groups.js?v=109';
 import { normalizeTeam, hasTeam, countTeamRoles, TEAM_ROLE_COUNT } from './team-state.js?v=114';
 /* =====================================================================
@@ -11,7 +11,7 @@ import { normalizeTeam, hasTeam, countTeamRoles, TEAM_ROLE_COUNT } from './team-
    ===================================================================== */
 import * as D from './data.js?v=109';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=112';
+import { openStore } from './store.js?v=115';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=51';
@@ -849,9 +849,9 @@ function getParticipation() {
 }
 
 const players = playersView($('#players-view'), {
-  getStore: () => store, getParticipation, drawTeam, syncExistingTeam, notify: toast
+  getStore: () => store, getParticipation, getOwnPortrait: () => portrait.value(), drawTeam, syncExistingTeam, notify: toast
 });
-const portrait = portraitView({ getPlayer: () => ME, getStore: () => store, onUpdate: value => { account.renderParticipation(); players.updatePortrait(ME.pid, value); } });
+const portrait = portraitView({ getPlayer: () => ME, getStore: () => store, onUpdate: players.updatePortrait });
 const account = accountView({
   getStore: () => store,
   getParticipation,

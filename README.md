@@ -161,7 +161,8 @@ Les portraits partagés sont stockés séparément dans `portraits/{pid}` : avat
 `bouc` / `chatte`, ou JPEG réduit à 240 × 240 pixels et au plus 120 000 caractères.
 Les joueurs connectés peuvent lire un portrait ; seul son propriétaire peut le
 modifier. La lecture de la collection entière est interdite. Les photos sont
-chargées pour les lignes affichées (pagination de 50), les leaders et la fiche ouverte.
+actualisées pendant que les lignes du classement (pagination de 50), les leaders ou la fiche du gouve sont affichés.
+La ligne du joueur reprend immédiatement la photo de son profil. Les autres joueurs voient la nouvelle photo après son enregistrement dans Firebase.
 
 Un portrait préexistant conservé uniquement sur un téléphone n’est pas publié
 sans action du joueur : « Partager ce portrait » permet de le synchroniser.

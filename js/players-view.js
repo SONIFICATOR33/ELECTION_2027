@@ -21,7 +21,7 @@ const thumbIcon = '<svg class="score-thumb" viewBox="0 0 24 24" aria-hidden="tru
 const alphabetical = (a, b) => a.pseudo.localeCompare(b.pseudo, 'fr') || a.pid.localeCompare(b.pid);
 const politicalColors = ['#8B142D', '#A1394E', '#A15665', '#726A71', '#486996', '#29517E', '#173968'];
 
-export function playersView(root, { getStore, getParticipation, drawTeam, syncExistingTeam, notify }) {
+export function playersView(root, { getStore, getParticipation, getOwnPortrait, drawTeam, syncExistingTeam, notify }) {
   const find = selector => root.querySelector(selector);
   const tabs = [...root.querySelectorAll('[role="tab"]')];
   let tab, panel;
@@ -46,25 +46,41 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   const votingOrder = createVotingOrder();
   const portraitCache = new Map();
   function avatar(pid) {
-    return `<img class="player-avatar" data-public-portrait="${escape(pid)}" src="${escape(portraitSource(portraitCache.get(pid)?.value))}" alt="" width="32" height="32" loading="lazy">`;
+    const value = pid === getStore().me()?.pid ? getOwnPortrait() : portraitCache.get(pid)?.value;
+    return `<img class="player-avatar" data-public-portrait="${escape(pid)}" src="${escape(portraitSource(value))}" alt="" width="32" height="32" loading="lazy">`;
   }
   function updatePortrait(pid, value) {
-    portraitCache.set(pid, { value });
+    const src = portraitSource(value);
     for (const image of document.querySelectorAll('[data-public-portrait]')) {
-      if (image.dataset.publicPortrait === pid) image.src = portraitSource(value);
+      if (image.dataset.publicPortrait === pid && image.getAttribute('src') !== src) image.src = src;
     }
   }
   function loadVisiblePortraits() {
-    if (!active || !getStore().me()) return;
-    const store = getStore(), request = generation;
-    for (const image of document.querySelectorAll('[data-public-portrait]')) {
-      const pid = image.dataset.publicPortrait;
+    const store = getStore(), me = store.me();
+    const wanted = new Set();
+    if (active && me) {
+      for (const image of document.querySelectorAll('.view.on [data-public-portrait], dialog[open] [data-public-portrait]')) {
+        const pid = image.dataset.publicPortrait;
+        if (pid !== me.pid) wanted.add(pid);
+      }
+    }
+    for (const [pid, entry] of portraitCache) {
+      if (!wanted.has(pid)) {
+        entry.stop();
+        portraitCache.delete(pid);
+      }
+    }
+    for (const pid of wanted) {
       if (portraitCache.has(pid)) continue;
       const entry = { value: '' };
       portraitCache.set(pid, entry);
-      store.getPortrait(pid).then(value => {
-        if (active && generation === request && getStore() === store && portraitCache.get(pid) === entry) updatePortrait(pid, value);
-      }).catch(() => { if (generation === request && portraitCache.get(pid) === entry) portraitCache.delete(pid); });
+      entry.stop = store.watchPortrait(pid, value => {
+        if (portraitCache.get(pid) !== entry) return;
+        entry.value = value;
+        updatePortrait(pid, value);
+      }, () => {
+        if (portraitCache.get(pid) === entry) portraitCache.delete(pid);
+      });
     }
   }
 
@@ -193,6 +209,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
 
   dialog.addEventListener('close', () => {
     clearDialog();
+    loadVisiblePortraits();
     if (opener === homeVote) homeVote.focus({ preventScroll: true });
     else if (opener === startVote) (startVote.hidden ? tab : startVote).focus({ preventScroll: true });
     else if (visible) focusPlayerAction(opener);
@@ -202,6 +219,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   function pause() {
     generation++;
     active = visible = false;
+    loadVisiblePortraits();
     for (const unsubscribe of unsubscribes) unsubscribe();
     unsubscribes = [];
     cancelAnimationFrame(frame);
@@ -432,6 +450,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     if (active) {
       renderCommunityForecast();
       if (visible) renderPlayers();
+      else loadVisiblePortraits();
       return;
     }
 
@@ -444,7 +463,6 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       selectTab(find('#tab-gouves'));
       limit = PAGE_SIZE;
     }
-    portraitCache.clear();
     rows = [];
     scores = {};
     votes = [];
