@@ -1,4 +1,4 @@
-import { homeCalendar } from './home-calendar.js?v=107';
+import { homeCalendar } from './home-calendar.js?v=108';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
 import { playersView } from './players-view.js?v=105';
 import { accountView } from './account-view.js?v=103';
@@ -142,12 +142,12 @@ function renderHomeCalendar() {
   const stageLink = stage => `<a class="stage-status-link" data-complete="${stage.complete}" href="#paris" data-go="paris#${stage.anchor}">Étape ${stage.number} · ${stage.complete ? 'Validée' : isOpen(stage.key) ? 'À valider' : 'Non jouée'} →</a>`;
   const banner = $('#home-deadline');
   banner.hidden = !next;
-  banner.innerHTML = next ? `<div><strong>Prochaine étape · ${shortDate(next.date)}</strong><span>${esc(next.label)}${next.provisional ? ' · date provisoire' : ''}</span></div>${stageLink(stages[next.stage - 1])}` : '';
+  banner.innerHTML = next ? `<div><strong>Prochaine étape · ${shortDate(next.date)}</strong><span>${esc(next.label)}${next.closing ? ' (à prôner avant la clôture du ' + shortDate(next.date) + ')' : ''}${next.provisional ? ' · date provisoire' : ''}</span></div>${stageLink(stages[next.stage - 1])}` : '';
   $('#home-timeline').innerHTML = stages.map(stage => `<li${stage.number === current ? ' aria-current="step"' : ''}>
     <span class="timeline-dot" aria-hidden="true">${stage.number}</span>
     <div>${stage.number === current ? '<strong class="timeline-here">Vous êtes ici</strong>' : ''}
       <h3>${stage.title}</h3>
-      <p>Clôture le ${shortDate(stage.lock)}${stage.provisional ? ' (provisoire)' : ''} · ${stage.number < 3 ? 'Résultat' : 'Scrutin'} le ${shortDate(stage.end)}</p>
+      <p>À prôner avant la clôture du ${shortDate(stage.lock)}${stage.provisional ? ' (provisoire)' : ''} · ${stage.number < 3 ? 'Résultat' : 'Scrutin'} le ${shortDate(stage.end)}</p>
       ${stageLink(stage)}
     </div></li>`).join('');
   $('#home-journey-end').hidden = Boolean(current);
