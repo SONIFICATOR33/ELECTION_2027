@@ -734,7 +734,7 @@ function draw() {
 
 /* ===================== NAVIGATION ===================== */
 const VIEWS = ['acces', 'accueil', 'espace', 'profil', 'paris', 'team', 'classement', 'sondages'];
-const TAB = { profil: 'accueil', espace: 'accueil', sondages: 'accueil' };
+const TAB = { profil: 'accueil', espace: 'accueil' };
 let currentView = 'acces';
 
 function show() {
