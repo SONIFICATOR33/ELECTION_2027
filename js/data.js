@@ -26,9 +26,9 @@ export const NWEEKS = 21;                          // semaines 0 à 20 (23 nov. 
 export const mult = w => Math.round((2 - w / (NWEEKS - 1)) * 100) / 100;
 
 export const MILESTONES = [
-  { at: LOCK1, short: '11 déc.', label: 'Clôture du pari « Qui sera là ? »', kind: 'lock' },
+  { at: LOCK1, short: '11 déc.', label: 'Clôture du prono « Qui sera toujours là en janvier ? »', kind: 'lock' },
   { at: RES1, short: '31 déc.', label: 'Résultat : qui est encore là', kind: 'res' },
-  { at: LOCK2, short: '5 févr.', label: 'Clôture du pari « 500 signatures »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
+  { at: LOCK2, short: '5 févr.', label: 'Clôture du prono « 500 signatures »' + (LOCK2_PROVISOIRE ? ' (date provisoire)' : ''), kind: 'lock' },
   { at: DEPOT500, short: '12 mars', label: 'Dépôt des 500 signatures, 18 h', kind: 'off' },
   { at: RES2, short: '26 mars', label: 'Liste officielle attendue au plus tard', kind: 'res' },
   { at: TOUR1, short: '18 avril', label: '1er tour', kind: 'tour' },

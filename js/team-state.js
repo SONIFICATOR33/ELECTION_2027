@@ -1,3 +1,4 @@
+import { POSTES } from './data.js?v=109';
 // Une même forme pour les anciens brouillons et les sauvegardes du compte.
 export function normalizeTeam(value) {
   const t = value && typeof value === 'object' ? value : {};
@@ -17,4 +18,9 @@ export function sameTeam(a, b) {
   const left = normalizeTeam(a), right = normalizeTeam(b);
   return ['coeur', 'pm', 'jl', 'jn'].every(k => left[k] === right[k])
     && JSON.stringify(Object.entries(left.min).sort()) === JSON.stringify(Object.entries(right.min).sort());
+}
+
+export function completeTeam(value) {
+  const t = normalizeTeam(value);
+  return Boolean(t.coeur.trim() && t.pm.trim() && POSTES.every(post => t.min[post]?.trim()));
 }

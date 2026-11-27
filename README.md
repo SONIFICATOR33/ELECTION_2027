@@ -45,7 +45,7 @@ dans Mon profil ou le menu du navigateur.
 
 ## Le jeu
 
-1. **Qui sera encore là le 31 décembre ?** Clôture le 11 décembre 2026 à 23 h 59.
+1. **Qui sera toujours là en janvier ?** Clôture le 11 décembre 2026 à 23 h 59.
 2. **Qui aura les 500 signatures ?** Fait foi la liste officielle du Conseil
    constitutionnel, attendue au plus tard le 26 mars. Clôture provisoire le
    5 février 2027 à 23 h 59.
@@ -65,13 +65,10 @@ sans revenir au classement. Quand tous les gouvernements disponibles ont été
 notés, un message le précise. Les états de chargement et d’échec restent explicites.
 
 La page **Classements** affiche tous les joueurs, avec ta ligne toujours en tête.
-Le tri par défaut **Aléatoire** place ensuite les gouvernements auxquels tu
-n’as pas encore attribué de vote, dans un ordre aléatoire propre à ta session.
-Les autres joueurs restent visibles à la suite, y compris ceux sans gouvernement. Un vote à
-zéro compte comme un vote déjà effectué. La liste reste visible pendant le
-chargement des votes ou en cas d’échec. Les autres tris (pseudo, points, pouces ou
-position politique) gardent ta ligne en tête. Ouvre le
-gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **Voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
+Le tri par défaut affiche le classement par pouces reçus. Le bouton **Voter pour les gouves**
+ouvre un parcours distinct, aléatoire, parmi les gouves complets (12/12) encore non notés.
+Les autres tris permettent de consulter les points de pronos, les pseudos ou la polarité.
+Ouvre le gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **Voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
 
 Les votes sont conservés quand les ministres, le Premier ministre ou le joker changent.
 Ils sont comptabilisés pour le président soutenu : changer de président remet le
@@ -143,3 +140,19 @@ La typographie utilise trois tailles, 14 px pour le texte courant, 16 px pour
 les sous-titres et commandes, 20 px pour les titres.
 La police est distribuée localement dans `fonts/manrope-variable.woff2`,
 avec sa licence dans `fonts/OFL-Manrope.txt`.
+
+## Parcours et sauvegarde
+
+Trois étapes : « Qui sera toujours là en janvier ? », « Qui aura les 500 signatures ? »,
+puis « La présidentielle » (top 5 et finale dans un seul prono). Le bouton Enregistrer
+reste visible dans la troisième étape. Un brouillon local par compte conserve la saisie
+incomplète sur cet appareil ; il ne compte pas dans les photos du lundi tant que le prono
+complet n’est pas enregistré. Un brouillon dont la base serveur a changé est ignoré.
+
+L’accueil propose la première étape ouverte non jouée. Le potentiel affiché correspond
+aux poids des photos déjà enregistrées et encore possibles, rapportés au maximum du jeu ;
+il ne prédit pas le score et ne change pas le barème. Les anciens pouces sont conservés.
+
+La règle 12/12 est appliquée dans le parcours et lors des nouveaux votes du client.
+**Déploiement Firebase requis** : publier `firestore.rules` pour appliquer également cette
+restriction côté serveur aux anciennes versions du client. Les règles sont testées localement.

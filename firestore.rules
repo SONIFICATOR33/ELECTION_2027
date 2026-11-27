@@ -156,6 +156,7 @@ service cloud.firestore {
         return exists(saved) && get(saved).data.keys().hasAny(['team'])
           ? get(saved).data.team : (exists(legacy) ? get(legacy).data.value : null);
       }
+      function filled(name) { return name is string && name.matches('(?s).*[^\\s].*'); }
       function validVote() {
         let v = request.resource.data;
         return v.keys().hasOnly(['team', 'voter', 'rating', 'composition', 'createdAt'])
@@ -164,8 +165,18 @@ service cloud.firestore {
           && v.team != v.voter && ballot == v.team + '~' + v.voter
           && exists(/databases/$(db)/documents/players/$(v.team))
           && validTeam(v.composition) && v.composition == currentTeam(v.team)
-          && (v.composition.coeur != '' || v.composition.pm != '' || v.composition.min.size() > 0
-            || v.composition.jl != '' || v.composition.jn != '')
+          && filled(v.composition.coeur) && filled(v.composition.pm)
+          && v.composition.min.keys().hasAll(['Intérieur', 'Économie et Finances', 'Affaires étrangères', 'Armées', 'Justice', 'Éducation nationale', 'Santé', 'Travail et Emploi', 'Écologie et Énergie', 'Agriculture'])
+          && filled(v.composition.min['Intérieur'])
+          && filled(v.composition.min['Économie et Finances'])
+          && filled(v.composition.min['Affaires étrangères'])
+          && filled(v.composition.min['Armées'])
+          && filled(v.composition.min['Justice'])
+          && filled(v.composition.min['Éducation nationale'])
+          && filled(v.composition.min['Santé'])
+          && filled(v.composition.min['Travail et Emploi'])
+          && filled(v.composition.min['Écologie et Énergie'])
+          && filled(v.composition.min['Agriculture'])
           && v.createdAt == request.time;
       }
       allow read: if registered();

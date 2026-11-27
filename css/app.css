@@ -795,3 +795,14 @@ h1,h2 { font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
 .timeline-here { display: inline-block; color: var(--or); margin-bottom: 4px; }
 .home-timeline h3 { margin: 3px 0 4px; color: var(--ink); }
 .home-timeline p { margin: 0; color: var(--mut); font-size: var(--text-body); }
+
+/* Clear primary task, secondary voting, and a visible save action. */
+.home-deadline .stage-status-link { padding: 12px 16px; border: 1px solid currentColor; border-radius: 10px; font-size: var(--text-ui); }
+.prono-save-bar { position: sticky; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 5; padding: 10px 0; background: var(--card); border-top: 1px solid var(--line); }
+.prono-save-bar p { margin: 0 0 6px; }
+.selected-top { padding-left: 24px; }
+.selected-top li { padding-block: 4px; }
+.toast { top: calc(10px + env(safe-area-inset-top)); bottom: auto; padding: 8px 12px; }
+.podium { display: flex; flex-wrap: wrap; justify-content: center; }
+.podium .pcol { flex: 1 1 100px; }
+.home-rank { font-size: var(--text-body); }

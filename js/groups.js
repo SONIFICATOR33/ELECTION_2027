@@ -1,13 +1,13 @@
 import { LOCK1, LOCK2, LOCKGP } from './data.js?v=50';
 import { monthKey } from './history.js';
-import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
-import { teamVotesStore } from './team-votes.js?v=60';
+import { normalizeTeam, hasTeam, sameTeam } from './team-state.js?v=109';
+import { teamVotesStore } from './team-votes.js?v=109';
 
 export const GROUP_CODE = /^[a-f0-9]{32}$/;
 export const GROUP_ADMIN = 'vince';
 export const COMMON_GROUP = 'e1ec7100202700000000000000000001';
 export const STAGES = [
-  ['l1', 'Qui sera là le 31 décembre ?', LOCK1],
+  ['l1', 'Qui sera toujours là en janvier ?', LOCK1],
   ['l2', 'Qui aura les 500 signatures ?', LOCK2],
   ['weeks', 'La présidentielle', LOCKGP]
 ];
