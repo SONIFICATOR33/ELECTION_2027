@@ -779,3 +779,19 @@ h1,h2 { font-weight: 700; line-height: 1.1; letter-spacing: -.02em; }
 #v-paris .prono-rules { margin-block: 12px; }
 #v-paris .prono-rules > summary { cursor: pointer; min-height: 44px; padding-block: 10px; font-weight: 600; }
 #v-paris .prono-rules .fine { margin-block: 8px; }
+
+/* Home deadlines and four-stage journey */
+.home-deadline { border: 1px solid var(--line); border-left: 4px solid var(--or); border-radius: 12px; padding: 14px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; background: var(--card); }
+.home-deadline strong, .home-deadline span { display: block; }
+.home-deadline strong { color: var(--or); }
+.stage-status-link { display: inline-block; padding-block: 10px; color: var(--rouge); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.stage-status-link[data-complete="true"] { color: var(--vert); }
+.home-timeline { list-style: none; padding: 0; margin: 20px 0 0; }
+.home-timeline li { position: relative; display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 12px; padding-bottom: 22px; }
+.home-timeline li:not(:last-child)::before { content: ''; position: absolute; left: 15px; top: 32px; bottom: 0; width: 2px; background: var(--line); }
+.home-timeline li:last-child { padding-bottom: 0; }
+.timeline-dot { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: 50%; color: var(--mut); }
+.home-timeline [aria-current="step"] .timeline-dot { background: var(--or); color: var(--bg); border-color: var(--or); font-weight: 700; }
+.timeline-here { display: inline-block; color: var(--or); margin-bottom: 4px; }
+.home-timeline h3 { margin: 3px 0 4px; color: var(--ink); }
+.home-timeline p { margin: 0; color: var(--mut); font-size: var(--text-body); }

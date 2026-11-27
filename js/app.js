@@ -1,3 +1,4 @@
+import { homeCalendar } from './home-calendar.js?v=107';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
 import { playersView } from './players-view.js?v=105';
 import { accountView } from './account-view.js?v=103';
@@ -135,6 +136,23 @@ function renderPollsOverview() {
 }
 
 /* ===================== MES PARIS ===================== */
+function renderHomeCalendar() {
+  const { stages, current, next } = homeCalendar(now(), { l1: done('l1'), l2: done('l2'), gp: done('gp') });
+  const shortDate = date => dateFr(date, { day: '2-digit', month: '2-digit' });
+  const stageLink = stage => `<a class="stage-status-link" data-complete="${stage.complete}" href="#paris" data-go="paris#${stage.anchor}">Étape ${stage.number} · ${stage.complete ? 'Validée' : isOpen(stage.key) ? 'À valider' : 'Non jouée'} →</a>`;
+  const banner = $('#home-deadline');
+  banner.hidden = !next;
+  banner.innerHTML = next ? `<div><strong>Prochaine étape · ${shortDate(next.date)}</strong><span>${esc(next.label)}${next.provisional ? ' · date provisoire' : ''}</span></div>${stageLink(stages[next.stage - 1])}` : '';
+  $('#home-timeline').innerHTML = stages.map(stage => `<li${stage.number === current ? ' aria-current="step"' : ''}>
+    <span class="timeline-dot" aria-hidden="true">${stage.number}</span>
+    <div>${stage.number === current ? '<strong class="timeline-here">Vous êtes ici</strong>' : ''}
+      <h3>${stage.title}</h3>
+      <p>Clôture le ${shortDate(stage.lock)}${stage.provisional ? ' (provisoire)' : ''} · ${stage.number < 3 ? 'Résultat' : 'Scrutin'} le ${shortDate(stage.end)}</p>
+      ${stageLink(stage)}
+    </div></li>`).join('');
+  $('#home-journey-end').hidden = Boolean(current);
+}
+
 function renderParisSummary() {
   const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', '1er tour : mon top 5', 'st3'], ['gp', '2e tour : ma finale', 'st4']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
@@ -704,6 +722,7 @@ function show() {
   const heading = $('#v-' + view).querySelector('h1, h2');
   heading.tabIndex = -1;
   heading.focus({ preventScroll: true });
+  if (view === 'accueil') renderHomeCalendar();
   if (view === 'sondages' || view === 'accueil') renderPollsOverview();
   if (view === 'sondages') {
     if ($('#gHero').closest('details').open) renderHero();
@@ -825,7 +844,7 @@ const account = accountView({
 
 function renderAll() {
   renderSession(); renderSnd();
-  renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
+  renderHomeCalendar(); renderParisSummary(); renderStages(); renderSB(); renderPhoto(); renderPick(); renderTotal(); renderDuel(); renderGPBtn();
   renderTeam();
   if (currentView === 'profil') account.renderParticipation();
 }
