@@ -554,24 +554,51 @@ h2{font-weight:600;letter-spacing:-.2px}
 /* Classement des joueurs */
 .players-wrap { max-width: 780px; }
 #players-view { display: grid; gap: 10px; }
-.players-toolbar { display: grid; gap: 6px; }
-.players-toolbar label { font-weight: 700; }
-#players-sort { width: 100%; height: 60px; min-height: 60px; padding: 10px 12px; border: 1px solid var(--or); border-radius: 10px; background: #1c1913; color: var(--orC); font-size: var(--text-ui); font-weight: 700; }
-.players-list { margin: 0; padding: 0; list-style: none; }
-.player-row { display: grid; gap: 4px 24px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
-.player-row + .player-row { margin-top: 8px; }
-.player-row.own-player { border-inline-start: 3px solid var(--or); }
-.player-row .player-identity strong { overflow-wrap: anywhere; }
-.player-row .player-identity small { color: var(--mut); font-weight: 400; }
-.player-entry { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 8px; }
-.player-entry + .player-entry { border-top: 1px solid var(--line); }
-.player-action { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; padding: 4px 2px; border: 0; background: transparent; color: var(--orC); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.player-action[data-progress] { margin-block: 2px; padding-inline: 8px; border: 1px solid var(--progress-border); border-radius: 6px; background: var(--progress-bg); color: var(--progress-ink); text-decoration: none; }
-.player-unavailable { padding-block: 10px; color: var(--mut); }
-.player-score { font-variant-numeric: tabular-nums; }
-.player-ballot { grid-column: 1 / -1; margin-bottom: 6px; color: var(--mut); }
-@media (min-width: 540px) {
-  .player-row { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); align-items: center; }
+.ranking-tabs { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border: 1px solid var(--line); border-radius: 13px; background: var(--nuit2); }
+.ranking-tabs button { min-height: 44px; padding: 6px; border: 0; border-radius: 9px; color: var(--orC); background: transparent; font-weight: 700; }
+.ranking-tabs button[aria-selected="true"] { background: #c9a35e; color: #201b14; }
+#ranking-remaining { margin-inline-start: 6px; font-size: .875rem; font-variant-numeric: tabular-nums; }
+.ranking-panel { display: grid; gap: 12px; }
+.ranking-help { margin: 0; color: var(--mut); line-height: 1.5; }
+.vote-progress { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 12px; border: 1px solid #487564; border-radius: 12px; background: var(--vertbg); }
+.vote-progress:has(button[hidden]) > div { grid-column: 1 / -1; }
+.vote-progress strong, .vote-progress span { display: block; line-height: 1.35; }
+.vote-progress span { font-size: .875rem; }
+#players-start-vote { min-height: 44px; padding: 6px 12px; border: 1px solid #579778; border-radius: 9px; background: #176a46; color: #fff; font-weight: 700; }
+.ranking-panel { --ranking-columns: minmax(0, 1fr) minmax(3.3rem, .32fr) minmax(4.6rem, .4fr) .55rem; --row-bg: #10231d; }
+#ranking-pronos { --ranking-columns: minmax(0, 1fr) minmax(3.3rem, .32fr) .55rem; --row-bg: #171d26; }
+[data-theme="light"] #ranking-gouves { --row-bg: #edf5ef; }
+[data-theme="light"] #ranking-pronos { --row-bg: #f0f3f8; }
+.ranking-columns, .ranking-row { display: grid; grid-template-columns: var(--ranking-columns); align-items: center; column-gap: 8px; padding-inline: 10px; }
+.ranking-columns { padding-block: 0 5px; border-inline: 1px solid transparent; color: var(--mut); text-transform: uppercase; font-size: .875rem; font-weight: 700; line-height: 1.2; }
+.ranking-columns span:not(:first-child) { text-align: center; }
+.players-list { margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: 12px; background: var(--row-bg); }
+.players-list:empty { display: none; }
+.players-list li + li { border-top: 1px solid var(--line); }
+.ranking-row { position: relative; width: 100%; min-height: 64px; padding-block: 9px; border: 0; background: transparent; color: var(--ink); text-align: start; text-decoration: none; line-height: 1.25; }
+.players-list li:first-child .ranking-row { border-radius: 11px 11px 0 0; }
+.players-list li:last-child .ranking-row { border-radius: 0 0 11px 11px; }
+.ranking-row.own-player { box-shadow: inset 3px 0 var(--or); }
+:is(a,button).ranking-row:hover { background: rgb(128 128 128 / .12); }
+.ranking-row:focus-visible { z-index: 1; outline-offset: -3px; }
+.player-caption strong, .player-caption > small { display: block; overflow-wrap: anywhere; }
+.player-caption small { font-size: .875rem; color: var(--mut); font-weight: 400; }
+.player-caption > small { margin-top: 2px; }
+.player-score { display: flex; align-items: center; justify-content: center; gap: 3px; font-variant-numeric: tabular-nums; font-weight: 700; }
+.score-thumb { width: 1rem; height: 1rem; flex: none; }
+.vote-badge { display: inline-flex; justify-content: center; align-items: center; justify-self: center; min-width: 4.2rem; padding: 4px 5px; border: 1px solid var(--line); border-radius: 20px; font-size: .875rem; font-weight: 700; color: var(--mut); }
+.vote-badge[data-state="rated"] { color: var(--vert); border-color: #477a66; }
+.vote-badge[data-state="pending"] { background: #c9a35e; color: #201b14; border-color: transparent; }
+.row-chevron { justify-self: end; width: 7px; height: 7px; border: solid var(--mut); border-width: 0 1.5px 1.5px 0; transform: rotate(-45deg); }
+.ranking-sort { margin-top: 8px; color: var(--mut); font-size: .875rem; }
+.ranking-sort summary { cursor: pointer; padding-block: 10px; }
+.ranking-sort label { display: grid; gap: 4px; }
+.ranking-sort select { min-height: 44px; width: 100%; background: var(--card); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding-inline: 8px; }
+.players-more { margin-top: 8px; }
+@media (max-width: 360px) {
+  #ranking-gouves { --ranking-columns: minmax(0,1fr) 2.7rem 3.8rem .45rem; }
+  .ranking-columns, .ranking-row { padding-inline: 7px; column-gap: 4px; }
+  .vote-badge { min-width: 0; width: 100%; }
 }
 .politics-legend { display: flex; align-items: center; justify-content: flex-end; gap: 8px; color: var(--mut); }
 .politics-legend i { width: min(30%, 128px); height: 8px; border-radius: 9px; background: linear-gradient(90deg, #8b142d, #726a71, #173968); }
@@ -726,7 +753,6 @@ body:has(#v-espace.on) {
 [data-theme="light"] .space-card[data-complete="true"] [data-space-status] { color: #146b48; }
 [data-theme="light"] .space-card progress,
 [data-theme="light"] .space-card progress::-webkit-progress-bar { background: #ddd9d0; }
-[data-theme="light"] #players-sort { background: #f2f0eb; }
 [data-theme="light"] #portrait-dialog,
 [data-theme="light"] .leaders-bubble { background: #fffdf8; }
 [data-theme="light"] .portrait-options button { background: #f6f4ef; }
@@ -739,15 +765,6 @@ body:has(#v-espace.on) {
 [data-theme="light"] .p3 .blk { color: var(--ink); }
 [data-theme="light"] .team-rating button[aria-pressed="true"] { color: #fff; }
 [data-theme="light"] .politics-swatch { border-color: #777; }
-
-/* Progression des pronos et du gouve du joueur connecté. */
-.player-action[data-progress="empty"] { --progress-bg: #421b23; --progress-ink: #ffb3bd; --progress-border: #a94759; }
-.player-action[data-progress="started"] { --progress-bg: #412b0d; --progress-ink: #ffd59b; --progress-border: #b98736; }
-.player-action[data-progress="complete"] { --progress-bg: #174d8c; --progress-ink: #d8eaff; --progress-border: #679dde; }
-[data-theme="light"] .player-action[data-progress="empty"] { --progress-bg: #fce8ec; --progress-ink: #9b2035; --progress-border: #c46b7b; }
-[data-theme="light"] .player-action[data-progress="started"] { --progress-bg: #fff0d9; --progress-ink: #7d4a00; --progress-border: #b88430; }
-[data-theme="light"] .player-action[data-progress="complete"] { --progress-bg: #e4efff; --progress-ink: #144e91; --progress-border: #5d86bd; }
-
 
 /* Typography: black by default, white only when selected in the profile. */
 :root { color-scheme: dark; --bg: #121212; --nuit: #121212; --nuit2: #121212; --text-body: 16px; --w: 400; --ink-2: rgba(255,255,255,.6); --mut: var(--ink-2); }

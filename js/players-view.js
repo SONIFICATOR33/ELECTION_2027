@@ -4,7 +4,7 @@ import { monthlyPhotos } from './history.js';
 import { by, RESULTS, U1, U2 } from './data.js?v=50';
 import { classement, current } from './scoring.js';
 import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=109';
-import { normalizeTeam, hasTeam, sameTeam, completeTeam } from './team-state.js?v=109';
+import { normalizeTeam, hasTeam, sameTeam, completeTeam, countTeamRoles, TEAM_ROLE_COUNT } from './team-state.js?v=114';
 import { teamVoteScores } from './team-votes.js?v=109';
 import { teamPosition } from './team-gauge.js?v=102';
 import { createVotingOrder, unvotedGovernments, nextUnvotedGovernment } from './voting-order.js?v=109';
@@ -17,35 +17,17 @@ const escape = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
 const name = id => by[id] ? by[id].p + ' ' + by[id].n : id;
 const fmt = n => Number(n).toLocaleString('fr-FR', { maximumFractionDigits: 1 });
 const PAGE_SIZE = 50;
+const thumbIcon = '<svg class="score-thumb" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 10h4v11H3zM10 10l4-7c2 0 3 1 2 4l-1 3h5a2 2 0 0 1 2 2l-2 7a2 2 0 0 1-2 2h-8z"/></svg>';
 const alphabetical = (a, b) => a.pseudo.localeCompare(b.pseudo, 'fr') || a.pid.localeCompare(b.pid);
 const politicalColors = ['#8B142D', '#A1394E', '#A15665', '#726A71', '#486996', '#29517E', '#173968'];
 
 export function playersView(root, { getStore, getParticipation, drawTeam, syncExistingTeam, notify }) {
-  root.innerHTML = `<div class="players-toolbar" hidden>
-    <button type="button" class="ghost" id="players-start-vote" aria-haspopup="dialog">Découvrir un gouve</button>
-    <label for="players-sort">Classement par</label>
-    <select id="players-sort">
-
-      <option value="thumbs" selected>Nombre de pouces levés</option>
-      <option value="name">Ordre alphabétique</option>
-      <option value="points">Points de pronos</option>
-      <option value="politics">De gauche à droite</option>
-    </select>
-  </div>
-  <div class="politics-legend" hidden><span>Gauche</span><i aria-hidden="true"></i><span>Droite</span></div>
-  <p class="fine" id="players-vote-status" role="status" hidden></p>
-  <ul class="players-list" aria-label="Classement des joueurs" hidden></ul>
-  <button class="ghost" id="players-more" hidden>Afficher plus de joueurs</button>
-  <p class="fine" id="players-status" role="status"></p>
-  <button class="ghost" id="players-retry" hidden>Réessayer</button>
-  <p class="fine" id="players-sync" hidden>Ton gouvernement attend une connexion pour être partagé. <button class="linkbtn" id="players-resync">Réessayer la synchronisation</button></p>`;
-
   const find = selector => root.querySelector(selector);
+  const tabs = [...root.querySelectorAll('[role="tab"]')];
+  let tab, panel;
   const status = find('#players-status');
-  const voteStatus = find('#players-vote-status');
-  const playerList = find('.players-list');
-  const sort = find('#players-sort');
-  const more = find('#players-more');
+  const startVote = find('#players-start-vote');
+  const remainingBadge = find('#ranking-remaining');
   const retry = find('#players-retry');
   const syncStatus = find('#players-sync');
   const leaders = document.querySelector('[data-home-leaders]');
@@ -94,9 +76,18 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   function renderVoteInvitation() {
     const failed = Boolean(voteError) || (!display && !retry.hidden);
     const ready = Boolean(display) && votesReady;
-    const available = ready && discoveryQueue().length > 0;
+    const remaining = ready ? discoveryQueue().length : 0;
+    const available = remaining > 0;
     homeVote.disabled = !available && !failed;
-    find('#players-start-vote').disabled = !available;
+    startVote.hidden = !available;
+    remainingBadge.hidden = !available;
+    remainingBadge.textContent = available ? String(remaining) : '';
+    find('#tab-gouves').setAttribute('aria-label', available ? `Gouves, ${remaining} à noter` : 'Gouves');
+    const total = ready ? rows.filter(row => row.pid !== getStore().me().pid && completeTeam(display.teams[row.pid])).length : 0;
+    find('#players-vote-count').textContent = total ? `${total - remaining} sur ${total}` : '';
+    find('#players-vote-status').textContent = !ready
+      ? voteError || (!display && !retry.hidden ? 'Gouvernements indisponibles.' : 'Chargement des votes…')
+      : total ? (total === 1 ? 'gouve complet noté' : 'gouves complets notés') : 'Aucun gouve complet à noter pour le moment.';
     homeVote.textContent = failed ? 'Réessayer' : 'Découvrir un gouve';
     homeVoteStatus.textContent = failed ? voteError || 'Gouvernements indisponibles pour le moment.'
       : !ready ? 'Chargement des gouvernements…'
@@ -110,7 +101,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     showPlayer(opener || homeVote, { id: next.pid, kind: 'team', discovery: true });
   }
 
-  find('#players-start-vote').onclick = () => { opener = find('#players-start-vote'); nextGovernment(); };
+  startVote.onclick = () => { opener = startVote; nextGovernment(); };
   homeVote.onclick = () => {
     if (voteError || (!display && !retry.hidden)) { pause(); resume(false); }
     else nextGovernment();
@@ -195,15 +186,15 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   function focusPlayerAction(button) {
     if (!button?.dataset.player) return;
     const { player, detail } = button.dataset;
-    const target = playerList.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`);
+    const target = panel.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`);
     if (target) target.focus({ preventScroll: true });
-    else if (!dialog.open) (playerList.querySelector('[data-detail="team"]') || sort).focus({ preventScroll: true });
+    else if (!dialog.open) tab.focus({ preventScroll: true });
   }
 
   dialog.addEventListener('close', () => {
     clearDialog();
     if (opener === homeVote) homeVote.focus({ preventScroll: true });
-    else if (opener?.id === 'players-start-vote') opener.focus({ preventScroll: true });
+    else if (opener === startVote) (startVote.hidden ? tab : startVote).focus({ preventScroll: true });
     else if (visible) focusPlayerAction(opener);
     opener = null;
   });
@@ -219,87 +210,111 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     clearDialog();
   }
 
-  function playerHTML(row, pid, political, positions) {
-    const own = row.pid === pid;
-    const prono = display.pronos[row.pid] || {};
-    const hasProno = Boolean(prono.l1?.length || prono.l2?.length || current(prono));
-    const hasGovernment = hasTeam(display.teams[row.pid]);
-    const balance = positions.get(row.pid);
-    const color = balance == null ? '' : politicalColors[Math.round((balance + 1) * 3)];
-    const position = balance == null ? 'Sans repère' : balance < 0 ? 'À gauche' : balance > 0 ? 'À droite' : 'À l’équilibre';
-    const indicator = political ? `<span class="politics-swatch" ${color ? 'style="--position:' + color + '"' : ''} title="${position}" aria-label="${position}"></span>` : '';
+  function selectTab(selected) {
+    if (selected === tab) return;
+    if (panel) {
+      panel.hidden = true;
+      panel.querySelector('.players-list').replaceChildren();
+    }
+    tab = selected;
+    panel = find('#' + tab.getAttribute('aria-controls'));
+    for (const item of tabs) {
+      item.setAttribute('aria-selected', String(item === tab));
+      item.tabIndex = item === tab ? 0 : -1;
+    }
+    panel.hidden = false;
+    limit = PAGE_SIZE;
+    if (visible) renderPlayers();
+  }
+
+  for (const item of tabs) {
+    item.onclick = () => selectTab(item);
+    item.onkeydown = event => {
+      let selected;
+      if (event.key === 'Home') selected = tabs[0];
+      else if (event.key === 'End') selected = tabs[tabs.length - 1];
+      else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') selected = tabs.find(other => other !== item);
+      else return;
+      event.preventDefault();
+      selectTab(selected);
+      selected.focus();
+    };
+  }
+  selectTab(find('#tab-gouves'));
+
+  function playerRow(row, { own, kind, subtitle, value, scoreLabel, badge = '', available, indicator = '' }) {
     const label = escape(row.pseudo);
-    const progress = own ? getParticipation() : null;
-    function entryAction(type, available) {
-      const isProno = type === 'pronos';
-      if (own) {
-        const target = isProno ? 'paris' : 'team';
-        const count = isProno ? progress.pronos : progress.team;
-        const total = isProno ? progress.totalPronos : progress.totalTeam;
-        const started = count > 0 || (isProno ? progress.startedPronos : progress.startedTeam);
-        const state = count === total ? 'complete' : started ? 'started' : 'empty';
-        const status = { empty: 'Pas commencé', started: 'En cours', complete: 'Complet' }[state];
-        const title = isProno ? 'Mes pronos' : 'Mon gouve';
-        return `<a class="player-action" data-progress="${state}" href="#${target}" data-go="${target}" title="${status}" aria-label="${title} · ${status}">${title}</a>`;
-      }
-      if (!available) return `<span class="player-unavailable">${isProno ? 'Aucun prono' : 'Aucun gouve'}</span>`;
-      const title = isProno ? 'Voir les pronos' : 'Voir le gouve';
-      return `<button type="button" class="player-action" data-player="${escape(row.pid)}" data-detail="${type}" aria-haspopup="dialog" aria-label="${title} de ${label}">${title}</button>`;
+    const identity = `<span class="player-identity">${indicator}${avatar(row.pid)}<span class="player-caption"><strong>${label}${own ? '<small> (toi)</small>' : ''}</strong><small>${subtitle}</small></span></span>`;
+    const content = identity + `<span class="player-score"><span class="visually-hidden">${scoreLabel} </span>${value}</span>`
+      + badge + (available || own ? '<span class="row-chevron" aria-hidden="true"></span>' : '');
+    if (own) {
+      const target = kind === 'team' ? 'team' : 'paris';
+      return `<li><a class="ranking-row own-player" data-player="${escape(row.pid)}" data-detail="${kind}" href="#${target}" data-go="${target}">${content}</a></li>`;
     }
+    if (!available) return `<li><div class="ranking-row">${content}</div></li>`;
+    return `<li><button type="button" class="ranking-row" data-player="${escape(row.pid)}" data-detail="${kind}" aria-haspopup="dialog"><span class="visually-hidden">${kind === 'team' ? 'Voir le gouve de' : 'Voir les pronos de'} </span>${content}</button></li>`;
+  }
+
+  function governmentRow(row, own, positions) {
+    const team = display.teams[row.pid];
+    const count = own ? getParticipation().team : countTeamRoles(team);
+    const full = count === TEAM_ROLE_COUNT;
+    const slots = `${count}/${TEAM_ROLE_COUNT}`;
+    const available = hasTeam(team);
+    const subtitle = !count && !available ? 'Aucun gouve' : (full ? '' : 'En cours · ') + slots + ' postes';
     const score = scores[row.pid];
-    const thumbs = score?.points || 0;
-    const received = votesReady ? `${fmt(thumbs)} ${thumbs > 1 ? 'pouces reçus' : 'pouce reçu'}` : '—';
-    const notes = [];
-    if (!own && hasGovernment) {
-      if (!completeTeam(display.teams[row.pid])) notes.push('Gouve en cours');
-      if (votesReady && score?.rating != null) {
-        notes.push(`Ton vote · ${score.rating} ${score.rating > 1 ? 'pouces' : 'pouce'}`);
-      }
+    let state = 'partial', ballot = slots, voteLabel = '';
+    if (own) { ballot = '—'; voteLabel = 'Ton propre gouve'; }
+    else if (votesReady && score?.rating != null) {
+      state = 'rated';
+      ballot = '✓ Noté';
+      voteLabel = ` · ${score.rating} ${score.rating > 1 ? 'pouces' : 'pouce'}`;
+    } else if (full && votesReady) { state = 'pending'; ballot = 'À noter'; }
+    else if (full || !available) ballot = '—';
+    const badge = `<span class="vote-badge" data-state="${state}">${ballot}<span class="visually-hidden">${voteLabel}</span></span>`;
+    let indicator = '';
+    if (positions) {
+      const balance = positions.get(row.pid);
+      const color = balance == null ? '' : politicalColors[Math.round((balance + 1) * 3)];
+      const position = balance == null ? 'Sans repère' : balance < 0 ? 'À gauche' : balance > 0 ? 'À droite' : 'À l’équilibre';
+      indicator = `<span class="politics-swatch" ${color ? 'style="--position:' + color + '"' : ''} title="${position}" aria-label="${position}"></span>`;
     }
-    return `<li class="player-row${own ? ' own-player' : ''}">
-      <div class="player-identity">${indicator}${avatar(row.pid)}<strong>${label}${own ? ' <small>(toi)</small>' : ''}</strong></div>
-      <div class="player-entries">
-        <div class="player-entry">${entryAction('pronos', hasProno)}<span class="player-score">${fmt(row.total)} ${row.total > 1 ? 'points' : 'point'}</span></div>
-        <div class="player-entry">${entryAction('team', hasGovernment)}<span class="player-score">${received}</span>
-          ${notes.length ? `<small class="player-ballot">${notes.join(' · ')}</small>` : ''}
-        </div>
-      </div>
-    </li>`;
+    const value = votesReady ? fmt(score?.points || 0) + ' ' + thumbIcon : '—';
+    return playerRow(row, { own, kind: 'team', subtitle, value, scoreLabel: 'Pouces reçus', badge, available, indicator });
+  }
+
+  function pronoRow(row, own) {
+    const prono = display.pronos[row.pid] || {};
+    const stages = own ? getParticipation().pronos : [prono.l1?.length, prono.l2?.length, current(prono)].filter(Boolean).length;
+    const subtitle = stages ? `${stages}/3 étapes renseignées` : 'Aucun prono';
+    return playerRow(row, { own, kind: 'pronos', subtitle, value: fmt(row.total), scoreLabel: 'Points', available: stages > 0 });
   }
 
   function renderPlayers() {
-    find('.players-toolbar').hidden = playerList.hidden = !display;
-    voteStatus.hidden = !display;
-    if (!display) {
-      playerList.replaceChildren();
-      more.hidden = find('.politics-legend').hidden = true;
-      return;
-    }
-
+    const results = panel.querySelector('.ranking-results');
+    results.hidden = !display;
+    const list = panel.querySelector('.players-list');
+    if (!display) { list.replaceChildren(); return; }
     const pid = getStore().me().pid;
-    const random = sort.value === 'random';
-    const political = sort.value === 'politics';
-    const positions = political ? new Map(rows.map(row =>
-      [row.pid, teamPosition(normalizeTeam(display.teams[row.pid])).balance])) : new Map();
+    const isGouve = panel.id === 'ranking-gouves';
+    const order = panel.querySelector('select').value;
+    const positions = order === 'politics' ? new Map(rows.map(row =>
+      [row.pid, teamPosition(normalizeTeam(display.teams[row.pid])).balance])) : null;
     const others = rows.filter(row => row.pid !== pid);
-    const ordered = random
-      ? votingOrder(others, { pid, teams: display.teams, scores, ready: votesReady })
-      : others;
-    if (sort.value === 'name') ordered.sort(alphabetical);
-    if (sort.value === 'thumbs') ordered.sort((a, b) =>
+    if (order === 'name') others.sort(alphabetical);
+    if (order === 'thumbs') others.sort((a, b) =>
       (scores[b.pid]?.points || 0) - (scores[a.pid]?.points || 0) || alphabetical(a, b));
-    if (political) ordered.sort((a, b) =>
+    if (positions) others.sort((a, b) =>
       (positions.get(a.pid) ?? Infinity) - (positions.get(b.pid) ?? Infinity) || alphabetical(a, b));
     const own = rows.find(row => row.pid === pid);
+    const shown = others.slice(0, limit);
+    if (own) shown.unshift(own);
     const focus = document.activeElement;
-    playerList.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
-      .map(row => playerHTML(row, pid, political, positions)).join('');
+    list.innerHTML = shown.map(row => isGouve ? governmentRow(row, row.pid === pid, positions) : pronoRow(row, row.pid === pid)).join('');
     focusPlayerAction(focus);
     loadVisiblePortraits();
-    find('.politics-legend').hidden = !political;
-    more.hidden = ordered.length <= limit;
-    voteStatus.textContent = !votesReady ? voteError || 'Chargement des votes…'
-      : 'Pour voter, ouvre un gouve complet puis choisis de 0 à 3 pouces sous sa composition.';
+    find('.politics-legend').hidden = !positions;
+    panel.querySelector('.players-more').hidden = others.length <= limit;
   }
 
   function refresh() {
@@ -422,12 +437,13 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
 
     active = true;
     const request = ++generation, store = getStore();
+    display = null;
     if (sortViewer !== store.me().pid) {
       sortViewer = store.me().pid;
-      sort.value = 'thumbs';
+      for (const select of root.querySelectorAll('.ranking-sort select')) select.selectedIndex = 0;
+      selectTab(find('#tab-gouves'));
       limit = PAGE_SIZE;
     }
-    display = null;
     portraitCache.clear();
     rows = [];
     scores = {};
@@ -563,14 +579,12 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     }
   }
 
-  sort.addEventListener('change', () => {
-    limit = PAGE_SIZE;
-    renderPlayers();
-  });
-  more.onclick = () => {
-    limit += PAGE_SIZE;
-    renderPlayers();
-  };
+  for (const select of root.querySelectorAll('.ranking-sort select')) {
+    select.onchange = () => { limit = PAGE_SIZE; renderPlayers(); };
+  }
+  for (const more of root.querySelectorAll('.players-more')) {
+    more.onclick = () => { limit += PAGE_SIZE; renderPlayers(); };
+  }
   retry.onclick = () => { pause(); resume(true); };
   find('#players-resync').onclick = async () => {
     syncStatus.hidden = await syncExistingTeam();
