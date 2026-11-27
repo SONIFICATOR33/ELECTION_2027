@@ -26,3 +26,11 @@ export function unvotedGovernments(rows, { pid, teams, scores, ready }) {
   return ready ? rows.filter(row => row.pid !== pid && hasTeam(teams[row.pid])
     && scores[row.pid]?.rating == null) : [];
 }
+
+// Advance through the stable random queue, including when a card is skipped.
+export function nextUnvotedGovernment(queue, current) {
+  if (!queue.length) return null;
+  const index = queue.findIndex(row => row.pid === current);
+  const next = queue[(index + 1) % queue.length];
+  return next.pid === current ? null : next;
+}

@@ -547,7 +547,9 @@ h2{font-weight:600;letter-spacing:-.2px}
 .campaign-fold[open] { padding-bottom: 12px; }
 .campaign-fold[open] > summary::after { transform: rotate(-45deg); }
 .hero > :not(canvas) { position: relative; }
-#player-dialog .dialog-toolbar { justify-content: flex-start; }
+#player-dialog .dialog-toolbar { position: sticky; top: -16px; z-index: 2; justify-content: flex-end; gap: 10px; padding-block: 8px; background: var(--bg); }
+#player-next-vote { color: var(--or); min-height: 44px; }
+#player-next-vote:disabled { opacity: .5; cursor: default; }
 
 /* Tableau des joueurs */
 .players-wrap { max-width: 780px; }

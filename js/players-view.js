@@ -6,7 +6,7 @@ import { COMMON_GROUP, STAGES, visibleGameData } from './groups.js?v=60';
 import { normalizeTeam, hasTeam, sameTeam } from './team-state.js';
 import { teamVoteScores } from './team-votes.js?v=99';
 import { teamPosition } from './team-gauge.js?v=102';
-import { createVotingOrder, unvotedGovernments } from './voting-order.js?v=104';
+import { createVotingOrder, unvotedGovernments, nextUnvotedGovernment } from './voting-order.js?v=105';
 import { firstRoundForecast, closedForecastWeeks, forecastPhotoDate } from './community-forecast.js?v=92';
 import { portraitThumb } from './fiches.js?v=51';
 
@@ -58,6 +58,8 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   forecastPeriod.addEventListener('change', renderCommunityForecast);
   const dialog = document.querySelector('#player-dialog');
   const heading = document.querySelector('#player-title');
+  const nextVote = document.querySelector('#player-next-vote');
+  nextVote.onclick = () => nextGovernment();
   const details = document.querySelector('#player-detail');
   let display, rows = [], scores = {}, votes = [], votesReady = false, voteError = '';
   let active = false, visible = false, unsubscribes = [], generation = 0, frame, limit = PAGE_SIZE;
@@ -82,9 +84,9 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   }
 
   function nextGovernment() {
-    const next = discoveryQueue()[0];
+    const next = nextUnvotedGovernment(discoveryQueue(), openTeam?.id);
     if (!next || votePending) return;
-    showPlayer(homeVote, { id: next.pid, kind: 'team', discovery: true });
+    showPlayer(opener || homeVote, { id: next.pid, kind: 'team', discovery: true });
   }
 
   homeVote.onclick = () => {
@@ -163,6 +165,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     if (imageUrl) URL.revokeObjectURL(imageUrl);
     imageUrl = null;
     openTeam = null;
+    nextVote.hidden = true;
     details.replaceChildren();
   }
 
@@ -283,6 +286,8 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   }
 
   function refreshVotePanel() {
+    nextVote.hidden = !openTeam;
+    nextVote.disabled = Boolean(votePending) || !nextUnvotedGovernment(discoveryQueue(), openTeam?.id);
     const panel = details.querySelector('[data-team-vote]');
     if (!panel || !openTeam || !display) return;
     const score = scores[openTeam.id], points = score?.points || 0, voters = score?.voters || 0;
@@ -493,6 +498,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     }
     if (!dialog.open) dialog.showModal();
     else details.querySelector('[data-rating]')?.focus({ preventScroll: true });
+    dialog.scrollTop = 0;
     if (kind !== 'team') return;
 
     dialogRequest = new AbortController();
