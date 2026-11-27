@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Prone ton President</title>
+<title>Prône ton Président</title>
 <meta property="og:type" content="website">
-<meta property="og:title" content="Prone ton President">
+<meta property="og:title" content="Prône ton Président">
 <meta property="og:description" content="Pronostique la présidentielle 2027, compose ton gouvernement et gagne des points avec les votes des autres joueurs.">
 <meta property="og:url" content="https://sonificator33.github.io/ELECTION_2027/">
 <meta property="og:image" content="https://sonificator33.github.io/ELECTION_2027/img/habit.jpg">
 <meta name="twitter:card" content="summary">
-<meta name="apple-mobile-web-app-title" content="Prone ton President">
+<meta name="apple-mobile-web-app-title" content="Prône ton Président">
 <meta name="description" content="Pronostique la présidentielle 2027, compose ton gouvernement et vote pour les meilleurs. Vote de 0 à 3 pouces pour les gouvernements et compare les totaux.">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="preload" href="img/habit.jpg" as="image">
@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
 <script src="js/theme.js?v=74"></script>
-<link rel="stylesheet" href="css/app.css?v=107">
+<link rel="stylesheet" href="css/app.css?v=109">
 </head>
 <body>
 <main>
@@ -60,9 +60,10 @@
       <p>2 jeux indépendants : <b>Mes pronos</b> pour trouver qui sera élu président, <b>Mon gouve</b> pour récolter le plus de 👍 avec ton gouvernement idéal.</p>
     </div>
     <aside class="home-deadline" id="home-deadline" aria-label="Prochaine étape"></aside>
+    <p class="fine" id="home-photo-rule"></p>
     <article class="card dashboard-card" aria-labelledby="home-vote-title">
       <h2 id="home-vote-title">Vote pour les gouvernements des autres</h2>
-      <button class="big" id="home-vote" type="button" aria-haspopup="dialog" disabled>👍 Je vote</button>
+      <button class="ghost" id="home-vote" type="button" aria-haspopup="dialog" disabled>👍 Je vote</button>
       <p class="fine" id="home-vote-status" role="status">Chargement des gouvernements…</p>
     </article>
     <article class="card dashboard-card">
@@ -78,7 +79,7 @@
       <div class="page-links">
         <a href="#profil" data-go="profil">Mon profil</a>
         <a href="#paris" data-go="paris">Mes pronos</a>
-        <a href="#team" data-go="team">Mon gouvernement</a>
+        <a href="#team" data-go="team">Mon gouve</a>
       </div>
     </article>
     <article class="card dashboard-card">
@@ -110,9 +111,9 @@
       <div class="page-links"><a href="#sondages" data-go="sondages">Voir les sondages</a></div>
     </article>
     <article class="card dashboard-card" aria-labelledby="home-journey-title">
-      <h2 id="home-journey-title">Les 4 étapes du jeu</h2>
+      <h2 id="home-journey-title">Les 3 étapes du jeu</h2>
       <ol class="home-timeline" id="home-timeline"></ol>
-      <p class="fine" id="home-journey-end" hidden>Les quatre étapes sont terminées.</p>
+      <p class="fine" id="home-journey-end" hidden>Tu es à jour. Tu peux modifier tes pronos tant qu’ils sont ouverts.</p>
     </article>
   </div>
 </section>
@@ -137,7 +138,7 @@
       </a>
       <a class="space-card" href="#paris" data-go="paris" data-space-card="pronos">
         <div class="space-card-line"><strong>Mes pronos</strong><span data-space-status>0 %</span></div>
-        <progress max="4" value="0" aria-label="Progression des pronostics"></progress>
+        <progress max="3" value="0" aria-label="Progression des pronostics"></progress>
         <small data-space-count></small>
         <div class="space-summary" data-space-summary hidden>
           <span data-space-photo aria-hidden="true" hidden></span>
@@ -147,7 +148,7 @@
         </div>
       </a>
       <a class="space-card" href="#team" data-go="team" data-space-card="gouvernement">
-        <div class="space-card-line"><strong>Mon gouvernement</strong><span data-space-status>0 %</span></div>
+        <div class="space-card-line"><strong>Mon gouve</strong><span data-space-status>0 %</span></div>
         <progress max="12" value="0" aria-label="Progression du gouvernement"></progress>
         <small data-space-count></small>
         <div class="space-summary" data-space-summary hidden>
@@ -228,10 +229,11 @@
 
     <article class="card stage" id="st1">
       <div class="shead"><span class="tag">Étape 1</span><span class="dl" id="dl1"></span></div>
-      <h2>Qui sera candidat déclaré le 31 décembre ?</h2>
+      <h2>Qui sera toujours là en janvier ?</h2>
       <p class="ssum" id="sum1"></p>
       <button class="tog" data-sb="1" aria-controls="sb1"></button>
       <div class="sbody" id="sb1">
+      <p class="fine">L’échauffement : quels candidats seront encore déclarés au 31 décembre ?</p>
       <p class="pick-instruction">Touche tes candidats. <strong>Vert = oui · Gris = non</strong></p>
       <p class="retires" id="retires"></p>
       <div class="count"><span><b id="n1">0</b> candidats retenus</span><button class="linkbtn" id="pre1">Partir des déclarés actuels</button></div>
@@ -239,7 +241,7 @@
       <details class="prono-rules"><summary>Règles de cette étape</summary>
         <p class="fine">Référence : Toute l’Europe au 31 décembre. Une candidature à une primaire ne compte pas.</p>
       </details>
-      <button class="big" id="save1">Valider mon pari</button>
+      <button class="big" id="save1">Enregistrer mon prono</button>
       </div>
     </article>
 
@@ -257,33 +259,30 @@
       <p class="fine">Le recueil officiel ouvre le lendemain de la publication du décret de convocation. Clôture le 12 mars 2027 à 18 h. <a href="https://www.info.gouv.fr/actualite/election-presidentielle-2027">Calendrier du Gouvernement</a></p>
       <p class="fine" id="lock2note"></p>
       </details>
-      <button class="big" id="save2">Valider mon pari</button>
+      <button class="big" id="save2">Enregistrer mon prono</button>
       </div>
     </article>
 
     <article class="card stage" id="st3">
       <div class="shead"><span class="tag">Étape 3</span><span class="dl" id="dl3"></span></div>
-      <h2>1er tour : mon top 5</h2>
+      <h2>La présidentielle</h2>
       <div id="photo"></div>
       <p class="ssum" id="sum3"></p>
       <button class="tog" data-sb="3" aria-controls="sb3"></button>
       <div class="sbody" id="sb3">
-        <p class="pick-instruction">Choisis 5 candidats et indique leur score.</p>
+        <h3>Mon top 5 · 1er tour</h3>
+        <ol id="selected-top" class="selected-top"></ol>
+        <p class="pick-instruction">Choisis 5 candidats et indique leur score. Touche un candidat sélectionné pour le retirer.</p>
         <div class="pick" id="pick"></div>
         <div class="total" id="total"></div>
-        <a class="linkbtn" href="#paris" data-go="paris#st4">Passer à ma finale →</a>
-      </div>
-    </article>
-    <article class="card stage" id="st4">
-      <div class="shead"><span class="tag">Étape 4</span><span class="dl" id="dl4"></span></div>
-      <h2>2e tour : ma finale</h2>
-      <p class="ssum" id="sum4"></p>
-      <button class="tog" data-sb="4" aria-controls="sb4"></button>
-      <div class="sbody" id="sb4">
+        <h3 id="finale-title">Ma finale · 2e tour</h3>
         <div id="duel"></div>
         <p class="warn" id="coh" hidden></p>
+      </div>
+      <div class="prono-save-bar">
+        <p id="gp-draft-status" class="fine" role="status"></p>
         <div class="warn errs" id="errs" role="alert"></div>
-        <button class="big" id="saveGP">Enregistrer les deux tours</button>
+        <button class="big" id="saveGP">Enregistrer mon prono</button>
       </div>
     </article>
   </div>
@@ -294,7 +293,8 @@
   <div class="wrap stack">
     <a class="page-back" href="#espace" data-back>Retour</a>
     <article class="card">
-      <h2>Mon gouvernement</h2>
+      <h2>Mon gouve</h2>
+      <p id="team-save-status" class="fine" role="status">Les modifications sont enregistrées automatiquement.</p>
     </article>
     <article class="card team-gauge" id="team-gauge" hidden>
       <h2>Polarité politique</h2>
@@ -318,7 +318,7 @@
       <div class="jk"><input type="text" id="t-jl" placeholder="Ministère de…" autocomplete="off" maxlength="60"><div id="t-jn"></div></div>
     </article>
     <p class="help" id="pubHelp"></p>
-    <button class="big" id="teamShare" disabled>Faire une image de mon gouvernement</button>
+    <button class="big" id="teamShare" disabled>Partager mon gouve</button>
   </div>
 </section>
 
@@ -439,13 +439,13 @@
       <summary>Calcul des points de pronos</summary>
       <p><b>Gouves · Vote de 0 à 3 👍.</b> Le classement additionne tous les pouces reçus. Un seul choix par joueur et par gouvernement, modifiable ou retirable, sans vote pour soi. « 0 · Non » enregistre ton vote sans ajouter de pouce. Les gouvernements et les pronostics ont chacun leur classement.</p>
       <ul class="pts">
-        <li><b>1 à 5</b><span><b>« Qui sera là ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
+        <li><b>1 à 5</b><span><b>« Qui sera toujours là en janvier ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
         <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
         <li><b>+2</b><span>par score du 1er tour à 1 point près</span></li>
         <li><b>+5</b><span>par finaliste trouvé</span></li>
         <li><b>10 à 30</b><span>pour le bon président : 10 si tout le monde l'avait choisi, jusqu'à 30 si tu étais presque seul. +3 si son score au 2nd tour est à 2 points près.</span></li>
       </ul>
-      <p class="help"><b>Les photos du lundi :</b> chaque lundi, ton pronostic est enregistré pour le calcul des points. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
+      <p class="help"><b>Les photos du lundi :</b> Ton prono est photographié chaque lundi : plus tôt = plus de points. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
       <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
     </details>
   </div>
@@ -454,9 +454,10 @@
 
 <nav class="tabs" aria-label="Onglets" hidden>
   <a href="#accueil" data-t="accueil" data-go="accueil"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg><span>Accueil</span></a>
-  <a href="#espace" data-t="espace" data-go="espace"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Mon espace</span></a>
+  <a href="#paris" data-t="paris" data-go="paris"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg><span>Mes pronos</span></a>
+  <a href="#team" data-t="team" data-go="team"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-4a6 6 0 0 1 12 0v4M17 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v2"/></svg><span>Mon gouve</span></a>
   <a href="#classement" data-t="classement" data-go="classement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"/></svg><span>Classements</span></a>
-  <a href="#sondages" data-t="sondages" data-go="sondages"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v16h16M7.5 15l4-5 3.5 3 5-7"/></svg><span>Sondages</span></a>
+
 </nav>
 
 <div class="fiche" id="fiche" role="dialog" aria-modal="true" aria-labelledby="fName" hidden>
@@ -507,7 +508,7 @@
   <h2 id="player-title"></h2>
   <div id="player-detail"></div>
 </dialog>
-<dialog id="team-image-dialog" aria-label="Mon casting">
+<dialog id="team-image-dialog" aria-label="Mon gouve">
   <form method="dialog" class="dialog-toolbar"><button class="dialog-close" aria-label="Fermer" autofocus><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button></form>
   <img id="team-image-preview" alt="Affiche de ton gouvernement avec sa polarité">
   <div class="team-image-actions">
@@ -523,7 +524,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=108"></script>
+<script type="module" src="js/app.js?v=109"></script>
 <script type="module" src="js/install.js?v=106"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>

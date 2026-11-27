@@ -2,7 +2,7 @@
    STOCKAGE — même interface en mode essai (localStorage) et en mode partagé (Firebase)
    ===================================================================== */
 import { FIREBASE } from './config.js';
-import { COMMON_GROUP, GROUP_ADMIN, groupsStore } from './groups.js?v=60';
+import { COMMON_GROUP, GROUP_ADMIN, groupsStore } from './groups.js?v=109';
 import { monthKey } from './history.js';
 import { weekOf, clampWeek } from './scoring.js';
 

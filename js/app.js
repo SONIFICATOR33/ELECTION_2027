@@ -1,16 +1,17 @@
-import { homeCalendar } from './home-calendar.js?v=108';
+import { potentialRemaining, displayedRanks } from './prono-progress.js?v=109';
+import { homeCalendar } from './home-calendar.js?v=109';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
-import { playersView } from './players-view.js?v=105';
+import { playersView } from './players-view.js?v=109';
 import { accountView } from './account-view.js?v=103';
 import { portraitView } from './portrait-view.js?v=85';
-import { GROUP_ADMIN } from './groups.js?v=60';
-import { normalizeTeam, hasTeam } from './team-state.js';
+import { GROUP_ADMIN } from './groups.js?v=109';
+import { normalizeTeam, hasTeam } from './team-state.js?v=109';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=102';
+import * as D from './data.js?v=109';
 import * as S from './scoring.js';
-import { openStore } from './store.js?v=60';
+import { openStore } from './store.js?v=109';
 import { snd } from './sound.js';
 import { guilloche } from './guilloche.js';
 import { initFiches, portraitThumb } from './fiches.js?v=51';
@@ -34,7 +35,7 @@ const daysTo = t => Math.round((mid(t) - mid(now())) / 864e5);
 const dateFr = (t, o = { weekday: 'short', day: 'numeric', month: 'short' }) => new Date(t).toLocaleDateString('fr-FR', { ...o, timeZone: 'Europe/Paris' });
 
 const toastEl = $('#toast'); let tt;
-const toast = (m, duration = 2400) => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), duration); };
+const toast = (m, duration = 2000) => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), Math.min(duration, 2500)); };
 
 /* ---------- état ---------- */
 let store, ME = null, ALL = { players: {}, pronos: {} };
@@ -61,6 +62,13 @@ function loadDraft() {
   draft.team = normalizeTeam(!teamNeedsSync() && Object.hasOwn(p, 'team') ? p.team : readTeam());
   teamRevision++;
   for (const k in dirty) dirty[k] = false;
+  try {
+    const saved = JSON.parse(localStorage.getItem('pdm-gp-draft-' + ME?.pid));
+    if (ME && isOpen('gp') && saved?.base === JSON.stringify(cur) && Array.isArray(saved.value?.top)
+      && saved.value.top.length <= 5 && saved.value.top.every(t => by[t.id] && Number.isFinite(t.pct))) {
+      draft.gp = saved.value; dirty.gp = true;
+    }
+  } catch {}
 }
 
 async function refresh(force) {
@@ -117,14 +125,17 @@ function renderPollsOverview() {
   $('#home-podium').innerHTML = D.POD.slice(0, 5).map(([id, value], i) => {
     const candidate = by[id], name = candidate.p + ' ' + candidate.n;
     return `<button type="button" class="home-poll-row" data-fiche="${id}" aria-label="${esc(name)}, ${fmt(value)} %, ouvrir la fiche">
-      <span class="home-rank">${i + 1}</span>${av(candidate, 32)}<span class="home-candidate">${esc(name)}</span><strong>${fmt(value)} %</strong>
+      <span class="home-rank">${displayedRanks(D.POD.map(p => p[1]))[i].rank}${displayedRanks(D.POD.map(p => p[1]))[i].tied ? ' ex æquo' : ''}</span>${av(candidate, 32)}<span class="home-candidate">${esc(name)}</span><strong>${fmt(value)} %</strong>
     </button>`;
   }).join('');
   $('#podDate').textContent = 'Dernier sondage présenté · ' + dateFr(D.LAST_POLL_DATE, longDate);
-  $('#podSrc').textContent = `${D.POLL_DATE} · Moyenne au ${dateFr(D.PODIUM_DATE, longDate)}`;
+  $('#podSrc').textContent = `${D.POLL_DATE} · Moyenne au ${dateFr(D.PODIUM_DATE, longDate)} · Ex æquo selon les valeurs arrondies affichées`;
   $('#movesDate').dateTime = D.PODIUM_DATE.toISOString().slice(0, 10);
   $('#movesDate').textContent = 'MàJ le ' + dateFr(D.PODIUM_DATE, { day: 'numeric', month: 'long', year: 'numeric' });
-  $('#podium').innerHTML = [1, 0, 2].map(i => { const [id, v] = D.POD[i], c = by[id]; return `<div class="pcol p${i + 1}" data-fiche="${id}" role="button" tabindex="0" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}">${av(c, i === 0 ? 62 : 50)}<b><span class="pn">${esc(c.p)}</span>${esc(c.n)}</b><div class="blk"><span class="rk">${i + 1}</span><span class="pv">${fmt(v)} %</span></div></div>`; }).join('');
+  const pollRanks = displayedRanks(D.POD.map(p => p[1]));
+  $('#podium').innerHTML = D.POD.map(([id, v], i) => ({ id, v, ...pollRanks[i] })).filter(p => p.rank <= 3).map(({id, v, rank, tied}) => {
+    const c = by[id]; return `<div class="pcol p${Math.min(rank,3)}" data-fiche="${id}" role="button" tabindex="0" aria-label="Fiche de ${esc(c.p + ' ' + c.n)}">${av(c, rank === 1 ? 62 : 50)}<b>${esc(c.p + ' ' + c.n)}</b><div class="blk"><span class="rk">${rank}${tied ? ' ex æquo' : ''}</span><span class="pv">${fmt(v)} %</span></div></div>`;
+  }).join('');
   const UP = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
   const DN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
   $('#moves').innerHTML = D.MOVES.map(([h, l]) => `<div><h3>${h}</h3>${l.map(([id, u, t]) => `<div class="mv" data-fiche="${id}" role="button" tabindex="0"><span class="ar ${u ? 'up' : 'dn'}">${u ? UP : DN}</span>${av(by[id], 40)}<div><b>${by[id].p} ${by[id].n}</b><span>${t}</span></div></div>`).join('')}</div>`).join('');
@@ -140,21 +151,23 @@ function renderHomeCalendar() {
   const { stages, current, next } = homeCalendar(now(), { l1: done('l1'), l2: done('l2'), gp: done('gp') });
   const shortDate = date => dateFr(date, { day: '2-digit', month: '2-digit' });
   const stageLink = stage => `<a class="stage-status-link" data-complete="${stage.complete}" href="#paris" data-go="paris#${stage.anchor}">Étape ${stage.number} · ${stage.complete ? 'Validée' : isOpen(stage.key) ? 'À valider' : 'Non jouée'} →</a>`;
+  $('#home-photo-rule').textContent = isOpen('gp') ? photoExplanation() : '';
   const banner = $('#home-deadline');
-  banner.hidden = !next;
-  banner.innerHTML = next ? `<div><strong>Prochaine étape · ${shortDate(next.date)}</strong><span>${esc(next.label)}${next.closing ? ' (à prôner avant la clôture du ' + shortDate(next.date) + ')' : ''}${next.provisional ? ' · date provisoire' : ''}</span></div>${stageLink(stages[next.stage - 1])}` : '';
+  banner.hidden = false;
+  banner.innerHTML = next ? `<div><strong>À toi de jouer · Étape ${next.stage}</strong><span>${esc(next.label)} · À enregistrer avant le ${shortDate(next.date)}${next.provisional ? ' · date provisoire' : ''}</span></div>${stageLink(stages[next.stage - 1])}` : `<strong>${stages.every(s => s.complete) ? 'Tes pronos sont à jour' : 'Aucun prono ouvert à compléter'}</strong><a href="#paris" data-go="paris">Voir mes pronos →</a>`;
   $('#home-timeline').innerHTML = stages.map(stage => `<li${stage.number === current ? ' aria-current="step"' : ''}>
     <span class="timeline-dot" aria-hidden="true">${stage.number}</span>
     <div>${stage.number === current ? '<strong class="timeline-here">Vous êtes ici</strong>' : ''}
       <h3>${stage.title}</h3>
-      <p>À prôner avant la clôture du ${shortDate(stage.lock)}${stage.provisional ? ' (provisoire)' : ''} · ${stage.number < 3 ? 'Résultat' : 'Scrutin'} le ${shortDate(stage.end)}</p>
+      <p>À enregistrer avant le ${shortDate(stage.lock)}${stage.provisional ? ' (provisoire)' : ''} · ${stage.number < 3 ? 'Résultat le ' + shortDate(stage.end) : 'Tours les ' + shortDate(D.TOUR1) + ' et ' + shortDate(D.TOUR2)}</p>
       ${stageLink(stage)}
     </div></li>`).join('');
   $('#home-journey-end').hidden = Boolean(current);
+  $('#home-journey-end').textContent = stages.every(s => s.complete) ? 'Tu es à jour. Tu peux modifier tes pronos tant qu’ils sont ouverts.' : 'Les pronos restants sont clos.';
 }
 
 function renderParisSummary() {
-  const rows = [['l1', 'Qui sera là le 31 décembre ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', '1er tour : mon top 5', 'st3'], ['gp', '2e tour : ma finale', 'st4']];
+  const rows = [['l1', 'Qui sera toujours là en janvier ?', 'st1'], ['l2', 'Qui aura les 500 signatures ?', 'st2'], ['gp', 'La présidentielle · Top 5 et finale', 'st3']];
   $('#parisSummary').innerHTML = rows.map(([k, t, a], i) => {
     const ok = done(k);
     return `<div class="ms${ok ? ' done' : ''}${k === 'l1' && !ok && isOpen(k) ? ' needs-prono' : ''}"><i>${ok ? OKSVG.replace('12', '16').replace('12', '16') : i + 1}</i><span>${t}<small>${ok ? 'Fait' : isOpen(k) ? 'À faire' : 'Non joué'}</small></span><a href="#paris" data-go="paris#${a}">${isOpen(k) ? (ok ? 'Modifier' : 'Jouer') : 'Voir'}</a></div>`;
@@ -181,7 +194,7 @@ function renderStage(key) {
   $('#tiles' + n).innerHTML = tilesHTML(key);
   $('#n' + n).textContent = draft[key].length;
   const b = $('#save' + n); b.hidden = !open;
-  b.textContent = done(key) ? (dirty[key] ? 'Enregistrer mes changements' : 'Pari enregistré') : 'Valider mon pari';
+  b.textContent = done(key) ? (dirty[key] ? 'Enregistrer mes changements' : 'Prono enregistré') : 'Enregistrer mon prono';
   $('#pre' + n).hidden = !open;
 }
 function renderStages() {
@@ -198,28 +211,28 @@ function renderStages() {
     dirty[key] = true; b.classList.toggle('on', i < 0); b.setAttribute('aria-pressed', i < 0);
     if (i < 0) snd.pick(AXIS(id)); else snd.unpick(AXIS(id));
     $('#n' + n).textContent = draft[key].length;
-    $('#save' + n).textContent = done(key) ? 'Enregistrer mes changements' : 'Valider mon pari';
+    $('#save' + n).textContent = done(key) ? 'Enregistrer mes changements' : 'Enregistrer mon prono';
   });
   $('#save' + n).addEventListener('click', () => withMe(async () => {
     if (!draft[key].length) { snd.error(); toast('Touche au moins un candidat'); return; }
     await store.save({ [key]: draft[key].slice(), [key + 'at']: now() });
-    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera là ? » enregistré' : 'Pari « 500 signatures » enregistré');
+    snd.vote(); dirty[key] = false; await refresh(true); initSB(); renderAll(); $('#v-paris').scrollIntoView(); toast(n === '1' ? 'Pari « Qui sera toujours là en janvier ? » enregistré' : 'Pari « 500 signatures » enregistré');
   }));
 });
 $('#pre1').onclick = () => { draft.l1 = D.U1.filter(id => !by[id].und); dirty.l1 = true; renderStage('l1'); snd.sweep(draft.l1.map(AXIS)); toast('Les déclarés actuels sont cochés : décoche ceux qui vont renoncer'); };
 $('#pre2').onclick = () => { if (!draft.l1.length) { toast('Fais d’abord ton étape 1'); return; } draft.l2 = draft.l1.slice(); dirty.l2 = true; renderStage('l2'); snd.sweep(draft.l2.map(AXIS)); toast('Repris de ton étape 1 : décoche ceux qui n’auront pas leurs signatures'); };
 
 /* ---- Repli des étapes ---- */
-const SB = { 1: false, 2: false, 3: false, 4: false }, SBK = { 1: 'l1', 2: 'l2', 3: 'gp', 4: 'gp' };
+const SB = { 1: false, 2: false, 3: false }, SBK = { 1: 'l1', 2: 'l2', 3: 'gp' };
 function initSB() {
-  const first = [1, 2, 3, 4].find(i => isOpen(SBK[i]) && !done(SBK[i]));
-  [1, 2, 3, 4].forEach(i => SB[i] = i === (first || 3));
+  const first = [1, 2, 3].find(i => isOpen(SBK[i]) && !done(SBK[i]));
+  [1, 2, 3].forEach(i => SB[i] = i === (first || 3));
 }
 function renderSB() {
-  [1, 2, 3, 4].forEach(i => {
+  [1, 2, 3].forEach(i => {
     const b = $(`.tog[data-sb="${i}"]`), body = $('#sb' + i), k = SBK[i];
     body.hidden = !SB[i]; b.setAttribute('aria-expanded', SB[i]);
-    b.textContent = SB[i] ? 'Replier' : isOpen(k) ? (done(k) ? 'Modifier mon pari' : 'Faire ce pari') : 'Voir mon pari';
+    b.textContent = SB[i] ? 'Replier' : isOpen(k) ? (done(k) ? 'Modifier mon prono' : 'Faire ce prono') : 'Voir mon prono';
     const p = mine();
     let t;
     if (k === 'gp') {
@@ -228,7 +241,7 @@ function renderSB() {
         : `Ton gagnant : ${by[c.pres].p} ${by[c.pres].n} · ${fmt(c.win)} %`)
         : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     }
-    else t = p[k] && p[k].length ? `Ton pari : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 décembre' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
+    else t = p[k] && p[k].length ? `Ton prono : ${p[k].length} candidats ${k === 'l1' ? 'encore là le 31 décembre' : 'auront leurs 500 signatures'}.` : (isOpen(k) ? 'Pas encore joué.' : 'Non joué.');
     $('#sum' + i).textContent = t;
   });
 }
@@ -236,14 +249,18 @@ $$('.tog').forEach(b => b.onclick = () => { const i = +b.dataset.sb; SB[i] = !SB
 
 /* ---- Grand Prono ---- */
 const gp = () => draft.gp;
+$('#selected-top').onclick = event => {
+  const button = event.target.closest('[data-remove-top]');
+  if (button && isOpen('gp')) $('#pick .chip[data-id="' + button.dataset.removeTop + '"]')?.click();
+};
+function photoExplanation() {
+  return 'Ton prono présidentiel est photographié chaque lundi : plus tôt = plus de points. Il te reste ' + potentialRemaining(mine(), now()) + ' % du potentiel maximal, photos déjà prises comprises.';
+}
 function renderPhoto() {
   const el = $('#photo'), w = S.weekOf(now()), dl = deadline('gp');
-  for (const id of ['dl3', 'dl4']) { const e = $('#' + id); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot); }
+  for (const id of ['dl3']) { const e = $('#' + id); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot); }
   if (!isOpen('gp')) { el.innerHTML = '<p class="okbar">Pronostic clos.</p>'; return; }
-  const cw = S.clampWeek(w);
-  el.innerHTML = done('gp')
-    ? ''
-    : `<div class="photo" style="background:var(--rougebg)"><b style="color:var(--rouge)">×${fmt(D.mult(cw))}</b><span>Une semaine sans prono vaut zéro.</span></div>`;
+  el.textContent = photoExplanation();
 }
 const rankedTop = () => [...gp().top].sort((a, b) => b.pct - a.pct);
 const finalists = () => rankedTop().filter(t => t.pct > 0).slice(0, 2);
@@ -269,7 +286,7 @@ $('#pick').addEventListener('click', e => {
     snd.rank(gp().top.length - 1, AXIS(id));
   } else {
     snd.error();
-    toast('Top 5 complet : retire d’abord un nom en cliquant sur le candidat que tu veux supprimer.', 6000);
+    $('#gp-draft-status').textContent = 'Top 5 complet : touche le candidat à retirer pour changer ton choix.';
     return;
   }
   dirty.gp = true;
@@ -284,6 +301,7 @@ $('#pick').addEventListener('input', e => {
   renderTotal(); renderDuel(); renderGPBtn();
 });
 function renderTotal() {
+  $('#selected-top').innerHTML = rankedTop().map(t => `<li><button type="button" class="linkbtn" data-remove-top="${t.id}" ${isOpen('gp') ? '' : 'disabled'}>${esc(by[t.id].p + ' ' + by[t.id].n)} · ${fmt(t.pct)} % <span aria-hidden="true">×</span></button></li>`).join('');
   $('#total').hidden = !gp().top.length;
   const s = gp().top.reduce((a, t) => a + t.pct, 0), over = s > 100;
   $('#total').className = 'total' + (over ? ' over' : '');
@@ -303,7 +321,7 @@ function renderDuel() {
   renderCoh();
 }
 function renderCoh() {
-  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari des 500 signatures' : 'ton pari « Qui sera là ? »';
+  const g = gp(), el = $('#coh'), ref = draft.l2.length ? draft.l2 : draft.l1, lab = draft.l2.length ? 'ton pari des 500 signatures' : 'ton pari « Qui sera toujours là en janvier ? »';
   const out = ref.length ? [g.pres, ...g.top.map(t => t.id)].filter((id, i, a) => id && a.indexOf(id) === i && !ref.includes(id)) : [];
   el.hidden = !out.length;
   if (out.length) el.textContent = `Attention : ${out.map(id => by[id].n).join(', ')} ${out.length > 1 ? 'ne sont pas' : 'n’est pas'} dans ${lab}. C’est permis, mais pas très cohérent.`;
@@ -324,9 +342,20 @@ $('#duel').addEventListener('input', e => {
   dirty.gp = true;
   renderGPBtn();
 });
+function persistPronoDraft() {
+  if (!ME) return;
+  try {
+    const key = 'pdm-gp-draft-' + ME.pid;
+    if (dirty.gp) localStorage.setItem(key, JSON.stringify({ base: JSON.stringify(S.current(mine())), value: draft.gp }));
+    else localStorage.removeItem(key);
+    $('#gp-draft-status').textContent = dirty.gp ? 'Brouillon conservé sur cet appareil. Enregistre le prono complet pour qu’il compte.' : '';
+  } catch { $('#gp-draft-status').textContent = 'Brouillon non sauvegardé sur cet appareil. Enregistre ton prono avant de quitter.'; }
+}
+window.addEventListener('pagehide', persistPronoDraft);
 function renderGPBtn() {
+  persistPronoDraft();
   const b = $('#saveGP'); b.hidden = !isOpen('gp');
-  b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mes changements' : 'Deux tours enregistrés') : 'Enregistrer les deux tours';
+  b.textContent = done('gp') ? (dirty.gp ? 'Enregistrer mon prono' : 'Prono enregistré') : 'Enregistrer mon prono';
 }
 $('#saveGP').onclick = () => withMe(async () => {
   const g = gp(), er = [], s = g.top.reduce((a, t) => a + t.pct, 0);
@@ -337,10 +366,11 @@ $('#saveGP').onclick = () => withMe(async () => {
   if (g.pres && !finalists().some(t => t.id === g.pres)) er.push('Choisis le vainqueur parmi les deux meilleurs scores.');
   if (!Number.isFinite(g.win) || g.win < 50 || g.win > 80) er.push('Saisis un score de finale entre 50 et 80 %.');
   const E = $('#errs');
-  if (er.length) { snd.error(); E.innerHTML = er.map(esc).join('<br>'); E.classList.add('on'); E.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+  if (er.length) { SB[3] = true; renderSB(); snd.error(); E.innerHTML = er.map(esc).join('<br>'); E.classList.add('on'); E.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
   E.classList.remove('on');
+  const savedDraft = JSON.stringify(g);
   await store.save({}, { pres: g.pres, top: rankedTop().map(t => ({ id: t.id, pct: t.pct })), win: g.win });
-  snd.vote(); dirty.gp = false; await refresh(true); renderAll(); toast('Prono enregistré');
+  snd.vote(); dirty.gp = JSON.stringify(gp()) !== savedDraft; await refresh(true); renderAll(); toast('Prono enregistré');
 });
 const recapDialog = $('#recap-dialog');
 let recapUrl, recapFile;
@@ -391,7 +421,7 @@ async function drawPronoRecap() {
   ctx.font = '600 64px ' + font;
   ctx.fillText('Mes pronos', 64, 96);
   ctx.font = '500 32px ' + font;
-  ctx.fillText(ME ? `Prone ton President · ${ME.pseudo}` : 'Prone ton President', 64, 151, 952);
+  ctx.fillText(ME ? `Prône ton Président · ${ME.pseudo}` : 'Prône ton Président', 64, 151, 952);
   let y = 237;
   for (const [title, lines] of sections) {
     ctx.fillStyle = '#E6D3A3';
@@ -481,7 +511,7 @@ function renderPublish() {
   renderTeamGauge();
   const n = teamCount(), ok = n === 12, b = $('#teamShare');
   b.disabled = !ok; b.classList.toggle('off', !ok);
-  b.textContent = 'Faire une image de mon gouvernement';
+  b.textContent = 'Partager mon gouve';
   $('#pubHelp').textContent = ok ? '' : `${n}/12 postes remplis`;
 }
 $('#v-team').addEventListener('change', e => {
@@ -492,15 +522,18 @@ $('#v-team').addEventListener('change', e => {
   const was = !$('#teamShare').disabled; saveTeam(); syncEditedTeam(); renderPublish(); if (!was && !$('#teamShare').disabled) { snd.logo(); toast('Gouvernement complet : tu peux faire une image.'); }
 });
 $('#v-team').addEventListener('input', e => {
-  if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; saveTeam(); return; }
-  const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); saveTeam(); renderPublish(); }
+  if (e.target.id === 't-jl') { draft.team.jl = e.target.value; dirty.team = true; saveTeam(); syncEditedTeam(); return; }
+  const d = e.target.closest('.sel'); if (d && e.target.tagName === 'INPUT') { setT(d.dataset.k, e.target.value.trim()); saveTeam(); syncEditedTeam(); renderPublish(); }
 });
 $('#v-team').addEventListener('change', e => {
   if (e.target.matches('#t-jl, .sel input')) syncEditedTeam();
 });
 window.addEventListener('online', syncExistingTeam);
 function syncEditedTeam() {
-  queueTeamSync(false).catch(() => toast('Le gouvernement n’a pas pu être partagé. Vérifie ta connexion.'));
+  $('#team-save-status').textContent = 'Enregistrement…';
+  queueTeamSync(false).then(() => {
+    $('#team-save-status').textContent = store.groups ? 'Gouve enregistré automatiquement.' : 'Gouve conservé sur cet appareil (mode essai).';
+  }).catch(() => { $('#team-save-status').textContent = 'Gouve conservé sur cet appareil. Connexion nécessaire pour le partager.'; });
 }
 function saveTeam() {
   teamRevision++;
@@ -518,7 +551,7 @@ const teamImageShare = $('#team-image-share');
 const teamImageDownload = $('#team-image-download');
 const castingTitle = pseudo => {
   const author = pseudo?.trim();
-  return author ? 'Le casting ' + (/^[aeiouyàâäéèêëîïôöùûü]/i.test(author) ? 'd’' : 'de ') + author : 'Mon casting';
+  return author ? 'Le gouve ' + (/^[aeiouyàâäéèêëîïôöùûü]/i.test(author) ? 'd’' : 'de ') + author : 'Mon gouve';
 };
 let teamImageUrl, teamImageFile;
 
@@ -533,8 +566,8 @@ teamImageShare.onclick = async () => {
   if (!teamImageFile) return;
   try {
     await navigator.share({
-      files: [teamImageFile], title: 'Mon gouvernement',
-      text: 'Mon gouvernement de rêve, et toi ? ' + location.origin + location.pathname
+      files: [teamImageFile], title: 'Mon gouve',
+      text: 'Mon gouve de rêve, et toi ? ' + location.origin + location.pathname
     });
   } catch (error) {
     if (error.name !== 'AbortError') toast('Partage impossible. Tu peux télécharger l’image.');
@@ -700,7 +733,7 @@ function draw() {
 
 /* ===================== NAVIGATION ===================== */
 const VIEWS = ['acces', 'accueil', 'espace', 'profil', 'paris', 'team', 'classement', 'sondages'];
-const TAB = { profil: 'espace', paris: 'espace', team: 'espace' };
+const TAB = { profil: 'accueil', espace: 'accueil', sondages: 'accueil' };
 let currentView = 'acces';
 
 function show() {
@@ -767,7 +800,7 @@ document.addEventListener('click', event => {
   const [view, anchor] = link.dataset.go.split('#');
   if (link.dataset.t && view !== currentView) playEntrySound();
   go(view);
-  if (anchor && /^st[1234]$/.test(anchor)) {
+  if (anchor && /^st[123]$/.test(anchor)) {
     SB[+anchor[2]] = true;
     renderSB();
     requestAnimationFrame(() => document.getElementById(anchor)?.scrollIntoView({ block: 'start' }));
@@ -805,8 +838,8 @@ function getParticipation() {
     presidentName: team.coeur,
     presidentPortrait: av(president, 32),
     primeMinister: team.pm,
-    pronos: ['l1', 'l2', 'gp', 'gp'].filter(done).length,
-    totalPronos: 4,
+    pronos: ['l1', 'l2', 'gp'].filter(done).length,
+    totalPronos: 3,
     startedPronos: [draft.l1, draft.l2, draft.gp.top].some(values => values.length > 0) || Boolean(draft.gp.pres),
     team: countTeamRoles(team),
     startedTeam: hasTeam(team),

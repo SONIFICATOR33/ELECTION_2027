@@ -1,4 +1,4 @@
-import { hasTeam } from './team-state.js';
+import { completeTeam } from './team-state.js?v=109';
 
 // One independent draw per viewer and page load. Keep every player visible,
 // putting governments still awaiting this viewer's vote first. Preserve random
@@ -15,7 +15,7 @@ export function createVotingOrder(random = Math.random) {
       if (!ranks.has(row.pid)) ranks.set(row.pid, random());
     }
     const priority = row => ready && row.pid !== pid
-      && hasTeam(teams[row.pid]) && scores[row.pid]?.rating == null;
+      && completeTeam(teams[row.pid]) && scores[row.pid]?.rating == null;
     return [...rows].sort((a, b) => Number(priority(b)) - Number(priority(a))
       || ranks.get(a.pid) - ranks.get(b.pid) || a.pid.localeCompare(b.pid));
   };
@@ -23,7 +23,7 @@ export function createVotingOrder(random = Math.random) {
 
 // Eligible discovery cards: a zero rating is already a vote.
 export function unvotedGovernments(rows, { pid, teams, scores, ready }) {
-  return ready ? rows.filter(row => row.pid !== pid && hasTeam(teams[row.pid])
+  return ready ? rows.filter(row => row.pid !== pid && completeTeam(teams[row.pid])
     && scores[row.pid]?.rating == null) : [];
 }
 

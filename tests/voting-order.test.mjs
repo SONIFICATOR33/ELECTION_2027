@@ -1,9 +1,10 @@
+import { POSTES } from '../js/data.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createVotingOrder } from '../js/voting-order.js';
 import { teamVoteScores } from '../js/team-votes.js';
 
-const team = { coeur: 'Présidente test' };
+const team = { coeur: 'Présidente test', pm: 'Premier ministre test', min: Object.fromEntries(POSTES.map(p=>[p,'Ministre test'])) };
 const rows = ['me', 'alice', 'bob', 'claire', 'empty'].map(pid => ({ pid, total: 0 }));
 const teams = { me: team, alice: team, bob: team, claire: team, empty: {} };
 const context = { pid: 'me', teams, scores: {}, ready: true };

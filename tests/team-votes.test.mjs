@@ -1,10 +1,11 @@
+import { POSTES } from '../js/data.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { teamVotesStore, teamVoteScores } from '../js/team-votes.js';
 import { normalizeTeam } from '../js/team-state.js';
 import { fakeFirestore } from './helpers/fake-firestore.js';
 
-const composition = normalizeTeam({ coeur: 'Présidente test', pm: 'Premier ministre test' });
+const composition = normalizeTeam({ coeur: 'Présidente test', pm: 'Premier ministre test', min: Object.fromEntries(POSTES.map(p=>[p,'Ministre test'])) });
 function setup() {
   const db = fakeFirestore({ 'pronos/alice': { team: composition } }, { publicGames: true });
   const client = voter => teamVotesStore({ F: db.client(voter), db: null, me: () => ({ pid: voter }) });
@@ -44,7 +45,7 @@ test('pas de vote pour soi, une composition disparue ou une fiche périmée', as
 test('les votes existants restent comptés après modification des autres postes', async () => {
   const { client, data, votes } = setup();
   await client('bob').setTeamVote('alice', composition, 1);
-  const next = normalizeTeam({ ...composition, pm: 'Autre ministre', min: { Justice: 'Autre personne' }, jl: 'Joker', jn: 'Nouveau joker' });
+  const next = normalizeTeam({ ...composition, pm: 'Autre ministre', min: { ...composition.min, Justice: 'Autre personne' }, jl: 'Joker', jn: 'Nouveau joker' });
   data.set('pronos/alice', { team: next });
   assert.deepEqual(teamVoteScores({ alice: next }, votes(), 'bob').alice, { points: 1, voters: 1, rating: 1 });
   await assert.rejects(client('claire').setTeamVote('alice', composition, 3), /changé/);
@@ -107,4 +108,15 @@ test('un ancien like garde son pouce ; les valeurs invalides sont exclues du cla
     assert.equal(teamVoteScores({ alice: { ...composition, coeur } }, votes(), 'bob').alice, undefined);
   }
   assert.equal(teamVoteScores({ alice: composition }, votes(), 'bob').alice.points, 3);
+});
+
+test('incomplete gouves keep historical thumbs but cannot receive a new vote', async () => {
+  const { client, data, votes } = setup();
+  await client('bob').setTeamVote('alice', composition, 3);
+  const incomplete = normalizeTeam({ ...composition, pm: '' });
+  data.set('pronos/alice', { team: incomplete });
+  assert.equal(teamVoteScores({alice: incomplete},votes(),'bob').alice.points,3);
+  await assert.rejects(client('claire').setTeamVote('alice',incomplete,1),/12\/12/);
+  await client('bob').removeTeamVote('alice');
+  assert.equal(votes().length,0);
 });

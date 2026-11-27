@@ -1,4 +1,4 @@
-import { hasTeam, normalizeTeam, sameTeam } from './team-state.js';
+import { completeTeam, hasTeam, normalizeTeam, sameTeam } from './team-state.js?v=109';
 
 // Un bulletin par couple gouvernement / votant, commun à tous les groupes.
 export function teamVotesStore({ F, db, me }) {
@@ -30,6 +30,7 @@ export function teamVotesStore({ F, db, me }) {
         if (!hasTeam(current) || !sameTeam(current, composition)) {
           throw new Error('Ce gouvernement a changé. Rouvre sa fiche avant de voter.');
         }
+        if (!completeTeam(current)) throw new Error('Le gouve doit être complet (12/12) pour recevoir un vote.');
         const ballot = { team, voter, rating, composition: normalizeTeam(current) };
         tx.set(ref, { ...ballot, createdAt: F.serverTimestamp() });
         return ballot;
