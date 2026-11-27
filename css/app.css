@@ -149,11 +149,11 @@ th:first-child,td:first-child{text-align:left}
 .pts{margin:8px 0;padding:0;list-style:none}.pts li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
 .pts b{font:600 var(--text-ui)/1.1 var(--cond);color:var(--bleuT)}
 /* Anchor from the viewport top: iOS can retain a stale bottom during scrolling. */
-.tabs{--nav-viewport-bottom:100vh;position:fixed;left:0;right:0;top:var(--nav-viewport-bottom);bottom:auto;transform:translateY(-100%);z-index:20;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom)}
+.tabs{--nav-viewport-bottom:100vh;position:fixed;left:0;right:0;top:var(--nav-viewport-bottom);bottom:auto;transform:translateY(-100%);z-index:20;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding-bottom:env(safe-area-inset-bottom)}
 @supports(height:100dvh){.tabs{--nav-viewport-bottom:100dvh}}
 .tabs a{display:grid;grid-template-rows:24px auto;align-content:start;justify-items:center;gap:2px;padding:8px 0 10px;color:var(--orC);font-weight:600;font-size:8pt;text-decoration:none;min-height:56px}
 .tabs a span{max-width:100%;white-space:nowrap;text-align:center;line-height:1.2}
-@media(max-width:360px){.tabs{grid-template-columns:.8fr 1.1fr 1.2fr .9fr}}
+@media(max-width:360px){.tabs{grid-template-columns:.85fr 1.05fr 1fr 1.15fr .95fr}}
 .tabs a.on{color:var(--bleuT)}
 .tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;font-size:var(--text-body);transition:.25s;z-index:50;pointer-events:none;max-width:90vw;text-align:center}
