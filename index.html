@@ -60,7 +60,6 @@
       <p>2 jeux indépendants : <b>Mes pronos</b> pour trouver qui sera élu président, <b>Mon gouve</b> pour récolter le plus de 👍 avec ton gouvernement idéal.</p>
     </div>
     <aside class="home-deadline" id="home-deadline" aria-label="Prochaine étape"></aside>
-    <p class="fine" id="home-photo-rule"></p>
     <article class="card dashboard-card" aria-labelledby="home-vote-title">
       <h2 id="home-vote-title">Vote pour les gouvernements des autres</h2>
       <button class="ghost" id="home-vote" type="button" aria-haspopup="dialog" disabled>👍 Je vote</button>
@@ -445,7 +444,8 @@
         <li><b>+5</b><span>par finaliste trouvé</span></li>
         <li><b>10 à 30</b><span>pour le bon président : 10 si tout le monde l'avait choisi, jusqu'à 30 si tu étais presque seul. +3 si son score au 2nd tour est à 2 points près.</span></li>
       </ul>
-      <p class="help"><b>Les photos du lundi :</b> Ton prono est photographié chaque lundi : plus tôt = plus de points. La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro, alors lance-toi tôt.</p>
+      <p class="help"><b>Les photos du lundi :</b> <span id="rules-photo-explanation"></span></p>
+      <p class="help">La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro.</p>
       <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
     </details>
   </div>
@@ -524,7 +524,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=109"></script>
+<script type="module" src="js/app.js?v=110"></script>
 <script type="module" src="js/install.js?v=106"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>

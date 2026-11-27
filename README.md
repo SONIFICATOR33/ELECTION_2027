@@ -149,7 +149,7 @@ reste visible dans la troisième étape. Un brouillon local par compte conserve 
 incomplète sur cet appareil ; il ne compte pas dans les photos du lundi tant que le prono
 complet n’est pas enregistré. Un brouillon dont la base serveur a changé est ignoré.
 
-L’accueil propose la première étape ouverte non jouée. Le potentiel affiché correspond
+L’accueil propose la première étape ouverte non jouée. Dans les règles (« Calcul des points de pronos »), le potentiel affiché correspond
 aux poids des photos déjà enregistrées et encore possibles, rapportés au maximum du jeu ;
 il ne prédit pas le score et ne change pas le barème. Les anciens pouces sont conservés.
 
