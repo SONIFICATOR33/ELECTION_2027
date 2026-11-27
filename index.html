@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
 <script src="js/theme.js?v=74"></script>
-<link rel="stylesheet" href="css/app.css?v=113">
+<link rel="stylesheet" href="css/app.css?v=114">
 </head>
 <body>
 <main>
@@ -438,21 +438,58 @@
   <div class="wrap stack players-wrap">
     <a class="page-back" href="#accueil" data-back>Accueil</a>
     <h1 class="page-title" id="players-title">Classements</h1>
-    <div id="players-view"></div>
-    <details class="card rules campaign-fold">
-      <summary>Calcul des points de pronos</summary>
-      <p><b>Gouves · Vote de 0 à 3 👍.</b> Le classement additionne tous les pouces reçus. Un seul choix par joueur et par gouvernement, modifiable ou retirable, sans vote pour soi. « 0 · Non » enregistre ton vote sans ajouter de pouce. Les gouvernements et les pronostics ont chacun leur classement.</p>
-      <ul class="pts">
-        <li><b>1 à 5</b><span><b>« Qui sera toujours là en janvier ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
-        <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
-        <li><b>+2</b><span>par score du 1er tour à 1 point près</span></li>
-        <li><b>+5</b><span>par finaliste trouvé</span></li>
-        <li><b>10 à 30</b><span>pour le bon président : 10 si tout le monde l'avait choisi, jusqu'à 30 si tu étais presque seul. +3 si son score au 2nd tour est à 2 points près.</span></li>
-      </ul>
-      <p class="help"><b>Les photos du lundi :</b> <span id="rules-photo-explanation"></span></p>
-      <p class="help">La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro.</p>
-      <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
-    </details>
+    <div id="players-view">
+      <div class="ranking-tabs" role="tablist" aria-label="Jeu">
+        <button type="button" role="tab" id="tab-pronos" aria-controls="ranking-pronos" aria-selected="false" tabindex="-1">Pronos</button>
+        <button type="button" role="tab" id="tab-gouves" aria-controls="ranking-gouves" aria-selected="true">Gouves <span id="ranking-remaining" hidden></span></button>
+      </div>
+      <section id="ranking-gouves" class="ranking-panel" role="tabpanel" aria-labelledby="tab-gouves">
+        <p class="ranking-help">Note les gouvernements complets des autres joueurs, de 0 à 3 pouces. Touche une ligne pour ouvrir le gouve.</p>
+        <div class="vote-progress">
+          <div role="status"><strong id="players-vote-count"></strong><span id="players-vote-status">Chargement des votes…</span></div>
+          <button type="button" id="players-start-vote" aria-haspopup="dialog" hidden>Noter le suivant</button>
+        </div>
+        <div class="ranking-results" hidden>
+          <div class="ranking-columns" aria-hidden="true"><span>Joueur</span><span>Reçus</span><span>Mon vote</span></div>
+          <ul class="players-list" aria-label="Classement des gouves"></ul>
+          <button type="button" class="ghost players-more" hidden>Afficher plus de joueurs</button>
+          <details class="ranking-sort"><summary>Options de tri</summary>
+            <label>Trier les gouves par<select><option value="thumbs">Pouces reçus</option><option value="name">Ordre alphabétique</option><option value="politics">De gauche à droite</option></select></label>
+            <div class="politics-legend" hidden><span>Gauche</span><i aria-hidden="true"></i><span>Droite</span></div>
+          </details>
+        </div>
+        <details class="card rules campaign-fold"><summary>Règles du vote</summary>
+          <p>Chaque joueur peut donner de 0 à 3 pouces à un gouve complet. Le classement additionne les pouces reçus. « 0 · Non » compte comme un vote. Rouvre la fiche pour modifier ou annuler ta note.</p>
+        </details>
+        <p class="fine" id="players-sync" hidden>Ton gouvernement attend une connexion pour être partagé. <button class="linkbtn" id="players-resync">Réessayer la synchronisation</button></p>
+      </section>
+      <section id="ranking-pronos" class="ranking-panel" role="tabpanel" aria-labelledby="tab-pronos" hidden>
+        <p class="ranking-help">Touche une ligne pour consulter les pronos du joueur.</p>
+        <div class="ranking-results" hidden>
+          <div class="ranking-columns" aria-hidden="true"><span>Joueur</span><span>Points</span></div>
+          <ul class="players-list" aria-label="Classement des pronos"></ul>
+          <button type="button" class="ghost players-more" hidden>Afficher plus de joueurs</button>
+          <details class="ranking-sort"><summary>Options de tri</summary>
+            <label>Trier les pronos par<select><option value="points">Points de pronos</option><option value="name">Ordre alphabétique</option></select></label>
+          </details>
+        </div>
+        <details class="card rules campaign-fold">
+          <summary>Calcul des points de pronos</summary>
+          <ul class="pts">
+            <li><b>1 à 5</b><span><b>« Qui sera toujours là en janvier ? » et « 500 signatures »</b> : par candidat bien jugé. 1 point si tout le monde avait bon, jusqu'à 5 si presque tout le monde s'est trompé. Pour les 500 signatures : +3 si tu as le nombre exact de candidats, +1 à un près.</span></li>
+            <li><b>+3</b><span>par candidat au bon rang de ton top 5, +1 s'il est dans le top 5 mais mal classé</span></li>
+            <li><b>+2</b><span>par score du 1er tour à 1 point près</span></li>
+            <li><b>+5</b><span>par finaliste trouvé</span></li>
+            <li><b>10 à 30</b><span>pour le bon président : 10 si tout le monde l'avait choisi, jusqu'à 30 si tu étais presque seul. +3 si son score au 2nd tour est à 2 points près.</span></li>
+          </ul>
+          <p class="help"><b>Les photos du lundi :</b> <span id="rules-photo-explanation"></span></p>
+          <p class="help">La 1re photo compte ×2, la dernière ×1. Ton score est la moyenne de toutes les photos du jeu : une semaine sans prono compte zéro.</p>
+          <p class="help"><b>Les titres :</b> Militant, Attaché parlementaire, Conseiller de l'ombre, Sondeur, Analyste politique et, pour le premier, Oracle de l'Élysée. Avant les premiers résultats, fais tous tes paris ouverts pour passer Attaché parlementaire.</p>
+        </details>
+      </section>
+      <p class="fine" id="players-status" role="status"></p>
+      <button class="ghost" id="players-retry" hidden>Réessayer</button>
+    </div>
   </div>
 </section>
 </main>
@@ -531,7 +568,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=113"></script>
+<script type="module" src="js/app.js?v=114"></script>
 <script type="module" src="js/install.js?v=106"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>

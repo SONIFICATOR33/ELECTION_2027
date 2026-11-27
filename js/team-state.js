@@ -20,7 +20,13 @@ export function sameTeam(a, b) {
     && JSON.stringify(Object.entries(left.min).sort()) === JSON.stringify(Object.entries(right.min).sort());
 }
 
+export const TEAM_ROLE_COUNT = POSTES.length + 2;
+
+export function countTeamRoles(value) {
+  const team = normalizeTeam(value);
+  return [team.coeur, team.pm, ...POSTES.map(post => team.min[post])].filter(name => name?.trim()).length;
+}
+
 export function completeTeam(value) {
-  const t = normalizeTeam(value);
-  return Boolean(t.coeur.trim() && t.pm.trim() && POSTES.every(post => t.min[post]?.trim()));
+  return countTeamRoles(value) === TEAM_ROLE_COUNT;
 }

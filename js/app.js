@@ -1,11 +1,11 @@
 import { potentialRemaining, displayedRanks } from './prono-progress.js?v=109';
 import { homeCalendar } from './home-calendar.js?v=109';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
-import { playersView } from './players-view.js?v=113';
+import { playersView } from './players-view.js?v=114';
 import { accountView } from './account-view.js?v=112';
 import { portraitView } from './portrait-view.js?v=112';
 import { GROUP_ADMIN } from './groups.js?v=109';
-import { normalizeTeam, hasTeam } from './team-state.js?v=109';
+import { normalizeTeam, hasTeam, countTeamRoles, TEAM_ROLE_COUNT } from './team-state.js?v=114';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
@@ -496,7 +496,6 @@ function syncExistingTeam() {
   return queueTeamSync(true).then(() => true).catch(error => { console.warn(error); return false; });
 }
 
-const countTeamRoles = team => Number(Boolean(team?.coeur)) + Number(Boolean(team?.pm)) + D.POSTES.filter(p => team?.min?.[p]).length;
 const teamCount = () => countTeamRoles(draft.team);
 function renderTeamGauge() {
   const position = teamPosition(draft.team);
@@ -845,7 +844,7 @@ function getParticipation() {
     startedPronos: [draft.l1, draft.l2, draft.gp.top].some(values => values.length > 0) || Boolean(draft.gp.pres),
     team: countTeamRoles(team),
     startedTeam: hasTeam(team),
-    totalTeam: D.POSTES.length + 2
+    totalTeam: TEAM_ROLE_COUNT
   };
 }
 
