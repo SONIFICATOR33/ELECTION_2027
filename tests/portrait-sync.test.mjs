@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { portraitView } from '../js/portrait-view.js';
 
-test('a pending portrait survives a failed share and accepts remote updates after retry', async t => {
+test('an explicitly pending portrait retries once on reopening and stays available after a failed share', async t => {
   const elements = new Map();
   const document = {
     querySelector(selector) {
@@ -32,11 +32,14 @@ test('a pending portrait survives a failed share and accepts remote updates afte
   });
 
   let player = { pid: 'alice' };
-  let receive, resolveSave, rejectSave, stopped = false;
+  let receive, resolveSave, rejectSave, stopped = false, writes = 0;
   const updates = [];
   const store = {
     watchPortrait(pid, update) { receive = update; return () => { stopped = true; }; },
-    setPortrait: () => new Promise((resolve, reject) => { resolveSave = resolve; rejectSave = reject; })
+    setPortrait: () => {
+      writes++;
+      return new Promise((resolve, reject) => { resolveSave = resolve; rejectSave = reject; });
+    }
   };
   const profile = portraitView({
     getPlayer: () => player, getStore: () => store,
@@ -46,15 +49,18 @@ test('a pending portrait survives a failed share and accepts remote updates afte
   profile.render();
   receive('bouc');
   assert.equal(profile.value(), 'chatte');
-  const failed = share.onclick();
+  assert.equal(writes, 1);
   assert.deepEqual(updates.at(-1), ['alice', 'chatte']);
   receive('bouc');
   rejectSave(new Error('offline'));
-  await failed;
+  await new Promise(resolve => setImmediate(resolve));
+  receive('bouc');
+  assert.equal(writes, 1);
   assert.equal(profile.value(), 'chatte');
   assert.equal(saved.get('pdm-portrait:alice:pending'), '1');
 
   const retry = share.onclick();
+  assert.equal(writes, 2);
   resolveSave();
   await retry;
   assert.equal(saved.has('pdm-portrait:alice:pending'), false);

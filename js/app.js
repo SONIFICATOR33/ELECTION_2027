@@ -3,7 +3,7 @@ import { homeCalendar } from './home-calendar.js?v=109';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
 import { playersView } from './players-view.js?v=115';
 import { accountView } from './account-view.js?v=112';
-import { portraitView } from './portrait-view.js?v=115';
+import { portraitView } from './portrait-view.js?v=116';
 import { GROUP_ADMIN } from './groups.js?v=109';
 import { normalizeTeam, hasTeam, countTeamRoles, TEAM_ROLE_COUNT } from './team-state.js?v=114';
 /* =====================================================================
