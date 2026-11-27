@@ -1,5 +1,5 @@
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
-import { playersView } from './players-view.js?v=104';
+import { playersView } from './players-view.js?v=105';
 import { accountView } from './account-view.js?v=103';
 import { portraitView } from './portrait-view.js?v=85';
 import { GROUP_ADMIN } from './groups.js?v=60';

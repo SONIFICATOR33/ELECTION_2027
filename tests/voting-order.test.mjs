@@ -82,3 +82,15 @@ test('discovery keeps a random stable order and advances once after each recorde
   }
   assert.deepEqual(sequence, ['bob', 'claire', 'alice']);
 });
+
+test('next card advances on skip, wraps, and never returns the current card alone', async () => {
+  const { nextUnvotedGovernment } = await import('../js/voting-order.js');
+  const queue = ['alice', 'bob', 'claire'].map(pid => ({ pid }));
+  assert.equal(nextUnvotedGovernment(queue)?.pid, 'alice');
+  assert.equal(nextUnvotedGovernment(queue, 'alice')?.pid, 'bob');
+  assert.equal(nextUnvotedGovernment(queue, 'bob')?.pid, 'claire');
+  assert.equal(nextUnvotedGovernment(queue, 'claire')?.pid, 'alice');
+  assert.equal(nextUnvotedGovernment(queue.slice(1), 'alice')?.pid, 'bob');
+  assert.equal(nextUnvotedGovernment([queue[0]], 'alice'), null);
+  assert.equal(nextUnvotedGovernment([], 'alice'), null);
+});

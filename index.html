@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
 <script src="js/theme.js?v=74"></script>
-<link rel="stylesheet" href="css/app.css?v=97">
+<link rel="stylesheet" href="css/app.css?v=105">
 </head>
 <body>
 <main>
@@ -496,7 +496,7 @@
   <p id="portrait-status" class="fine" role="status" hidden></p>
 </dialog>
 <dialog id="player-dialog" aria-labelledby="player-title">
-  <form method="dialog" class="dialog-toolbar"><button class="dialog-close" aria-label="Retour aux joueurs" autofocus><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"/></svg></button></form>
+  <form method="dialog" class="dialog-toolbar"><button type="button" class="ghost" id="player-next-vote" hidden>Vote suivant <span aria-hidden="true">→</span></button><button class="dialog-close" aria-label="Fermer" autofocus><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button></form>
   <h2 id="player-title"></h2>
   <div id="player-detail"></div>
 </dialog>
@@ -516,7 +516,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=104"></script>
+<script type="module" src="js/app.js?v=105"></script>
 <script type="module" src="js/install.js?v=15"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>
