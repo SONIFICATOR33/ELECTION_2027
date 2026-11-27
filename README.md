@@ -57,6 +57,13 @@ dans Mon profil ou le menu du navigateur.
 
 ### Votes des gouvernements
 
+Sur l’accueil, **Qui mérite tes 👍 ?** ouvre directement un gouvernement non encore
+noté, choisi dans l’ordre aléatoire propre au joueur. Son propre gouvernement et
+les compositions vides sont exclus. Le total des pouces n’est révélé qu’après le
+vote enregistré, y compris une note de zéro. **Au suivant →** permet de continuer
+sans revenir au classement. Quand tous les gouvernements disponibles ont été
+notés, un message le précise. Les états de chargement et d’échec restent explicites.
+
 La page **Classements** affiche tous les joueurs, avec ta ligne toujours en tête.
 Le tri par défaut **Aléatoire** place ensuite les gouvernements auxquels tu
 n’as pas encore attribué de vote, dans un ordre aléatoire propre à ta session.
