@@ -67,7 +67,13 @@ class LocalStore {
   }
   async logout() { this.db.me = null; this.write(); }
   async loadAll() { return { players: structuredClone(this.db.players), pronos: structuredClone(this.db.pronos) }; }
-  async getPortrait(pid = this.me()?.pid) { return this.db.players[pid]?.portrait || ''; }
+  watchPortrait(pid, update) {
+    const read = () => update(this.read().players[pid]?.portrait || '');
+    const changed = event => { if (event.key === this.K || event.key === null) read(); };
+    window.addEventListener('storage', changed);
+    queueMicrotask(read);
+    return () => window.removeEventListener('storage', changed);
+  }
   async setPortrait(value) {
     const pid = this.me()?.pid;
     if (!pid || !validPortrait(value)) throw new StoreError('portrait', 'Portrait invalide.');
@@ -172,11 +178,14 @@ class FirebaseStore {
     } while (cursor);
     return Object.fromEntries(names);
   }
-  async getPortrait(pid = this.me()?.pid) {
-    if (!this.me()) throw new StoreError('auth', 'Reconnecte-toi.');
-    const doc = await this.F.getDocFromServer(this.F.doc(this.db, 'portraits', pid));
-    const value = doc.data()?.value;
-    return validPortrait(value) ? value : '';
+  watchPortrait(pid, update, fail) {
+    const { F, db } = this;
+    const ref = F.doc(db, 'portraits', pid);
+    return F.onSnapshot(ref, { includeMetadataChanges: true }, snapshot => {
+      if (snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites) return;
+      const value = snapshot.data()?.value;
+      update(validPortrait(value) ? value : '');
+    }, fail);
   }
   async setPortrait(value) {
     const pid = this.me()?.pid;

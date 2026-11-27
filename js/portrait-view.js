@@ -1,4 +1,4 @@
-import { PORTRAITS as portraits, PHOTO_PREFIX as photoPrefix, validPortrait, portraitSource } from './player-portrait.js?v=112';
+import { validPortrait, portraitSource } from './player-portrait.js?v=112';
 
 async function makePortrait(file) {
   if (file.size > 20 * 1024 * 1024) throw new Error('Choisis une image de moins de 20 Mo.');
@@ -40,34 +40,44 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
   const profileStatus = document.querySelector('#profile-portrait-status');
   const options = [...dialog.querySelectorAll('[data-portrait]')];
   let player = null, selected = '', request = 0, saving = false, synced = false, syncError = false;
+  let pending = false, stopWatching, session = 0;
 
   function storageKey() { return 'pdm-portrait:' + player; }
 
   function load() {
     const pid = getPlayer()?.pid ?? null;
     if (player === pid) return;
+    stopWatching?.();
+    stopWatching = null;
+    const currentSession = ++session;
     player = pid;
-    selected = ''; synced = false; syncError = false; saving = false;
+    selected = ''; synced = false; syncError = false; saving = false; pending = false;
     request++;
     if (dialog.open) dialog.close();
     if (!player) return;
-    let pendingLocal = false;
     try {
       const saved = localStorage.getItem(storageKey());
-      pendingLocal = localStorage.getItem(storageKey() + ':pending') === '1';
-      if (validPortrait(saved)) selected = saved;
-    } catch {}
-    const pidRequest = player, revision = request;
-    getStore().getPortrait(pidRequest).then(value => {
-      if (player !== pidRequest || request !== revision || getPlayer()?.pid !== pidRequest) return;
-      if (value && (!pendingLocal || value === selected)) {
-        selected = value; synced = true;
-        try { localStorage.setItem(storageKey(), value); localStorage.removeItem(storageKey() + ':pending'); } catch {}
+      if (validPortrait(saved)) {
+        selected = saved;
+        pending = localStorage.getItem(storageKey() + ':pending') === '1';
       }
+    } catch {}
+    stopWatching = getStore().watchPortrait(pid, value => {
+      if (currentSession !== session || getPlayer()?.pid !== pid || saving) return;
+      if (pending && value !== selected) return;
+      if (!value && !synced) return;
+      selected = value; synced = Boolean(value); pending = false; syncError = false;
+      try {
+        if (value) localStorage.setItem(storageKey(), value);
+        else localStorage.removeItem(storageKey());
+        localStorage.removeItem(storageKey() + ':pending');
+      } catch {}
       render();
-    }).catch(() => {
-      if (player !== pidRequest || request !== revision) return;
-      syncError = true; render();
+      onUpdate(pid, selected);
+    }, () => {
+      if (currentSession !== session || getPlayer()?.pid !== pid) return;
+      syncError = true;
+      render();
     });
   }
 
@@ -81,7 +91,7 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
     }
     share.disabled = saving || !selected;
     upload.disabled = saving;
-    profileStatus.textContent = synced ? (getStore().mode === 'local' ? 'Portrait conservé sur cet appareil (mode essai).' : 'Portrait partagé avec les autres joueurs.')
+    profileStatus.textContent = saving ? 'Enregistrement du portrait…' : synced ? (getStore().mode === 'local' ? 'Portrait conservé sur cet appareil (mode essai).' : 'Portrait partagé avec les autres joueurs.')
       : selected ? 'Ce portrait est sur cet appareil. Ouvre-le pour le partager.'
       : syncError ? 'Portrait du compte indisponible. Réessaie depuis ton profil.' : '';
   }
@@ -94,22 +104,23 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
   async function save(portrait) {
     if (!player || saving || !validPortrait(portrait)) return;
     const pid = player, revision = ++request;
-    selected = portrait; synced = false; saving = true;
+    const currentSession = session;
+    selected = portrait; synced = false; saving = true; pending = true;
     // Preview immediately even if local storage is full or server sync fails.
     try { localStorage.setItem(storageKey(), portrait); localStorage.setItem(storageKey() + ':pending', '1'); } catch {}
-    render(); message('Enregistrement du portrait…');
+    render(); onUpdate(pid, portrait); message('Enregistrement du portrait…');
     try {
       await getStore().setPortrait(portrait);
       if (player !== pid || revision !== request || getPlayer()?.pid !== pid) return;
-      synced = true; syncError = false;
+      synced = true; syncError = false; pending = false;
       try { localStorage.removeItem(storageKey() + ':pending'); } catch {}
-      onUpdate(portrait); dialog.close();
+      if (dialog.open) dialog.close();
     } catch (error) {
       if (player === pid && revision === request) message(error.code === 'permission-denied'
         ? 'Photo affichée sur cet appareil. Le partage attend l’activation des portraits dans Firebase.'
         : 'Photo affichée sur cet appareil. Partage impossible : vérifie ta connexion puis réessaie.');
     } finally {
-      if (player === pid) { saving = false; render(); }
+      if (currentSession === session) { saving = false; render(); }
     }
   }
   share.onclick = () => save(selected);
@@ -147,6 +158,6 @@ export function portraitView({ getPlayer, getStore, onUpdate }) {
 
   return {
     render,
-    hasSelection() { load(); return Boolean(selected); }
+    value() { load(); return selected; }
   };
 }
