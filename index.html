@@ -19,7 +19,7 @@
 <link rel="apple-touch-icon" href="icons/election-180.png">
 <link rel="icon" href="icons/election-192.png">
 <script src="js/theme.js?v=74"></script>
-<link rel="stylesheet" href="css/app.css?v=105">
+<link rel="stylesheet" href="css/app.css?v=107">
 </head>
 <body>
 <main>
@@ -59,6 +59,7 @@
       <h1 id="welcome-title">Bienvenue</h1>
       <p>2 jeux indépendants : <b>Mes pronos</b> pour trouver qui sera élu président, <b>Mon gouve</b> pour récolter le plus de 👍 avec ton gouvernement idéal.</p>
     </div>
+    <aside class="home-deadline" id="home-deadline" aria-label="Prochaine étape"></aside>
     <article class="card dashboard-card" aria-labelledby="home-vote-title">
       <h2 id="home-vote-title">Vote pour les gouvernements des autres</h2>
       <button class="big" id="home-vote" type="button" aria-haspopup="dialog" disabled>👍 Je vote</button>
@@ -107,6 +108,11 @@
       </div>
       <p class="fine" id="home-blackout" hidden></p>
       <div class="page-links"><a href="#sondages" data-go="sondages">Voir les sondages</a></div>
+    </article>
+    <article class="card dashboard-card" aria-labelledby="home-journey-title">
+      <h2 id="home-journey-title">Les 4 étapes du jeu</h2>
+      <ol class="home-timeline" id="home-timeline"></ol>
+      <p class="fine" id="home-journey-end" hidden>Les quatre étapes sont terminées.</p>
     </article>
   </div>
 </section>
@@ -517,7 +523,7 @@
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
-<script type="module" src="js/app.js?v=105"></script>
+<script type="module" src="js/app.js?v=107"></script>
 <script type="module" src="js/install.js?v=106"></script>
 <script type="module" src="js/bottom-nav.js?v=86"></script>
 </body>
