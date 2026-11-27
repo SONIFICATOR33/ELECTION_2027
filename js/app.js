@@ -1,5 +1,5 @@
-import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=99';
-import { playersView } from './players-view.js?v=100';
+import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
+import { playersView } from './players-view.js?v=102';
 import { accountView } from './account-view.js?v=69';
 import { portraitView } from './portrait-view.js?v=85';
 import { GROUP_ADMIN } from './groups.js?v=60';
@@ -7,7 +7,7 @@ import { normalizeTeam, hasTeam } from './team-state.js';
 /* =====================================================================
    LES PRONOS DES MEMBRÉS — interface
    ===================================================================== */
-import * as D from './data.js?v=101';
+import * as D from './data.js?v=102';
 import * as S from './scoring.js';
 import { openStore } from './store.js?v=60';
 import { snd } from './sound.js';
