@@ -1,7 +1,7 @@
 import { potentialRemaining, displayedRanks } from './prono-progress.js?v=109';
 import { homeCalendar } from './home-calendar.js?v=109';
 import { drawTeamGauge, gaugeHeight, teamPosition } from './team-gauge.js?v=102';
-import { playersView } from './players-view.js?v=112';
+import { playersView } from './players-view.js?v=113';
 import { accountView } from './account-view.js?v=112';
 import { portraitView } from './portrait-view.js?v=112';
 import { GROUP_ADMIN } from './groups.js?v=109';
