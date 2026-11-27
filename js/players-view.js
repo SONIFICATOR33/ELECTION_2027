@@ -22,7 +22,7 @@ const politicalColors = ['#8B142D', '#A1394E', '#A15665', '#726A71', '#486996', 
 
 export function playersView(root, { getStore, getParticipation, drawTeam, syncExistingTeam, notify }) {
   root.innerHTML = `<div class="players-toolbar" hidden>
-    <button type="button" class="ghost" id="players-start-vote">Voter pour les gouves →</button>
+    <button type="button" class="ghost" id="players-start-vote" aria-haspopup="dialog">Découvrir un gouve</button>
     <label for="players-sort">Classement par</label>
     <select id="players-sort">
 
@@ -34,12 +34,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   </div>
   <div class="politics-legend" hidden><span>Gauche</span><i aria-hidden="true"></i><span>Droite</span></div>
   <p class="fine" id="players-vote-status" role="status" hidden></p>
-  <div class="players-table-wrap" hidden>
-    <table class="players-table">
-      <thead><tr><th scope="col">Joueur</th><th scope="col">Pronos</th><th scope="col" aria-label="Points">Pts</th><th scope="col" aria-label="Gouvernement"><abbr title="Gouvernements">Gouves</abbr></th><th scope="col" aria-label="Pouces levés">👍</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <ul class="players-list" aria-label="Classement des joueurs" hidden></ul>
   <button class="ghost" id="players-more" hidden>Afficher plus de joueurs</button>
   <p class="fine" id="players-status" role="status"></p>
   <button class="ghost" id="players-retry" hidden>Réessayer</button>
@@ -48,7 +43,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   const find = selector => root.querySelector(selector);
   const status = find('#players-status');
   const voteStatus = find('#players-vote-status');
-  const tableBody = find('tbody');
+  const playerList = find('.players-list');
   const sort = find('#players-sort');
   const more = find('#players-more');
   const retry = find('#players-retry');
@@ -102,7 +97,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     const available = ready && discoveryQueue().length > 0;
     homeVote.disabled = !available && !failed;
     find('#players-start-vote').disabled = !available;
-    homeVote.textContent = failed ? 'Réessayer' : '👍 Je vote';
+    homeVote.textContent = failed ? 'Réessayer' : 'Découvrir un gouve';
     homeVoteStatus.textContent = failed ? voteError || 'Gouvernements indisponibles pour le moment.'
       : !ready ? 'Chargement des gouvernements…'
       : available ? '' : 'Tu as voté pour tous les gouvernements disponibles. Reviens découvrir les prochains !';
@@ -200,9 +195,9 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
   function focusPlayerAction(button) {
     if (!button?.dataset.player) return;
     const { player, detail } = button.dataset;
-    const target = tableBody.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`);
+    const target = playerList.querySelector(`[data-player="${CSS.escape(player)}"][data-detail="${detail}"]`);
     if (target) target.focus({ preventScroll: true });
-    else if (!dialog.open) (tableBody.querySelector('[data-detail="team"]') || sort).focus({ preventScroll: true });
+    else if (!dialog.open) (playerList.querySelector('[data-detail="team"]') || sort).focus({ preventScroll: true });
   }
 
   dialog.addEventListener('close', () => {
@@ -224,7 +219,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     clearDialog();
   }
 
-  function rowHTML(row, pid, political, positions) {
+  function playerHTML(row, pid, political, positions) {
     const own = row.pid === pid;
     const prono = display.pronos[row.pid] || {};
     const hasProno = Boolean(prono.l1?.length || prono.l2?.length || current(prono));
@@ -234,41 +229,49 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     const position = balance == null ? 'Sans repère' : balance < 0 ? 'À gauche' : balance > 0 ? 'À droite' : 'À l’équilibre';
     const indicator = political ? `<span class="politics-swatch" ${color ? 'style="--position:' + color + '"' : ''} title="${position}" aria-label="${position}"></span>` : '';
     const label = escape(row.pseudo);
-    const button = (labelType, type, available, target) => {
-      const voted = type === 'team' && scores[row.pid]?.rating != null;
-      const className = 'player-action' + (available ? ' available' : '') + (voted ? ' voted' : '');
+    const progress = own ? getParticipation() : null;
+    function entryAction(type, available) {
+      const isProno = type === 'pronos';
       if (own) {
-        const progress = getParticipation();
-        const isProno = type === 'pronos';
+        const target = isProno ? 'paris' : 'team';
         const count = isProno ? progress.pronos : progress.team;
         const total = isProno ? progress.totalPronos : progress.totalTeam;
         const started = count > 0 || (isProno ? progress.startedPronos : progress.startedTeam);
         const state = count === total ? 'complete' : started ? 'started' : 'empty';
         const status = { empty: 'Pas commencé', started: 'En cours', complete: 'Complet' }[state];
-        return `<a class="player-action" data-progress="${state}" href="#${target}" data-go="${target}" title="${status}" aria-label="Ouvrir ${isProno ? 'mes pronos' : 'mon gouvernement'} · ${status}">Ouvrir</a>`;
+        const title = isProno ? 'Mes pronos' : 'Mon gouve';
+        return `<a class="player-action" data-progress="${state}" href="#${target}" data-go="${target}" title="${status}" aria-label="${title} · ${status}">${title}</a>`;
       }
-      const action = type === 'team' ? (!completeTeam(display.teams[row.pid]) ? 'Voir' : voted ? 'Voté' : 'Voter') : '<svg class="player-eye" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
-      const actionLabel = type === 'team'
-        ? (voted ? 'Voté · Voir le gouvernement de ' : 'Voter pour le gouvernement de ')
-        : 'Pronos de ';
-      return available
-        ? `<button class="${className}" data-player="${escape(row.pid)}" data-detail="${type}" aria-label="${actionLabel}${label}">${action}</button>`
-        : `<span aria-label="${labelType} à remplir">—</span>`;
-    };
-    return `<tr class="${hasProno || hasGovernment ? 'participating' : ''}${own ? ' own-player' : ''}">
-      <th scope="row">${indicator}<span class="player-identity">${avatar(row.pid)}<span>${label}${own ? ' <small>toi</small>' : ''}</span></span></th>
-      <td>${button('Pronos', 'pronos', hasProno, 'paris')}</td>
-      <td>${fmt(row.total)}</td>
-      <td>${button('Gouvernement', 'team', hasGovernment, 'team')}</td>
-      <td>${votesReady ? scores[row.pid]?.points || 0 : '—'}</td>
-    </tr>`;
+      if (!available) return `<span class="player-unavailable">${isProno ? 'Aucun prono' : 'Aucun gouve'}</span>`;
+      const title = isProno ? 'Voir les pronos' : 'Voir le gouve';
+      return `<button type="button" class="player-action" data-player="${escape(row.pid)}" data-detail="${type}" aria-haspopup="dialog" aria-label="${title} de ${label}">${title}</button>`;
+    }
+    const score = scores[row.pid];
+    const thumbs = score?.points || 0;
+    const received = votesReady ? `${fmt(thumbs)} ${thumbs > 1 ? 'pouces reçus' : 'pouce reçu'}` : '—';
+    const notes = [];
+    if (!own && hasGovernment) {
+      if (!completeTeam(display.teams[row.pid])) notes.push('Gouve en cours');
+      if (votesReady && score?.rating != null) {
+        notes.push(`Ton vote · ${score.rating} ${score.rating > 1 ? 'pouces' : 'pouce'}`);
+      }
+    }
+    return `<li class="player-row${own ? ' own-player' : ''}">
+      <div class="player-identity">${indicator}${avatar(row.pid)}<strong>${label}${own ? ' <small>(toi)</small>' : ''}</strong></div>
+      <div class="player-entries">
+        <div class="player-entry">${entryAction('pronos', hasProno)}<span class="player-score">${fmt(row.total)} ${row.total > 1 ? 'points' : 'point'}</span></div>
+        <div class="player-entry">${entryAction('team', hasGovernment)}<span class="player-score">${received}</span>
+          ${notes.length ? `<small class="player-ballot">${notes.join(' · ')}</small>` : ''}
+        </div>
+      </div>
+    </li>`;
   }
 
-  function renderTable() {
-    find('.players-toolbar').hidden = find('.players-table-wrap').hidden = !display;
+  function renderPlayers() {
+    find('.players-toolbar').hidden = playerList.hidden = !display;
     voteStatus.hidden = !display;
     if (!display) {
-      tableBody.replaceChildren();
+      playerList.replaceChildren();
       more.hidden = find('.politics-legend').hidden = true;
       return;
     }
@@ -289,14 +292,14 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       (positions.get(a.pid) ?? Infinity) - (positions.get(b.pid) ?? Infinity) || alphabetical(a, b));
     const own = rows.find(row => row.pid === pid);
     const focus = document.activeElement;
-    tableBody.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
-      .map(row => rowHTML(row, pid, political, positions)).join('');
+    playerList.innerHTML = [...(own ? [own] : []), ...ordered.slice(0, limit)]
+      .map(row => playerHTML(row, pid, political, positions)).join('');
     focusPlayerAction(focus);
     loadVisiblePortraits();
     find('.politics-legend').hidden = !political;
     more.hidden = ordered.length <= limit;
     voteStatus.textContent = !votesReady ? voteError || 'Chargement des votes…'
-      : 'Les gouves complets peuvent recevoir de 0 à 3 👍.';
+      : 'Pour voter, ouvre un gouve complet puis choisis de 0 à 3 pouces sous sa composition.';
   }
 
   function refresh() {
@@ -310,7 +313,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       renderVoteInvitation();
       renderLeaders();
       renderCommunityForecast();
-      if (visible) renderTable();
+      if (visible) renderPlayers();
       refreshVotePanel();
     });
   }
@@ -329,7 +332,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     const voted = score?.rating != null;
     const reveal = !openTeam.discovery || voted;
     panel.innerHTML = (reveal ? '<p class="vote-score">' + (votesReady ? points + ' 👍 · ' + voters + ' votant' + (voters === 1 ? '' : 's') : escape(voteError || 'Chargement des votes…')) + '</p>' : '') +
-      '<p id="team-rating-label">Ton vote pour ce gouvernement</p><div class="team-rating" role="group" aria-labelledby="team-rating-label">' +
+      '<p id="team-rating-label">Pour voter, touche le nombre de pouces que tu donnes à ce gouve.</p><div class="team-rating" role="group" aria-labelledby="team-rating-label">' +
       [0, 1, 2, 3].map(rating => {
         const label = rating === 0 ? '0 · Non' : rating + ' 👍';
         const ariaLabel = rating === 0 ? '0 · Non, sans pouce' : rating + (rating === 1 ? ' pouce' : ' pouces');
@@ -337,7 +340,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
       }).join('') + '</div>' +
       (score?.rating != null ? '<button class="linkbtn" data-vote-withdraw' + ((!votesReady || pending) ? ' disabled' : '') + '>Annuler mon vote</button>' : '') +
       (openTeam.discovery && voted ? (discoveryQueue().length
-        ? '<button class="big" data-vote-next' + (pending ? ' disabled' : '') + '>Au suivant →</button>'
+        ? '<button class="big" data-vote-next' + (pending ? ' disabled' : '') + '>Gouve suivant</button>'
         : '<p role="status">Tu as voté pour tous les gouvernements disponibles. Merci !</p>') : '') +
       (incomplete ? '<p role="status">Gouve en cours : les votes ouvrent à 12/12 postes.</p>' : '') +
       (pending ? '<p role="status">Enregistrement…</p>' : '') +
@@ -413,7 +416,7 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     if (!visible && dialog.open) dialog.close();
     if (active) {
       renderCommunityForecast();
-      if (visible) renderTable();
+      if (visible) renderPlayers();
       return;
     }
 
@@ -526,11 +529,11 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
     if (kind === 'pronos') details.innerHTML = playerPronos(id, display);
     else {
       openTeam = { id, discovery, composition: structuredClone(display.teams[id]) };
-      details.innerHTML = '<div class="player-owner player-identity">' + avatar(id) + '<strong>' + escape(player.pseudo) + '</strong></div><section class="team-vote-panel" data-team-vote></section><div data-team-image>Chargement de l’image…</div><section class="group-stage" data-team-comments></section>';
+      details.innerHTML = '<div class="player-owner player-identity">' + avatar(id) + '<strong>' + escape(player.pseudo) + '</strong></div><div data-team-image>Chargement de l’image…</div><section class="team-vote-panel" data-team-vote></section><section class="group-stage" data-team-comments></section>';
       refreshVotePanel();
     }
     if (!dialog.open) dialog.showModal();
-    else details.querySelector('[data-rating]')?.focus({ preventScroll: true });
+    else dialog.querySelector('.dialog-close').focus({ preventScroll: true });
     dialog.scrollTop = 0;
     loadVisiblePortraits();
     if (kind !== 'team') return;
@@ -562,11 +565,11 @@ export function playersView(root, { getStore, getParticipation, drawTeam, syncEx
 
   sort.addEventListener('change', () => {
     limit = PAGE_SIZE;
-    renderTable();
+    renderPlayers();
   });
   more.onclick = () => {
     limit += PAGE_SIZE;
-    renderTable();
+    renderPlayers();
   };
   retry.onclick = () => { pause(); resume(true); };
   find('#players-resync').onclick = async () => {

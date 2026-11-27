@@ -60,15 +60,17 @@ dans Mon profil ou le menu du navigateur.
 Sur l’accueil, **Vote pour les gouvernements des autres** ouvre directement un gouvernement non encore
 noté, choisi dans l’ordre aléatoire propre au joueur. Son propre gouvernement et
 les compositions vides sont exclus. Le total des pouces n’est révélé qu’après le
-vote enregistré, y compris une note de zéro. **Au suivant →** permet de continuer
+vote enregistré, y compris une note de zéro. **Gouve suivant** permet de continuer
 sans revenir au classement. Quand tous les gouvernements disponibles ont été
 notés, un message le précise. Les états de chargement et d’échec restent explicites.
 
 La page **Classements** affiche tous les joueurs, avec ta ligne toujours en tête.
-Le tri par défaut affiche le classement par pouces reçus. Le bouton **Voter pour les gouves**
+Le tri par défaut affiche le classement par pouces reçus. Le bouton **Découvrir un gouve**
 ouvre un parcours distinct, aléatoire, parmi les gouves complets (12/12) encore non notés.
 Les autres tris permettent de consulter les points de pronos, les pseudos ou la polarité.
-Ouvre le gouvernement d’un autre joueur pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce. Le bouton devient **Voté**. Tu peux rouvrir la fiche pour modifier ou annuler ton vote.
+Chaque joueur a deux entrées, **Voir les pronos** et **Voir le gouve**, avec le score correspondant sur chaque ligne.
+Dans la fiche du gouve, touche une note sous la composition pour voter de **0 à 3 👍**. « 0 · Non » enregistre un vote sans ajouter de pouce.
+Ta note apparaît sous la ligne du gouve. Tu peux rouvrir sa fiche pour modifier ou annuler ton vote.
 
 Les votes sont conservés quand les ministres, le Premier ministre ou le joker changent.
 Ils sont comptabilisés pour le président soutenu : changer de président remet le
