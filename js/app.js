@@ -151,7 +151,6 @@ function renderHomeCalendar() {
   const { stages, current, next } = homeCalendar(now(), { l1: done('l1'), l2: done('l2'), gp: done('gp') });
   const shortDate = date => dateFr(date, { day: '2-digit', month: '2-digit' });
   const stageLink = stage => `<a class="stage-status-link" data-complete="${stage.complete}" href="#paris" data-go="paris#${stage.anchor}">Étape ${stage.number} · ${stage.complete ? 'Validée' : isOpen(stage.key) ? 'À valider' : 'Non jouée'} →</a>`;
-  $('#home-photo-rule').textContent = isOpen('gp') ? photoExplanation() : '';
   const banner = $('#home-deadline');
   banner.hidden = false;
   banner.innerHTML = next ? `<div><strong>À toi de jouer · Étape ${next.stage}</strong><span>${esc(next.label)} · À enregistrer avant le ${shortDate(next.date)}${next.provisional ? ' · date provisoire' : ''}</span></div>${stageLink(stages[next.stage - 1])}` : `<strong>${stages.every(s => s.complete) ? 'Tes pronos sont à jour' : 'Aucun prono ouvert à compléter'}</strong><a href="#paris" data-go="paris">Voir mes pronos →</a>`;
@@ -257,10 +256,12 @@ function photoExplanation() {
   return 'Ton prono présidentiel est photographié chaque lundi : plus tôt = plus de points. Il te reste ' + potentialRemaining(mine(), now()) + ' % du potentiel maximal, photos déjà prises comprises.';
 }
 function renderPhoto() {
-  const el = $('#photo'), w = S.weekOf(now()), dl = deadline('gp');
+  const el = $('#photo'), dl = deadline('gp');
+  $('#rules-photo-explanation').textContent = photoExplanation();
+  el.hidden = isOpen('gp');
   for (const id of ['dl3']) { const e = $('#' + id); e.textContent = dl.txt; e.classList.toggle('hot', dl.hot); }
   if (!isOpen('gp')) { el.innerHTML = '<p class="okbar">Pronostic clos.</p>'; return; }
-  el.textContent = photoExplanation();
+  el.textContent = '';
 }
 const rankedTop = () => [...gp().top].sort((a, b) => b.pct - a.pct);
 const finalists = () => rankedTop().filter(t => t.pct > 0).slice(0, 2);
@@ -756,6 +757,7 @@ function show() {
   heading.tabIndex = -1;
   heading.focus({ preventScroll: true });
   if (view === 'accueil') renderHomeCalendar();
+  if (view === 'classement') renderPhoto();
   if (view === 'sondages' || view === 'accueil') renderPollsOverview();
   if (view === 'sondages') {
     if ($('#gHero').closest('details').open) renderHero();
