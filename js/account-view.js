@@ -163,6 +163,8 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, noti
   function closeProfile() {
     profileRequest++;
     listRequest++;
+    $('#profile-player-count-row').hidden = true;
+    $('#profile-player-count').textContent = '';
     setPinVisibility(false);
     nameField.value = '';
     vinceNames.open = false;
@@ -174,6 +176,22 @@ export function accountView({ getStore, onJoin, onLogout, getParticipation, noti
     $('#profile-pseudo').textContent = player.pseudo;
     showPin.hidden = !sessionPin;
     vinceNames.hidden = !isVince;
+    const countRow = $('#profile-player-count-row');
+    const count = $('#profile-player-count');
+    countRow.hidden = !isVince;
+    count.textContent = isVince ? 'Chargement…' : '';
+    if (isVince) {
+      const store = getStore();
+      const players = store.mode === 'firebase'
+        ? store.registeredPlayers()
+        : store.loadAll().then(data => data.players);
+      players.then(value => {
+        if (request !== profileRequest || getStore() !== store || store.me()?.pid !== player.pid) return;
+        count.textContent = Object.keys(value).length.toLocaleString('fr-FR');
+      }).catch(() => {
+        if (request === profileRequest) count.textContent = 'Indisponible';
+      });
+    }
     nameField.value = '';
     nameField.disabled = nameSubmit.disabled = true;
     nameStatus.textContent = 'Chargement…';
